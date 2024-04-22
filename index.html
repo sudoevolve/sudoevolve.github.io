@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VivoGPT  Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="webfonts/all.css" />
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="logo-menu">
+            <h2 class="logo">Sudo</h2>
+            <i class="fa-solid fa-bars"></i>
+        </div>
+
+        <ul class="list">
+            <li class="list-item">
+                <a href="#">
+                    <i class="fa-solid fa-house"></i>
+                    <span class="link-name" style="--i:1;">Home</span>
+                </a>
+            </li>
+            <li class="list-item">
+                <a href="#">
+                    <i class="fa-solid fa-clock"></i>
+                    <span class="link-name" style="--i:2;">Recently</span>
+                </a>
+            </li>
+            <li class="list-item">
+                <a href="#">
+                    <i class="fa-solid fa-bookmark"></i>
+                    <span class="link-name" style="--i:3;">Saved</span>
+                </a>
+            </li>
+            <li class="list-item">
+                <a href="#">
+                    <i class="fa-solid fa-face-smile"></i>
+                    <span class="link-name" style="--i:4;">User</span>
+                </a>
+            </li>
+            <li class="list-item">
+                <a href="#">
+                    <i class="fa-solid fa-gear"></i>
+                    <span class="link-name" style="--i:5;">Setting</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+
+
+
+    <div class="view" id="homeView">
+        <div class="textoutput">
+            <pre id="result"></pre>
+        </div>
+        <div class="input-container">
+            <input type="text" id="prompt" placeholder="Enter your prompt">
+            <button onclick="aiGenerate()">Generate</button>
+        </div>
+    </div>
+    <div class="view" id="recentlyView" style="display: none;">
+        <h1>recentlyView</h1>
+    </div>
+    <div class="view" id="savedView" style="display: none;">
+        <h1>savedView</h1>
+    </div>
+    <div class="view" id="userView" style="display: none;">
+        <h1>userView</h1>
+    </div>
+
+
+    
+
+</body>
+<script src="script.js"></script>
+</html>
