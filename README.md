@@ -7,14 +7,12 @@
 ## 🧠 About Me
 
 - 💼 专业方向：网络工程（Network Engineering）
-- 🔐 技术兴趣：Linux、数据库、网络安全
-- 🛠️ 常用工具：Qt / QML、C/C++、React Three Fiber、Unity、KLWP
-- 🖥️ 使用系统：Linux Mint + Windows 双系统
-- 🎨 爱好创作：动态壁纸设计、交互界面开发、美学编程
-
+- 🔐 技术兴趣：Linux、figma、网络安全
+- 🎨 爱好创作：交互界面开发、美学编程
+- 🤯 奇妙想法：痴迷于各种前端动画
 ---
 
-## 🧩 项目亮点
+## 🧩 一些小玩意儿
 
 - 🌌 **EvolveUI**  
   使用 Qt6 + QML 打造的现代组件库，支持暗色模式、图标字体、动画组件与响应式布局，适用于桌面和嵌入式应用。
@@ -34,6 +32,7 @@
 
 ### 💻 编程语言 & 脚本
 <p align="left">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white"/>
   <img src="https://img.shields.io/badge/C++-00599C?style=flat&logo=c%2b%2b&logoColor=white"/>
   <img src="https://img.shields.io/badge/C-555555?style=flat&logo=c&logoColor=white"/>
   <img src="https://img.shields.io/badge/Shell-4EAA25?style=flat&logo=gnu-bash&logoColor=white"/>
@@ -74,10 +73,8 @@
 
 ## 🛸 联系我
 
-- 📮 邮箱：sudo.evolve@example.com  
-- 🧭 GitHub：[@SudoEvolve](https://github.com/SudoEvolve)  
-- 🌐 主页：[https://sudo-evolve.dev](https://sudo-evolve.dev)
-
+- 📮 邮箱：sudoevolve@gmail.com  
+- 🧭 GitHub：[@SudoEvolve](https://github.com/sudoevolve)  
 ---
 
 希望我们在开源的世界中不期而遇！
