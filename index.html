@@ -32,7 +32,13 @@
             background-image: url('https://www.transparenttextures.com/patterns/rice-paper-3.png');
             color: var(--ink-black);
             font-family: var(--font-body);
-            overflow-x: hidden;
+            overflow: hidden;
+        }
+
+        canvas#intro-canvas {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 1000000; 
+            pointer-events: auto; 
         }
 
         #cursor {
@@ -40,16 +46,22 @@
             width: 30px; height: 30px;
             background: radial-gradient(circle, var(--ink-black) 0%, transparent 70%);
             border-radius: 50%;
-            pointer-events: none; z-index: 9999;
+            pointer-events: none; 
+            z-index: 1000001;
             transform: translate(-50%, -50%);
             mix-blend-mode: multiply;
-            transition: transform 0.2s;
+            transition: transform 0.1s ease-out;
         }
-        #cursor.active { transform: translate(-50%, -50%) scale(2.5); background: radial-gradient(circle, var(--cinnabar) 0%, transparent 70%); }
+        #cursor.active { 
+            transform: translate(-50%, -50%) scale(2.5); 
+            background: radial-gradient(circle, var(--cinnabar) 0%, transparent 70%); 
+        }
 
-        canvas#ink-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; opacity: 0.15; pointer-events: none;
+        canvas#bg-ink-canvas {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; 
+            opacity: 0.15; 
+            pointer-events: none;
         }
 
         .v-text {
@@ -71,6 +83,7 @@
             position: fixed; top: 0; width: 100%; padding: 30px 50px;
             display: flex; justify-content: space-between; align-items: flex-start;
             z-index: 100; mix-blend-mode: multiply;
+            opacity: 0; 
         }
         .brand-seal {
             width: 60px; height: 60px;
@@ -95,11 +108,14 @@
             font-size: 2.5rem;
             height: 60vh;
             opacity: 0;
+            will-change: transform;
         }
 
         .hero-main {
             text-align: center;
             position: relative;
+            will-change: transform;
+            opacity: 0;
         }
         .hero-title {
             font-family: var(--font-ink);
@@ -147,6 +163,7 @@
             border: 1px solid #dcdcdc;
             box-shadow: 0 20px 50px rgba(0,0,0,0.05);
             transform: translateY(50px); opacity: 0;
+            will-change: transform;
         }
 
         .proj-left {
@@ -179,7 +196,7 @@
             padding: 10px 30px;
             text-decoration: none; color: var(--ink-black);
             font-family: var(--font-body);
-            transition: 0.3s;
+            transition: background 0.3s, color 0.3s;
             position: relative; overflow: hidden;
             display: inline-block;
         }
@@ -188,6 +205,7 @@
         .ink-splash {
             position: absolute; z-index: -1; pointer-events: none;
             opacity: 0.1; width: 400px;
+            will-change: transform;
         }
 
         footer {
@@ -200,10 +218,11 @@
         }
 
         @media (max-width: 768px) {
-            .project-content { grid-template-columns: 1fr; text-align: center; }
+            .project-content { grid-template-columns: 1fr; text-align: center; transform: none !important; }
             .proj-left { border-right: none; border-bottom: 1px dashed #ccc; padding-bottom: 30px; padding-right: 0; text-align: center; }
             .hero-title { font-size: 4rem; }
             .poem-intro { display: none; }
+            .tilt-card { transform: none !important; }
         }
 
         .skills-section {
@@ -222,7 +241,6 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 40px;
-            perspective: 1000px;
         }
 
         .skill-category {
@@ -231,13 +249,8 @@
             padding: 30px;
             position: relative;
             overflow: hidden;
-            transition: transform 0.3s ease;
             box-shadow: 5px 5px 15px rgba(0,0,0,0.05);
-        }
-        .skill-category:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.7);
-            border-color: var(--cinnabar);
+            will-change: transform;
         }
         
         .cat-title {
@@ -285,10 +298,9 @@
         .qi-fill {
             height: 100%;
             background: var(--ink-black);
-            width: 0%; /* 初始为0，JS控制动画 */
+            width: 0%;
             position: relative;
         }
-        /* 进度条末端的墨晕 */
         .qi-fill::after {
             content: '';
             position: absolute;
@@ -321,8 +333,9 @@
 </head>
 <body>
 
+    <canvas id="intro-canvas"></canvas>
     <div id="cursor"></div>
-    <canvas id="ink-canvas"></canvas>
+    <canvas id="bg-ink-canvas"></canvas>
 
     <nav>
         <div class="brand-seal">苏</div>
@@ -331,13 +344,13 @@
         </div>
     </nav>
 
-    <header>
-        <div class="poem-intro v-text">
+    <header id="header-area">
+        <div class="poem-intro v-text parallax-layer" data-depth="0.1">
             十步杀一人 · 千里不留行<br>
             事了拂衣去 · 深藏身与名
         </div>
 
-        <div class="hero-main">
+        <div class="hero-main parallax-layer" data-depth="0.2">
             <h1 class="hero-title">苏渡 · 弈沃</h1>
             <div class="hero-subtitle">
                 SUDO EVOLVE <span style="color:var(--cinnabar); margin: 0 10px;">●</span> 数理通玄
@@ -371,7 +384,8 @@
 
         <div class="skills-grid">
             
-            <div class="skill-category">
+            <!-- 技能卡片 1: 心法 -->
+            <div class="skill-category tilt-card">
                 <div class="bg-seal">心法</div>
                 <div class="cat-title">混元内功</div>
                 
@@ -403,11 +417,11 @@
                 </div>
             </div>
 
-            <div class="skill-category">
+            <!-- 技能卡片 2: 机枢 -->
+            <div class="skill-category tilt-card">
                 <div class="bg-seal">机枢</div>
                 <div class="cat-title">天工机关</div>
 
-                <!-- Qt -->
                 <div class="skill-item">
                     <div class="skill-header">
                         <span class="skill-name">Qt / QML</span>
@@ -436,7 +450,8 @@
                 </div>
             </div>
 
-            <div class="skill-category">
+            <!-- 技能卡片 3: 道法 -->
+            <div class="skill-category tilt-card">
                 <div class="bg-seal">道法</div>
                 <div class="cat-title">乾坤道法</div>
 
@@ -449,7 +464,6 @@
                     <div class="skill-desc">言出法随，以字符敕令号令系统底层。</div>
                 </div>
 
-                <!-- Git -->
                 <div class="skill-item">
                     <div class="skill-header">
                         <span class="skill-name">Git</span>
@@ -474,9 +488,10 @@
 
     <div class="project-scroll">
         
+        <!-- 项目 1 -->
         <div class="project-item">
-            <img src="https://www.transparenttextures.com/patterns/shattered-island.png" class="ink-splash" style="top:10%; left:10%;">
-            <div class="project-content">
+            <img src="https://www.transparenttextures.com/patterns/shattered-island.png" class="ink-splash scroll-parallax" data-speed="0.5" style="top:10%; left:10%;">
+            <div class="project-content tilt-card">
                 <div class="proj-left">
                     <div class="proj-poem">
                         起舞弄清影<br>何似在人间
@@ -499,9 +514,10 @@
             </div>
         </div>
 
+        <!-- 项目 2 -->
         <div class="project-item">
-            <img src="https://www.transparenttextures.com/patterns/shattered-island.png" class="ink-splash" style="bottom:10%; right:10%;">
-            <div class="project-content">
+            <img src="https://www.transparenttextures.com/patterns/shattered-island.png" class="ink-splash scroll-parallax" data-speed="0.3" style="bottom:10%; right:10%;">
+            <div class="project-content tilt-card">
                 <div class="proj-left">
                     <div class="proj-poem">
                         九层之台<br>起于累土
@@ -525,9 +541,10 @@
             </div>
         </div>
 
+        <!-- 项目 3 -->
         <div class="project-item">
-            <img src="https://www.transparenttextures.com/patterns/shattered-island.png" class="ink-splash" style="top:20%; right:20%;">
-            <div class="project-content">
+            <img src="https://www.transparenttextures.com/patterns/shattered-island.png" class="ink-splash scroll-parallax" data-speed="0.6" style="top:20%; right:20%;">
+            <div class="project-content tilt-card">
                 <div class="proj-left">
                     <div class="proj-poem">
                         大象无形<br>大音希声
@@ -551,8 +568,9 @@
             </div>
         </div>
 
+        <!-- 项目 4 -->
         <div class="project-item">
-            <div class="project-content">
+            <div class="project-content tilt-card">
                 <div class="proj-left">
                     <div class="proj-poem">
                         明察秋毫<br>心如明镜
@@ -575,8 +593,9 @@
             </div>
         </div>
 
+        <!-- 项目 5 -->
         <div class="project-item">
-            <div class="project-content">
+            <div class="project-content tilt-card">
                 <div class="proj-left">
                     <div class="proj-poem">
                         笔走龙蛇<br>墨染池鱼
@@ -614,64 +633,203 @@
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        gsap.to(".poem-intro", {
-            opacity: 1,
-            duration: 2,
-            delay: 0.5,
-            ease: "power2.out"
-        });
+        const introCanvas = document.getElementById('intro-canvas');
+        const introCtx = introCanvas.getContext('2d');
+        let introW, introH;
 
-        gsap.from(".hero-title", {
-            y: 100,
-            opacity: 0,
-            duration: 1.5,
-            delay: 1,
-            ease: "power3.out"
-        });
+        function initIntro() {
+            introW = introCanvas.width = window.innerWidth;
+            introH = introCanvas.height = window.innerHeight;
+            
+            introCtx.fillStyle = '#f4f1e8';
+            introCtx.fillRect(0, 0, introW, introH);
+        }
+        initIntro();
+        window.addEventListener('resize', initIntro);
 
+        const dropState = { 
+            y: -50, 
+            radius: 10, 
+            scale: 1,
+            phase: 'drop'
+        };
+
+        function drawWobblyCircle(ctx, x, y, radius, color, composite) {
+            ctx.save();
+            if(composite) ctx.globalCompositeOperation = composite;
+            
+            ctx.beginPath();
+            const points = 20;
+            for (let i = 0; i <= points; i++) {
+                const angle = (i / points) * Math.PI * 2;
+                const r = radius + (Math.random() * radius * 0.1); 
+                const px = x + Math.cos(angle) * r;
+                const py = y + Math.sin(angle) * r;
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function startIntroAnimation() {
+            const tl = gsap.timeline({
+                onComplete: () => {
+                    gsap.to(introCanvas, { 
+                        opacity: 0, 
+                        duration: 1, 
+                        onComplete: () => {
+                            introCanvas.style.display = 'none';
+                            document.body.style.overflow = 'auto';
+                            
+                            startHeroAnimations();
+                        }
+                    });
+                }
+            });
+
+            tl.to(dropState, {
+                y: introH / 2,
+                duration: 0.8,
+                ease: "power2.in",
+                onUpdate: () => {
+                    introCtx.fillStyle = '#f4f1e8';
+                    introCtx.fillRect(0, 0, introW, introH);
+                    
+                    introCtx.beginPath();
+                    introCtx.arc(introW/2, dropState.y, dropState.radius, 0, Math.PI*2);
+                    introCtx.fillStyle = '#121212';
+                    introCtx.fill();
+                    
+                    introCtx.beginPath();
+                    introCtx.moveTo(introW/2 - 5, dropState.y);
+                    introCtx.lineTo(introW/2, dropState.y - 40);
+                    introCtx.lineTo(introW/2 + 5, dropState.y);
+                    introCtx.fill();
+                }
+            });
+
+            tl.to(dropState, {
+                scale: 300,
+                duration: 1.5,
+                ease: "power2.out",
+                onUpdate: () => {
+                    const currentRadius = dropState.radius * dropState.scale;
+                    
+                    drawWobblyCircle(introCtx, introW/2, introH/2, currentRadius, '#000', 'destination-out');
+                }
+            });
+        }
+
+        window.onload = startIntroAnimation;
+
+        function startHeroAnimations() {
+            gsap.to("nav", { opacity: 1, duration: 0.5 });
+            
+            gsap.to(".hero-main", { opacity: 1, duration: 0.5 });
+
+            gsap.to(".poem-intro", {
+                opacity: 1,
+                duration: 0.5,
+                delay: 0.1,
+                ease: "power2.out"
+            });
+
+            gsap.from(".hero-title", {
+                y: 100,
+                opacity: 0,
+                duration: 1,
+                delay: 0.2,
+                ease: "power3.out"
+            });
+        }
+        
         const projects = document.querySelectorAll('.project-content');
         projects.forEach((proj, index) => {
-            const direction = index % 2 === 0 ? -50 : 50;
-            
             gsap.fromTo(proj, 
-                { 
-                    opacity: 0, 
-                    y: 100,
-                    rotation: 2
-                },
+                { opacity: 0, y: 100 },
                 {
                     scrollTrigger: {
                         trigger: proj,
-                        start: "top 80%",
-                        end: "top 30%",
+                        start: "top 85%",
+                        end: "top 40%",
                         scrub: 1,
                     },
-                    opacity: 1,
-                    y: 0,
-                    rotation: 0,
-                    ease: "power2.out"
+                    opacity: 1, y: 0, ease: "power2.out"
                 }
             );
         });
 
-        const canvas = document.getElementById('ink-canvas');
-        const ctx = canvas.getContext('2d');
-        
-        let w, h;
-        let inks = [];
+        gsap.utils.toArray(".scroll-parallax").forEach(img => {
+            const speed = img.dataset.speed || 0.2;
+            gsap.to(img, {
+                y: (i, target) => -100 * speed,
+                scrollTrigger: {
+                    trigger: img,
+                    start: "top bottom",
+                    end: "bottom top",
+                    scrub: true
+                }
+            });
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if(window.innerWidth < 768) return; 
+            const x = (e.clientX / window.innerWidth - 0.5) * 2; 
+            const y = (e.clientY / window.innerHeight - 0.5) * 2;
+            gsap.utils.toArray('.parallax-layer').forEach(layer => {
+                const depth = layer.dataset.depth || 0.1;
+                gsap.to(layer, { x: x * 30 * depth, y: y * 30 * depth, duration: 1, ease: "power2.out" });
+            });
+        });
+
+        const tiltCards = document.querySelectorAll('.tilt-card');
+        tiltCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                if(window.innerWidth < 768) return;
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; 
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateX = ((y - centerY) / centerY) * -3;
+                const rotateY = ((x - centerX) / centerX) * 3;
+                
+                gsap.to(card, {
+                    rotationX: rotateX, rotationY: rotateY,
+                    transformPerspective: 1000, transformOrigin: "center center",
+                    boxShadow: `${-rotateY*2}px ${rotateX*2+20}px 40px rgba(0,0,0,0.1)`,
+                    duration: 0.4, ease: "power1.out"
+                });
+            });
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, { rotationX: 0, rotationY: 0, boxShadow: "0 20px 50px rgba(0,0,0,0.05)", duration: 0.8, ease: "elastic.out(1, 0.5)" });
+            });
+        });
+
+        gsap.utils.toArray('.qi-fill').forEach(bar => {
+            gsap.to(bar, {
+                scrollTrigger: { trigger: bar, start: "top 85%" },
+                width: bar.getAttribute('data-width'), duration: 1.5, ease: "power4.out", delay: 0.2
+            });
+        });
+
+        const bgCanvas = document.getElementById('bg-ink-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        let bgW, bgH, inks = [];
         const MAX_INKS = 15;
+        
+        function resizeBg() { bgW = bgCanvas.width = window.innerWidth; bgH = bgCanvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeBg);
+        resizeBg();
 
-        function resize() {
-            w = canvas.width = window.innerWidth;
-            h = canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        class InkDrop {
-            constructor(x, y) {
-                this.x = x || Math.random() * w;
-                this.y = y || Math.random() * h;
+        class BgInkDrop {
+            constructor() {
+                this.x = Math.random() * bgW;
+                this.y = Math.random() * bgH;
                 this.radius = 0;
                 this.maxRadius = Math.random() * 80 + 40;
                 this.opacity = 0.8;
@@ -679,89 +837,36 @@
                 this.color = Math.random() > 0.85 ? '#8a2525' : '#1a1a1a';
                 this.alive = true;
             }
-
             update() {
-                if (this.radius < this.maxRadius) {
-                    this.radius += this.speed;
-                } else {
-                    this.opacity -= 0.003;
-                    if (this.opacity <= 0.02) {
-                        this.alive = false;
-                    }
-                }
+                if (this.radius < this.maxRadius) this.radius += this.speed;
+                else { this.opacity -= 0.003; if (this.opacity <= 0.02) this.alive = false; }
             }
-
             draw() {
                 if (!this.alive) return;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.globalAlpha = this.opacity * 0.15;
-                ctx.shadowBlur = 25;
-                ctx.shadowColor = this.color;
-                ctx.fill();
-                ctx.globalAlpha = 1;
-                ctx.shadowBlur = 0;
+                bgCtx.beginPath();
+                bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                bgCtx.fillStyle = this.color;
+                bgCtx.globalAlpha = this.opacity * 0.15;
+                bgCtx.fill();
+                bgCtx.globalAlpha = 1;
             }
         }
-
-        function animate() {
-            ctx.clearRect(0, 0, w, h);
-            
-            if (inks.length < MAX_INKS && Math.random() < 0.01) {
-                inks.push(new InkDrop());
-            }
-
-            for (let i = 0; i < inks.length; i++) {
-                inks[i].update();
-                inks[i].draw();
-            }
-
-            for (let i = inks.length - 1; i >= 0; i--) {
-                if (!inks[i].alive) {
-                    inks.splice(i, 1);
-                }
-            }
-
-            requestAnimationFrame(animate);
+        function animateBg() {
+            bgCtx.clearRect(0, 0, bgW, bgH);
+            if (inks.length < MAX_INKS && Math.random() < 0.01) inks.push(new BgInkDrop());
+            inks.forEach(ink => { ink.update(); ink.draw(); });
+            inks = inks.filter(ink => ink.alive);
+            requestAnimationFrame(animateBg);
         }
-        animate();
+        animateBg();
 
         const cursor = document.getElementById('cursor');
-        window.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-        
-        document.querySelectorAll('a, .project-content').forEach(el => {
+        let mouseX = -100, mouseY = -100;
+        window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+        gsap.ticker.add(() => { gsap.set(cursor, { left: mouseX, top: mouseY }); });
+        document.querySelectorAll('a, .project-content, .skill-category').forEach(el => {
             el.addEventListener('mouseenter', () => cursor.classList.add('active'));
             el.addEventListener('mouseleave', () => cursor.classList.remove('active'));
-        });
-
-        gsap.utils.toArray('.qi-fill').forEach(bar => {
-            gsap.to(bar, {
-                scrollTrigger: {
-                    trigger: bar,
-                    start: "top 85%",
-                    toggleActions: "play none none reverse"
-                },
-                width: bar.getAttribute('data-width'),
-                duration: 1.5,
-                ease: "power4.out",
-                delay: 0.2
-            });
-        });
-
-        gsap.from(".skill-category", {
-            scrollTrigger: {
-                trigger: ".skills-grid",
-                start: "top 80%"
-            },
-            y: 50,
-            opacity: 0,
-            duration: 1,
-            stagger: 0.2,
-            ease: "back.out(1.7)"
         });
 
     </script>
