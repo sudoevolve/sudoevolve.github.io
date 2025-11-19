@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>苏渡 · 弈沃 | 侠客行</title>
     
-    <!-- 引入多款古风字体：鸿雷板书、钟齐志莽行书、思源宋体 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;500;700&family=Zhi+Mang+Xing&family=Long+Cang&display=swap" rel="stylesheet">
     
@@ -17,13 +16,13 @@
             --ink-black: #121212;
             --ink-light: #454545;
             --rice-paper: #f4f1e8;
-            --cinnabar: #8a2525;  /* 朱砂红 */
-            --bamboo: #5d6b4e;    /* 竹青 */
+            --cinnabar: #8a2525;
+            --bamboo: #5d6b4e;
             --gold: #bfa678;
             
-            --font-cursive: 'Zhi Mang Xing', cursive; /* 狂草 */
-            --font-ink: 'Ma Shan Zheng', cursive;     /* 榜书 */
-            --font-body: 'Noto Serif SC', serif;      /* 宋体 */
+            --font-cursive: 'Zhi Mang Xing', cursive;
+            --font-ink: 'Ma Shan Zheng', cursive;
+            --font-body: 'Noto Serif SC', serif;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
@@ -36,7 +35,6 @@
             overflow-x: hidden;
         }
 
-        /* --- 自定义毛笔光标 --- */
         #cursor {
             position: fixed; top: 0; left: 0; 
             width: 30px; height: 30px;
@@ -49,13 +47,11 @@
         }
         #cursor.active { transform: translate(-50%, -50%) scale(2.5); background: radial-gradient(circle, var(--cinnabar) 0%, transparent 70%); }
 
-        /* --- 背景动态水墨 --- */
         canvas#ink-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1; opacity: 0.15; pointer-events: none;
         }
 
-        /* --- 辅助类 --- */
         .v-text {
             writing-mode: vertical-rl;
             text-orientation: upright;
@@ -71,7 +67,6 @@
             border-radius: 4px;
         }
 
-        /* --- 导航 --- */
         nav {
             position: fixed; top: 0; width: 100%; padding: 30px 50px;
             display: flex; justify-content: space-between; align-items: flex-start;
@@ -88,7 +83,6 @@
             box-shadow: 3px 3px 5px rgba(0,0,0,0.2);
         }
 
-        /* --- 首页 Header --- */
         header {
             height: 100vh;
             display: flex; align-items: center; justify-content: center;
@@ -122,7 +116,6 @@
             padding: 10px 0; display: inline-block;
         }
 
-        /* --- 简介板块 --- */
         .intro-section {
             padding: 100px 20px;
             max-width: 900px; margin: 0 auto;
@@ -133,7 +126,6 @@
             margin-bottom: 40px;
         }
 
-        /* --- 战绩列表 (Projects) --- */
         .project-scroll {
             padding: 50px 0;
         }
@@ -154,10 +146,9 @@
             padding: 60px;
             border: 1px solid #dcdcdc;
             box-shadow: 0 20px 50px rgba(0,0,0,0.05);
-            transform: translateY(50px); opacity: 0; /* GSAP Init */
+            transform: translateY(50px); opacity: 0;
         }
 
-        /* 左侧诗词与标题 */
         .proj-left {
             border-right: 1px dashed var(--ink-light);
             padding-right: 40px;
@@ -175,7 +166,6 @@
             font-family: var(--font-ink); font-size: 3rem; color: var(--cinnabar);
         }
 
-        /* 右侧技术详情 */
         .proj-right { text-align: left; }
         .tech-stack {
             font-family: monospace; color: var(--bamboo); margin-bottom: 20px;
@@ -195,13 +185,11 @@
         }
         .btn-view:hover { background: var(--ink-black); color: #fff; }
 
-        /* 装饰性墨迹 */
         .ink-splash {
             position: absolute; z-index: -1; pointer-events: none;
             opacity: 0.1; width: 400px;
         }
 
-        /* --- Footer --- */
         footer {
             height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
             background: var(--ink-black); color: #888;
@@ -211,21 +199,18 @@
             font-family: var(--font-cursive); font-size: 2.5rem; color: #ccc; margin-bottom: 30px;
         }
 
-        /* 移动端适配 */
         @media (max-width: 768px) {
             .project-content { grid-template-columns: 1fr; text-align: center; }
             .proj-left { border-right: none; border-bottom: 1px dashed #ccc; padding-bottom: 30px; padding-right: 0; text-align: center; }
             .hero-title { font-size: 4rem; }
-            .poem-intro { display: none; } /* 手机端隐藏竖排诗 */
+            .poem-intro { display: none; }
         }
 
     </style>
 </head>
 <body>
 
-    <!-- 鼠标光标 -->
     <div id="cursor"></div>
-    <!-- 背景画布 -->
     <canvas id="ink-canvas"></canvas>
 
     <nav>
@@ -236,7 +221,6 @@
     </nav>
 
     <header>
-        <!-- 开场诗 (竖排) -->
         <div class="poem-intro v-text">
             十步杀一人 · 千里不留行<br>
             事了拂衣去 · 深藏身与名
@@ -253,7 +237,6 @@
         </div>
     </header>
 
-    <!-- 简介 -->
     <section class="intro-section">
         <div class="intro-quote">
             " 满堂花醉三千客，一剑霜寒十四州 "
@@ -266,10 +249,8 @@
         </p>
     </section>
 
-    <!-- 项目画卷 -->
     <div class="project-scroll">
         
-        <!-- 项目 1: Eideo -->
         <div class="project-item">
             <img src="https://www.transparenttextures.com/patterns/shattered-island.png" class="ink-splash" style="top:10%; left:10%;">
             <div class="project-content">
@@ -296,7 +277,6 @@
             </div>
         </div>
 
-        <!-- 项目 2: EvolveUI -->
         <div class="project-item">
             <img src="https://www.transparenttextures.com/patterns/shattered-island.png" class="ink-splash" style="bottom:10%; right:10%;">
             <div class="project-content">
@@ -323,7 +303,6 @@
             </div>
         </div>
 
-        <!-- 项目 3: Shader Renderer -->
         <div class="project-item">
             <img src="https://www.transparenttextures.com/patterns/shattered-island.png" class="ink-splash" style="top:20%; right:20%;">
             <div class="project-content">
@@ -350,7 +329,6 @@
             </div>
         </div>
 
-        <!-- 项目 4: Monitor -->
         <div class="project-item">
             <div class="project-content">
                 <div class="proj-left">
@@ -376,7 +354,6 @@
             </div>
         </div>
 
-        <!-- 项目 5: Handwriting -->
         <div class="project-item">
             <div class="project-content">
                 <div class="proj-left">
@@ -404,7 +381,6 @@
 
     </div>
 
-    <!-- 尾声 -->
     <footer>
         <div class="footer-poem v-text" style="height: 200px;">
             相忘于江湖<br>不如相濡以沫
@@ -416,10 +392,8 @@
     </footer>
 
     <script>
-        // --- 1. GSAP 卷轴动画 ---
         gsap.registerPlugin(ScrollTrigger);
 
-        // 开场诗词淡入
         gsap.to(".poem-intro", {
             opacity: 1,
             duration: 2,
@@ -427,7 +401,6 @@
             ease: "power2.out"
         });
 
-        // 标题淡入
         gsap.from(".hero-title", {
             y: 100,
             opacity: 0,
@@ -436,23 +409,22 @@
             ease: "power3.out"
         });
 
-        // 项目卷轴展开效果
         const projects = document.querySelectorAll('.project-content');
         projects.forEach((proj, index) => {
-            const direction = index % 2 === 0 ? -50 : 50; // 左右交替入场
+            const direction = index % 2 === 0 ? -50 : 50;
             
             gsap.fromTo(proj, 
                 { 
                     opacity: 0, 
                     y: 100,
-                    rotation: 2 // 轻微旋转增加纸张感
+                    rotation: 2
                 },
                 {
                     scrollTrigger: {
                         trigger: proj,
                         start: "top 80%",
                         end: "top 30%",
-                        scrub: 1, // 随滚动条平滑播放
+                        scrub: 1,
                     },
                     opacity: 1,
                     y: 0,
@@ -462,13 +434,12 @@
             );
         });
 
-        // --- 2. 水墨背景 (Canvas) ---
-        // 模拟墨汁滴入水中的扩散效果
         const canvas = document.getElementById('ink-canvas');
         const ctx = canvas.getContext('2d');
         
         let w, h;
         let inks = [];
+        const MAX_INKS = 15;
 
         function resize() {
             w = canvas.width = window.innerWidth;
@@ -479,28 +450,34 @@
 
         class InkDrop {
             constructor(x, y) {
-                this.x = x;
-                this.y = y;
+                this.x = x || Math.random() * w;
+                this.y = y || Math.random() * h;
                 this.radius = 0;
-                this.maxRadius = Math.random() * 100 + 50;
-                this.opacity = 1;
-                this.speed = Math.random() * 2 + 1;
-                this.color = Math.random() > 0.9 ? '#8a2525' : '#222'; // 偶尔出现朱砂红
+                this.maxRadius = Math.random() * 80 + 40;
+                this.opacity = 0.8;
+                this.speed = Math.random() * 1.2 + 0.8;
+                this.color = Math.random() > 0.85 ? '#8a2525' : '#1a1a1a';
+                this.alive = true;
             }
+
             update() {
                 if (this.radius < this.maxRadius) {
                     this.radius += this.speed;
                 } else {
-                    this.opacity -= 0.005;
+                    this.opacity -= 0.003;
+                    if (this.opacity <= 0.02) {
+                        this.alive = false;
+                    }
                 }
             }
+
             draw() {
+                if (!this.alive) return;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
-                ctx.globalAlpha = this.opacity * 0.1; // 非常淡
-                // 模拟边缘粗糙
-                ctx.shadowBlur = 20;
+                ctx.globalAlpha = this.opacity * 0.15;
+                ctx.shadowBlur = 25;
                 ctx.shadowColor = this.color;
                 ctx.fill();
                 ctx.globalAlpha = 1;
@@ -510,31 +487,32 @@
 
         function animate() {
             ctx.clearRect(0, 0, w, h);
-            // 随机生成墨点
-            if (Math.random() < 0.02) {
-                inks.push(new InkDrop(Math.random() * w, Math.random() * h));
+            
+            if (inks.length < MAX_INKS && Math.random() < 0.01) {
+                inks.push(new InkDrop());
             }
 
             for (let i = 0; i < inks.length; i++) {
                 inks[i].update();
                 inks[i].draw();
-                if (inks[i].opacity <= 0) {
+            }
+
+            for (let i = inks.length - 1; i >= 0; i--) {
+                if (!inks[i].alive) {
                     inks.splice(i, 1);
-                    i--;
                 }
             }
+
             requestAnimationFrame(animate);
         }
         animate();
 
-        // --- 3. 自定义光标 ---
         const cursor = document.getElementById('cursor');
         window.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
         
-        // Hover 交互
         document.querySelectorAll('a, .project-content').forEach(el => {
             el.addEventListener('mouseenter', () => cursor.classList.add('active'));
             el.addEventListener('mouseleave', () => cursor.classList.remove('active'));
