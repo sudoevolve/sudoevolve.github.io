@@ -3,490 +3,541 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>苏渡 · 弈沃 | 赛博武林盟</title>
+    <title>苏渡 · 弈沃 | 侠客行</title>
     
-    <!-- 引入古风字体与图标 -->
+    <!-- 引入多款古风字体：鸿雷板书、钟齐志莽行书、思源宋体 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;500;700&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;500;700&family=Zhi+Mang+Xing&family=Long+Cang&display=swap" rel="stylesheet">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <style>
         :root {
-            --ink: #0a0a0a;
-            --charcoal: #2c2c2c;
-            --paper: #f0efe9;
-            --red: #c02c38; /* 胭脂红 */
-            --cyan: #4a90e2; /* 科技蓝 */
-            --gold: #b89360;
-            --font-title: 'Zhi Mang Xing', cursive;
-            --font-body: 'Noto Serif SC', serif;
+            --ink-black: #121212;
+            --ink-light: #454545;
+            --rice-paper: #f4f1e8;
+            --cinnabar: #8a2525;  /* 朱砂红 */
+            --bamboo: #5d6b4e;    /* 竹青 */
+            --gold: #bfa678;
+            
+            --font-cursive: 'Zhi Mang Xing', cursive; /* 狂草 */
+            --font-ink: 'Ma Shan Zheng', cursive;     /* 榜书 */
+            --font-body: 'Noto Serif SC', serif;      /* 宋体 */
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; /* 隐藏默认光标，使用自定义笔锋 */ }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
 
         body {
-            background-color: var(--paper);
-            color: var(--ink);
+            background-color: var(--rice-paper);
+            background-image: url('https://www.transparenttextures.com/patterns/rice-paper-3.png');
+            color: var(--ink-black);
             font-family: var(--font-body);
             overflow-x: hidden;
         }
 
-        /* 自定义光标 */
+        /* --- 自定义毛笔光标 --- */
         #cursor {
-            position: fixed; top: 0; left: 0; width: 20px; height: 20px;
-            background: var(--red); border-radius: 50%;
+            position: fixed; top: 0; left: 0; 
+            width: 30px; height: 30px;
+            background: radial-gradient(circle, var(--ink-black) 0%, transparent 70%);
+            border-radius: 50%;
             pointer-events: none; z-index: 9999;
-            mix-blend-mode: difference;
             transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s;
+            mix-blend-mode: multiply;
+            transition: transform 0.2s;
         }
-        #cursor.hovered { width: 50px; height: 50px; opacity: 0.5; }
+        #cursor.active { transform: translate(-50%, -50%) scale(2.5); background: radial-gradient(circle, var(--cinnabar) 0%, transparent 70%); }
 
-        /* 背景 Canvas */
-        #bg-canvas {
+        /* --- 背景动态水墨 --- */
+        canvas#ink-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; opacity: 0.6;
+            z-index: -1; opacity: 0.15; pointer-events: none;
         }
 
-        /* 纹理叠加 */
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('https://www.transparenttextures.com/patterns/rice-paper-3.png');
-            pointer-events: none; z-index: 0; opacity: 0.5;
+        /* --- 辅助类 --- */
+        .v-text {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            letter-spacing: 0.3em;
+        }
+        .seal {
+            border: 2px solid var(--cinnabar);
+            color: var(--cinnabar);
+            padding: 5px;
+            font-family: var(--font-cursive);
+            font-size: 0.9rem;
+            display: inline-block;
+            border-radius: 4px;
         }
 
         /* --- 导航 --- */
         nav {
             position: fixed; top: 0; width: 100%; padding: 30px 50px;
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex; justify-content: space-between; align-items: flex-start;
             z-index: 100; mix-blend-mode: multiply;
         }
-        .brand { font-family: var(--font-title); font-size: 2rem; color: var(--ink); }
-        
-        /* --- Hero --- */
+        .brand-seal {
+            width: 60px; height: 60px;
+            background-color: var(--cinnabar);
+            color: #fff;
+            font-family: var(--font-cursive);
+            font-size: 2rem;
+            display: grid; place-items: center;
+            mask-image: url('https://www.transparenttextures.com/patterns/rough-cloth.png');
+            box-shadow: 3px 3px 5px rgba(0,0,0,0.2);
+        }
+
+        /* --- 首页 Header --- */
         header {
-            height: 100vh; display: flex; align-items: center; justify-content: center;
+            height: 100vh;
+            display: flex; align-items: center; justify-content: center;
             position: relative;
         }
-        .hero-text {
-            text-align: center; z-index: 2;
+
+        .poem-intro {
+            position: absolute; left: 10%; top: 20%;
+            font-family: var(--font-cursive);
+            font-size: 2.5rem;
+            height: 60vh;
+            opacity: 0;
+        }
+
+        .hero-main {
+            text-align: center;
+            position: relative;
         }
         .hero-title {
-            font-family: var(--font-title); font-size: 6vw;
-            background: linear-gradient(45deg, var(--ink), var(--charcoal));
-            -webkit-background-clip: text; color: transparent;
-            opacity: 0; transform: translateY(50px);
+            font-family: var(--font-ink);
+            font-size: 7rem;
+            line-height: 1.2;
+            color: var(--ink-black);
+            text-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+            margin-bottom: 20px;
         }
-        .hero-sub {
-            font-size: 1.5rem; margin-top: 20px; letter-spacing: 5px;
-            opacity: 0; transform: translateY(30px);
-        }
-        
-        /* --- 战绩 (Projects) --- */
-        .section-title {
-            font-family: var(--font-title); font-size: 4rem; text-align: center;
-            margin: 100px 0 60px 0; position: relative; z-index: 2;
-        }
-        .section-title span { display: inline-block; } /* for animation */
-
-        .projects-container {
-            max-width: 1200px; margin: 0 auto; padding-bottom: 100px;
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 40px; perspective: 1000px;
-            padding: 0 20px;
+        .hero-subtitle {
+            font-size: 1.2rem; letter-spacing: 5px;
+            border-top: 1px solid var(--cinnabar);
+            border-bottom: 1px solid var(--cinnabar);
+            padding: 10px 0; display: inline-block;
         }
 
-        /* 卡片样式 - 融合古风与科技 */
-        .card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0,0,0,0.1);
-            border-radius: 12px;
-            padding: 30px;
+        /* --- 简介板块 --- */
+        .intro-section {
+            padding: 100px 20px;
+            max-width: 900px; margin: 0 auto;
+            text-align: center;
+        }
+        .intro-quote {
+            font-family: var(--font-cursive); font-size: 2rem; color: var(--ink-light);
+            margin-bottom: 40px;
+        }
+
+        /* --- 战绩列表 (Projects) --- */
+        .project-scroll {
+            padding: 50px 0;
+        }
+
+        .project-item {
+            min-height: 90vh;
+            display: flex; align-items: center; justify-content: center;
             position: relative;
-            transition: transform 0.1s; /* JS controlling tilt */
-            transform-style: preserve-3d;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            overflow: hidden;
-            opacity: 0; /* GSAP handles fade in */
+            padding: 20px;
         }
 
-        /* 卡片悬停光效 */
-        .card::before {
-            content: ''; position: absolute; top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(192, 44, 56, 0.1) 0%, transparent 60%);
-            opacity: 0; transition: opacity 0.5s; pointer-events: none;
-            transform: translateZ(0);
-        }
-        .card:hover::before { opacity: 1; }
-
-        .card-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px; border-bottom: 2px solid var(--ink); padding-bottom: 10px;
-            transform: translateZ(20px);
+        .project-content {
+            display: grid; grid-template-columns: 1fr 1.5fr;
+            gap: 60px;
+            max-width: 1200px; width: 100%;
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(5px);
+            padding: 60px;
+            border: 1px solid #dcdcdc;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+            transform: translateY(50px); opacity: 0; /* GSAP Init */
         }
 
-        .card-icon {
-            font-size: 2rem; font-family: var(--font-title); color: var(--red);
+        /* 左侧诗词与标题 */
+        .proj-left {
+            border-right: 1px dashed var(--ink-light);
+            padding-right: 40px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            text-align: right;
+        }
+        .proj-poem {
+            font-family: var(--font-cursive);
+            font-size: 2rem;
+            line-height: 1.5;
+            color: var(--ink-black);
+            margin-bottom: 30px;
+        }
+        .proj-title {
+            font-family: var(--font-ink); font-size: 3rem; color: var(--cinnabar);
         }
 
-        .card h3 {
-            font-size: 1.5rem; font-weight: bold; color: var(--ink);
+        /* 右侧技术详情 */
+        .proj-right { text-align: left; }
+        .tech-stack {
+            font-family: monospace; color: var(--bamboo); margin-bottom: 20px;
+            font-size: 0.9rem; display: block;
+        }
+        .proj-desc {
+            font-size: 1.1rem; line-height: 2; color: #444; margin-bottom: 30px;
+        }
+        .btn-view {
+            border: 1px solid var(--ink-black);
+            padding: 10px 30px;
+            text-decoration: none; color: var(--ink-black);
+            font-family: var(--font-body);
+            transition: 0.3s;
+            position: relative; overflow: hidden;
+            display: inline-block;
+        }
+        .btn-view:hover { background: var(--ink-black); color: #fff; }
+
+        /* 装饰性墨迹 */
+        .ink-splash {
+            position: absolute; z-index: -1; pointer-events: none;
+            opacity: 0.1; width: 400px;
         }
 
-        .card-tech {
-            font-family: monospace; font-size: 0.8rem; color: var(--cyan);
-            margin-bottom: 15px; transform: translateZ(30px); display: block;
-        }
-
-        .card-desc {
-            font-size: 1rem; line-height: 1.8; color: #555;
-            transform: translateZ(20px);
-            text-align: justify;
-        }
-
-        /* 装饰性印章 */
-        .card-seal {
-            position: absolute; bottom: -10px; right: -10px;
-            font-family: var(--font-title); font-size: 4rem;
-            color: var(--red); opacity: 0.1;
-            transform: rotate(-20deg) translateZ(10px);
-            pointer-events: none;
-        }
-
-        /* --- 页脚 --- */
+        /* --- Footer --- */
         footer {
-            text-align: center; padding: 50px; color: #888;
-            border-top: 1px solid rgba(0,0,0,0.1);
-            background: #fff;
-            position: relative; z-index: 2;
+            height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: var(--ink-black); color: #888;
+            text-align: center;
+        }
+        .footer-poem {
+            font-family: var(--font-cursive); font-size: 2.5rem; color: #ccc; margin-bottom: 30px;
         }
 
-        /* 加载遮罩 */
-        .loader {
-            position: fixed; inset: 0; background: var(--ink); z-index: 10000;
-            display: flex; justify-content: center; align-items: center; color: #fff;
-            font-family: var(--font-title); font-size: 3rem;
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .project-content { grid-template-columns: 1fr; text-align: center; }
+            .proj-left { border-right: none; border-bottom: 1px dashed #ccc; padding-bottom: 30px; padding-right: 0; text-align: center; }
+            .hero-title { font-size: 4rem; }
+            .poem-intro { display: none; } /* 手机端隐藏竖排诗 */
         }
+
     </style>
 </head>
 <body>
 
-    <!-- 自定义光标 -->
+    <!-- 鼠标光标 -->
     <div id="cursor"></div>
-
-    <!-- 开场动画遮罩 -->
-    <div class="loader">苏渡 · 弈沃</div>
-
-    <!-- 背景粒子流 -->
-    <canvas id="bg-canvas"></canvas>
-    <div class="overlay"></div>
+    <!-- 背景画布 -->
+    <canvas id="ink-canvas"></canvas>
 
     <nav>
-        <div class="brand">Sudo Evolve</div>
-        <div style="font-family: var(--font-title); font-size: 1.2rem;">
-            <span style="margin-left:20px">悟道</span>
-            <span style="margin-left:20px">炼器</span>
+        <div class="brand-seal">苏</div>
+        <div class="v-text" style="font-family: var(--font-cursive); font-size: 1.2rem; height: 150px;">
+            <span>悟道</span><br><span>修身</span><br><span>编程</span>
         </div>
     </nav>
 
     <header>
-        <div class="hero-text">
-            <h1 class="hero-title">万码归宗 · 虚实同源</h1>
-            <div class="hero-sub">SUDO EVOLVE <span style="color:var(--red)">//</span> 赛博武侠录</div>
+        <!-- 开场诗 (竖排) -->
+        <div class="poem-intro v-text">
+            十步杀一人 · 千里不留行<br>
+            事了拂衣去 · 深藏身与名
+        </div>
+
+        <div class="hero-main">
+            <h1 class="hero-title">苏渡 · 弈沃</h1>
+            <div class="hero-subtitle">
+                SUDO EVOLVE <span style="color:var(--cinnabar); margin: 0 10px;">●</span> 赛博江湖录
+            </div>
+            <p style="margin-top: 30px; color: #666; font-style: italic;">
+                "以 Root 之权，行进化之事"
+            </p>
         </div>
     </header>
 
-    <!-- 江湖战绩 (Projects) -->
-    <section id="projects">
-        <h2 class="section-title">
-            <span>江</span><span>湖</span><span>战</span><span>绩</span>
-        </h2>
-        
-        <div class="projects-container">
-
-            <!-- Project 1: Eideo -->
-            <div class="card" data-tilt>
-                <div class="card-seal">影</div>
-                <div class="card-header">
-                    <h3>Eideo · 幻影留声</h3>
-                    <div class="card-icon">🎬</div>
-                </div>
-                <span class="card-tech">[ Qt6 :: QML :: FFmpeg :: Hardware Accel ]</span>
-                <p class="card-desc">
-                    集屏幕录制、实时推流、剪辑转码于一体的全能法宝。
-                    <br>融合 <b>Qt6</b> 之形与 <b>FFmpeg</b> 之魂，
-                    内修硬件加速心法，外练 QML 极简剑招。
-                    滤镜叠加如梦似幻，GIF 生成信手拈来。
-                </p>
-            </div>
-
-            <!-- Project 2: EvolveUI -->
-            <div class="card" data-tilt>
-                <div class="card-seal">基</div>
-                <div class="card-header">
-                    <h3>EvolveUI · 千机玲珑</h3>
-                    <div class="card-icon">🌌</div>
-                </div>
-                <span class="card-tech">[ Qt6 :: QML :: Components :: Responsive ]</span>
-                <p class="card-desc">
-                    打造现代界面的千机匣。
-                    <br>阴阳两仪（暗色模式）随心切换，
-                    响应式布局如水无常形。
-                    无论是桌面重器还是嵌入式微尘，皆可适配自如。
-                </p>
-            </div>
-
-            <!-- Project 3: Shader Renderer -->
-            <div class="card" data-tilt>
-                <div class="card-seal">虚</div>
-                <div class="card-header">
-                    <h3>Glsl Renderer · 炼虚化实</h3>
-                    <div class="card-icon">📝</div>
-                </div>
-                <span class="card-tech">[ C++17 :: OpenGL :: RAII :: ShaderToy-like ]</span>
-                <p class="card-desc">
-                    自研多片元着色器运行阵法。
-                    <br>以 <b>C++17</b> 为骨，<b>OpenGL</b> 为神。
-                    RAII 掌控资源生灭，FBO 构建自动灵力回路。
-                    纹理自反馈，实时渲染如掌中观纹，尽显数学之美。
-                </p>
-            </div>
-
-            <!-- Project 4: Device Monitor -->
-            <div class="card" data-tilt>
-                <div class="card-seal">眼</div>
-                <div class="card-header">
-                    <h3>Monitor · 天眼观气</h3>
-                    <div class="card-icon">🖥</div>
-                </div>
-                <span class="card-tech">[ Linux Tool :: Performance :: Widget ]</span>
-                <p class="card-desc">
-                    Linux 桌面轻量级观气法宝。
-                    <br>洞察 CPU 脉络，监测内存虚实。
-                    集成快速启动阵脚，夜间模式护眼宁神，
-                    于方寸之间掌控系统乾坤。
-                </p>
-            </div>
-
-            <!-- Project 5: Handwriting -->
-            <div class="card" data-tilt>
-                <div class="card-seal">书</div>
-                <div class="card-header">
-                    <h3>Handwriting · 笔墨问道</h3>
-                    <div class="card-icon">📊</div>
-                </div>
-                <span class="card-tech">[ MNIST :: TensorFlow :: PyTorch :: Data ]</span>
-                <p class="card-desc">
-                    自研手写数据采集系统。
-                    <br>将点滴墨迹化为 <b>MNIST</b> 经卷，
-                    兼容 PyTorch 与 TensorFlow 各大门派心法。
-                    为 AI 模型的飞升渡劫，提供最纯粹的训练养料。
-                </p>
-            </div>
-
+    <!-- 简介 -->
+    <section class="intro-section">
+        <div class="intro-quote">
+            " 满堂花醉三千客，一剑霜寒十四州 "
         </div>
+        <p style="line-height: 2; font-size: 1.1rem;">
+            在下乃是一介代码剑客。常年游走于 <b>Linux</b> 内核的幽深迷宫，亦流连于 <b>图形学</b> 的幻彩虚境。
+            <br>
+            我不信神佛，只信手中的键盘与眼前的屏幕。
+            若是代码有灵，我愿以逻辑为剑，斩尽天下 BUG，重塑数字乾坤。
+        </p>
     </section>
 
+    <!-- 项目画卷 -->
+    <div class="project-scroll">
+        
+        <!-- 项目 1: Eideo -->
+        <div class="project-item">
+            <img src="https://www.transparenttextures.com/patterns/shattered-island.png" class="ink-splash" style="top:10%; left:10%;">
+            <div class="project-content">
+                <div class="proj-left">
+                    <div class="proj-poem">
+                        起舞弄清影<br>何似在人间
+                    </div>
+                    <div>
+                        <div class="seal">摄魂</div>
+                        <h2 class="proj-title">幻影留声</h2>
+                        <div style="font-size: 1.2rem; margin-top:5px;">Eideo</div>
+                    </div>
+                </div>
+                <div class="proj-right">
+                    <span class="tech-stack">> Qt6 / QML / FFmpeg / Hardware Accel</span>
+                    <p class="proj-desc">
+                        江湖传闻，有一宝器能定格时光，留存光影。
+                        此器名为 Eideo，集<b>屏幕录制、实时推流、剪辑转码</b>于一身。
+                        内修硬件加速之深厚内力，外练 QML 极简剑招。
+                        滤镜叠加如梦似幻，GIF 生成信手拈来，乃是内容创作者行走江湖的必备兵刃。
+                    </p>
+                    <a href="#" class="btn-view">查看秘籍</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 项目 2: EvolveUI -->
+        <div class="project-item">
+            <img src="https://www.transparenttextures.com/patterns/shattered-island.png" class="ink-splash" style="bottom:10%; right:10%;">
+            <div class="project-content">
+                <div class="proj-left">
+                    <div class="proj-poem">
+                        九层之台<br>起于累土
+                    </div>
+                    <div>
+                        <div class="seal">千机</div>
+                        <h2 class="proj-title">玲珑机枢</h2>
+                        <div style="font-size: 1.2rem; margin-top:5px;">EvolveUI</div>
+                    </div>
+                </div>
+                <div class="proj-right">
+                    <span class="tech-stack">> Qt6 / QML / Component Library</span>
+                    <p class="proj-desc">
+                        工欲善其事，必先利其器。此乃打造现代界面的千机匣。
+                        阴阳两仪（暗色模式）随心切换，响应式布局如水无常形。
+                        无论是桌面重器还是嵌入式微尘，皆可适配自如。
+                        以此为基，万丈高楼平地起。
+                    </p>
+                    <a href="#" class="btn-view">查看图纸</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 项目 3: Shader Renderer -->
+        <div class="project-item">
+            <img src="https://www.transparenttextures.com/patterns/shattered-island.png" class="ink-splash" style="top:20%; right:20%;">
+            <div class="project-content">
+                <div class="proj-left">
+                    <div class="proj-poem">
+                        大象无形<br>大音希声
+                    </div>
+                    <div>
+                        <div class="seal">造化</div>
+                        <h2 class="proj-title">炼虚化实</h2>
+                        <div style="font-size: 1.2rem; margin-top:5px;">Glsl Renderer</div>
+                    </div>
+                </div>
+                <div class="proj-right">
+                    <span class="tech-stack">> C++17 / OpenGL / RAII / Shader</span>
+                    <p class="proj-desc">
+                        自研多片元着色器运行阵法。
+                        以 <b>C++17</b> 为骨，<b>OpenGL</b> 为神。
+                        RAII 掌控资源生灭，FBO 构建自动灵力回路。
+                        纹理自反馈，实时渲染如掌中观纹，将枯燥数学化为满屏绚烂，尽显造物之美。
+                    </p>
+                    <a href="#" class="btn-view">进入幻境</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 项目 4: Monitor -->
+        <div class="project-item">
+            <div class="project-content">
+                <div class="proj-left">
+                    <div class="proj-poem">
+                        明察秋毫<br>心如明镜
+                    </div>
+                    <div>
+                        <div class="seal">天眼</div>
+                        <h2 class="proj-title">天眼观气</h2>
+                        <div style="font-size: 1.2rem; margin-top:5px;">System Monitor</div>
+                    </div>
+                </div>
+                <div class="proj-right">
+                    <span class="tech-stack">> Linux / Performance Tool</span>
+                    <p class="proj-desc">
+                        Linux 桌面轻量级观气法宝。
+                        正如高手对决，需时刻洞察经脉气息。
+                        此工具可洞察 CPU 脉络，监测内存虚实。
+                        集成快速启动阵脚，夜间模式护眼宁神，于方寸之间掌控系统乾坤。
+                    </p>
+                    <a href="#" class="btn-view">获取法宝</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 项目 5: Handwriting -->
+        <div class="project-item">
+            <div class="project-content">
+                <div class="proj-left">
+                    <div class="proj-poem">
+                        笔走龙蛇<br>墨染池鱼
+                    </div>
+                    <div>
+                        <div class="seal">问道</div>
+                        <h2 class="proj-title">笔墨问道</h2>
+                        <div style="font-size: 1.2rem; margin-top:5px;">AI Trainer</div>
+                    </div>
+                </div>
+                <div class="proj-right">
+                    <span class="tech-stack">> MNIST / TensorFlow / PyTorch</span>
+                    <p class="proj-desc">
+                        自研手写数据采集系统。
+                        将点滴墨迹化为 <b>MNIST</b> 经卷，
+                        兼容 PyTorch 与 TensorFlow 各大门派心法。
+                        为 AI 模型的飞升渡劫，提供最纯粹的训练养料，探寻智慧的源头。
+                    </p>
+                    <a href="#" class="btn-view">研墨习字</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 尾声 -->
     <footer>
-        <p style="font-family: var(--font-title); font-size: 1.5rem;">一入江湖岁月催 · 代码尽头是谁身</p>
-        <p style="margin-top:10px; font-size: 0.9rem;">&copy; 2025 Sudo Evolve</p>
+        <div class="footer-poem v-text" style="height: 200px;">
+            相忘于江湖<br>不如相濡以沫
+        </div>
+        <div style="margin-top: 40px;">
+            <p>&copy; 2025 苏渡 · 弈沃 (Sudo Evolve)</p>
+            <p style="font-size: 0.8rem; opacity: 0.6; margin-top:10px;">Powered by Tea & Code</p>
+        </div>
     </footer>
 
     <script>
-        // --- 1. 开场动画 (GSAP) ---
-        window.addEventListener("load", () => {
-            const tl = gsap.timeline();
-            
-            // 移除加载遮罩
-            tl.to(".loader", {
-                opacity: 0,
-                duration: 1,
-                pointerEvents: "none",
-                ease: "power2.inOut"
-            })
-            // 标题文字上浮
-            .to(".hero-title", {
-                opacity: 1,
-                y: 0,
-                duration: 1.5,
-                ease: "power3.out"
-            }, "-=0.5")
-            .to(".hero-sub", {
-                opacity: 1,
-                y: 0,
-                duration: 1,
-                ease: "power3.out"
-            }, "-=1");
+        // --- 1. GSAP 卷轴动画 ---
+        gsap.registerPlugin(ScrollTrigger);
 
-            // 战绩板块滚动触发
-            gsap.registerPlugin(ScrollTrigger);
-            
-            // 标题文字拆分动画
-            gsap.from(".section-title span", {
-                scrollTrigger: {
-                    trigger: ".section-title",
-                    start: "top 80%",
-                },
-                y: 50,
-                opacity: 0,
-                duration: 0.8,
-                stagger: 0.1,
-                ease: "back.out(1.7)"
-            });
-
-            // 卡片交错入场
-            gsap.to(".card", {
-                scrollTrigger: {
-                    trigger: ".projects-container",
-                    start: "top 75%",
-                },
-                opacity: 1,
-                y: 0,
-                duration: 1,
-                stagger: 0.2,
-                ease: "power2.out",
-                from: { y: 100, opacity: 0 } // 也可以写在to里用from效果，这里为了清晰
-            });
+        // 开场诗词淡入
+        gsap.to(".poem-intro", {
+            opacity: 1,
+            duration: 2,
+            delay: 0.5,
+            ease: "power2.out"
         });
 
-        // --- 2. 水墨粒子背景 (Canvas) ---
-        const canvas = document.getElementById('bg-canvas');
+        // 标题淡入
+        gsap.from(".hero-title", {
+            y: 100,
+            opacity: 0,
+            duration: 1.5,
+            delay: 1,
+            ease: "power3.out"
+        });
+
+        // 项目卷轴展开效果
+        const projects = document.querySelectorAll('.project-content');
+        projects.forEach((proj, index) => {
+            const direction = index % 2 === 0 ? -50 : 50; // 左右交替入场
+            
+            gsap.fromTo(proj, 
+                { 
+                    opacity: 0, 
+                    y: 100,
+                    rotation: 2 // 轻微旋转增加纸张感
+                },
+                {
+                    scrollTrigger: {
+                        trigger: proj,
+                        start: "top 80%",
+                        end: "top 30%",
+                        scrub: 1, // 随滚动条平滑播放
+                    },
+                    opacity: 1,
+                    y: 0,
+                    rotation: 0,
+                    ease: "power2.out"
+                }
+            );
+        });
+
+        // --- 2. 水墨背景 (Canvas) ---
+        // 模拟墨汁滴入水中的扩散效果
+        const canvas = document.getElementById('ink-canvas');
         const ctx = canvas.getContext('2d');
-        let width, height;
-        let particles = [];
         
-        // 鼠标位置
-        let mouse = { x: null, y: null };
+        let w, h;
+        let inks = [];
 
         function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
         }
         window.addEventListener('resize', resize);
         resize();
 
-        window.addEventListener('mousemove', e => {
-            mouse.x = e.x;
-            mouse.y = e.y;
-            
-            // 自定义光标跟随
-            const cursor = document.getElementById('cursor');
-            cursor.style.left = e.x + 'px';
-            cursor.style.top = e.y + 'px';
-        });
-
-        // 交互效果：卡片 Hover 时光标变大
-        document.querySelectorAll('.card, a').forEach(el => {
-            el.addEventListener('mouseenter', () => document.getElementById('cursor').classList.add('hovered'));
-            el.addEventListener('mouseleave', () => document.getElementById('cursor').classList.remove('hovered'));
-        });
-
-        // 粒子类：结合“墨点”与“代码字符”
-        const chars = "01SUDOEVOLVEXY";
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
-                this.size = Math.random() * 3 + 1;
-                this.char = chars[Math.floor(Math.random() * chars.length)];
-                this.isChar = Math.random() > 0.8; // 20% 概率是字符，80% 是墨点
-                this.alpha = Math.random() * 0.5 + 0.1;
+        class InkDrop {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.radius = 0;
+                this.maxRadius = Math.random() * 100 + 50;
+                this.opacity = 1;
+                this.speed = Math.random() * 2 + 1;
+                this.color = Math.random() > 0.9 ? '#8a2525' : '#222'; // 偶尔出现朱砂红
             }
-
             update() {
-                this.x += this.vx;
-                this.y += this.vy;
-
-                // 鼠标斥力
-                if (mouse.x != null) {
-                    let dx = mouse.x - this.x;
-                    let dy = mouse.y - this.y;
-                    let distance = Math.sqrt(dx*dx + dy*dy);
-                    if (distance < 150) {
-                        const forceDirectionX = dx / distance;
-                        const forceDirectionY = dy / distance;
-                        const force = (150 - distance) / 150;
-                        this.vx -= forceDirectionX * force * 0.5;
-                        this.vy -= forceDirectionY * force * 0.5;
-                    }
-                }
-
-                // 边界反弹
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
-            }
-
-            draw() {
-                ctx.fillStyle = `rgba(10, 10, 10, ${this.alpha})`;
-                if (this.isChar) {
-                    ctx.font = '12px monospace';
-                    ctx.fillText(this.char, this.x, this.y);
+                if (this.radius < this.maxRadius) {
+                    this.radius += this.speed;
                 } else {
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
+                    this.opacity -= 0.005;
                 }
-                
-                // 连线效果（构建经脉感）
-                particles.forEach(p => {
-                    let dx = p.x - this.x;
-                    let dy = p.y - this.y;
-                    let dist = Math.sqrt(dx*dx + dy*dy);
-                    if (dist < 80) {
-                        ctx.strokeStyle = `rgba(0, 0, 0, ${0.05})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.beginPath();
-                        ctx.moveTo(this.x, this.y);
-                        ctx.lineTo(p.x, p.y);
-                        ctx.stroke();
-                    }
-                });
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.opacity * 0.1; // 非常淡
+                // 模拟边缘粗糙
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+                ctx.shadowBlur = 0;
             }
         }
 
-        function initParticles() {
-            particles = [];
-            const count = (width * height) / 15000; // 根据屏幕大小决定数量
-            for (let i = 0; i < count; i++) {
-                particles.push(new Particle());
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+            // 随机生成墨点
+            if (Math.random() < 0.02) {
+                inks.push(new InkDrop(Math.random() * w, Math.random() * h));
             }
+
+            for (let i = 0; i < inks.length; i++) {
+                inks[i].update();
+                inks[i].draw();
+                if (inks[i].opacity <= 0) {
+                    inks.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(animate);
         }
-        initParticles();
+        animate();
 
-        function animateParticles() {
-            ctx.clearRect(0, 0, width, height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-            requestAnimationFrame(animateParticles);
-        }
-        animateParticles();
-
-        // --- 3. 3D Tilt 效果 (Vanilla JS 实现) ---
-        document.querySelectorAll('.card').forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                const rotateX = ((y - centerY) / centerY) * -10; // max tilt deg
-                const rotateY = ((x - centerX) / centerX) * 10;
-
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-            });
-
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
-            });
+        // --- 3. 自定义光标 ---
+        const cursor = document.getElementById('cursor');
+        window.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        
+        // Hover 交互
+        document.querySelectorAll('a, .project-content').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('active'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('active'));
         });
 
     </script>
