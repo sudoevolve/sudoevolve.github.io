@@ -1,79 +1,494 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VivoGPT  Generator</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="webfonts/all.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>苏渡 · 弈沃 | 赛博武林盟</title>
+    
+    <!-- 引入古风字体与图标 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;500;700&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        :root {
+            --ink: #0a0a0a;
+            --charcoal: #2c2c2c;
+            --paper: #f0efe9;
+            --red: #c02c38; /* 胭脂红 */
+            --cyan: #4a90e2; /* 科技蓝 */
+            --gold: #b89360;
+            --font-title: 'Zhi Mang Xing', cursive;
+            --font-body: 'Noto Serif SC', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; /* 隐藏默认光标，使用自定义笔锋 */ }
+
+        body {
+            background-color: var(--paper);
+            color: var(--ink);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+        }
+
+        /* 自定义光标 */
+        #cursor {
+            position: fixed; top: 0; left: 0; width: 20px; height: 20px;
+            background: var(--red); border-radius: 50%;
+            pointer-events: none; z-index: 9999;
+            mix-blend-mode: difference;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+        #cursor.hovered { width: 50px; height: 50px; opacity: 0.5; }
+
+        /* 背景 Canvas */
+        #bg-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; opacity: 0.6;
+        }
+
+        /* 纹理叠加 */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/rice-paper-3.png');
+            pointer-events: none; z-index: 0; opacity: 0.5;
+        }
+
+        /* --- 导航 --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 30px 50px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; mix-blend-mode: multiply;
+        }
+        .brand { font-family: var(--font-title); font-size: 2rem; color: var(--ink); }
+        
+        /* --- Hero --- */
+        header {
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+            position: relative;
+        }
+        .hero-text {
+            text-align: center; z-index: 2;
+        }
+        .hero-title {
+            font-family: var(--font-title); font-size: 6vw;
+            background: linear-gradient(45deg, var(--ink), var(--charcoal));
+            -webkit-background-clip: text; color: transparent;
+            opacity: 0; transform: translateY(50px);
+        }
+        .hero-sub {
+            font-size: 1.5rem; margin-top: 20px; letter-spacing: 5px;
+            opacity: 0; transform: translateY(30px);
+        }
+        
+        /* --- 战绩 (Projects) --- */
+        .section-title {
+            font-family: var(--font-title); font-size: 4rem; text-align: center;
+            margin: 100px 0 60px 0; position: relative; z-index: 2;
+        }
+        .section-title span { display: inline-block; } /* for animation */
+
+        .projects-container {
+            max-width: 1200px; margin: 0 auto; padding-bottom: 100px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px; perspective: 1000px;
+            padding: 0 20px;
+        }
+
+        /* 卡片样式 - 融合古风与科技 */
+        .card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 30px;
+            position: relative;
+            transition: transform 0.1s; /* JS controlling tilt */
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            overflow: hidden;
+            opacity: 0; /* GSAP handles fade in */
+        }
+
+        /* 卡片悬停光效 */
+        .card::before {
+            content: ''; position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(192, 44, 56, 0.1) 0%, transparent 60%);
+            opacity: 0; transition: opacity 0.5s; pointer-events: none;
+            transform: translateZ(0);
+        }
+        .card:hover::before { opacity: 1; }
+
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; border-bottom: 2px solid var(--ink); padding-bottom: 10px;
+            transform: translateZ(20px);
+        }
+
+        .card-icon {
+            font-size: 2rem; font-family: var(--font-title); color: var(--red);
+        }
+
+        .card h3 {
+            font-size: 1.5rem; font-weight: bold; color: var(--ink);
+        }
+
+        .card-tech {
+            font-family: monospace; font-size: 0.8rem; color: var(--cyan);
+            margin-bottom: 15px; transform: translateZ(30px); display: block;
+        }
+
+        .card-desc {
+            font-size: 1rem; line-height: 1.8; color: #555;
+            transform: translateZ(20px);
+            text-align: justify;
+        }
+
+        /* 装饰性印章 */
+        .card-seal {
+            position: absolute; bottom: -10px; right: -10px;
+            font-family: var(--font-title); font-size: 4rem;
+            color: var(--red); opacity: 0.1;
+            transform: rotate(-20deg) translateZ(10px);
+            pointer-events: none;
+        }
+
+        /* --- 页脚 --- */
+        footer {
+            text-align: center; padding: 50px; color: #888;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            background: #fff;
+            position: relative; z-index: 2;
+        }
+
+        /* 加载遮罩 */
+        .loader {
+            position: fixed; inset: 0; background: var(--ink); z-index: 10000;
+            display: flex; justify-content: center; align-items: center; color: #fff;
+            font-family: var(--font-title); font-size: 3rem;
+        }
+    </style>
 </head>
 <body>
 
-    <nav class="sidebar">
-        <div class="logo-menu">
-            <h2 class="logo">Sudo</h2>
-            <i class="fa-solid fa-bars"></i>
-        </div>
+    <!-- 自定义光标 -->
+    <div id="cursor"></div>
 
-        <ul class="list">
-            <li class="list-item">
-                <a href="#">
-                    <i class="fa-solid fa-house"></i>
-                    <span class="link-name" style="--i:1;">Home</span>
-                </a>
-            </li>
-            <li class="list-item">
-                <a href="#">
-                    <i class="fa-solid fa-clock"></i>
-                    <span class="link-name" style="--i:2;">Recently</span>
-                </a>
-            </li>
-            <li class="list-item">
-                <a href="#">
-                    <i class="fa-solid fa-bookmark"></i>
-                    <span class="link-name" style="--i:3;">Saved</span>
-                </a>
-            </li>
-            <li class="list-item">
-                <a href="#">
-                    <i class="fa-solid fa-face-smile"></i>
-                    <span class="link-name" style="--i:4;">User</span>
-                </a>
-            </li>
-            <li class="list-item">
-                <a href="#">
-                    <i class="fa-solid fa-gear"></i>
-                    <span class="link-name" style="--i:5;">Setting</span>
-                </a>
-            </li>
-        </ul>
+    <!-- 开场动画遮罩 -->
+    <div class="loader">苏渡 · 弈沃</div>
+
+    <!-- 背景粒子流 -->
+    <canvas id="bg-canvas"></canvas>
+    <div class="overlay"></div>
+
+    <nav>
+        <div class="brand">Sudo Evolve</div>
+        <div style="font-family: var(--font-title); font-size: 1.2rem;">
+            <span style="margin-left:20px">悟道</span>
+            <span style="margin-left:20px">炼器</span>
+        </div>
     </nav>
 
-
-
-
-    <div class="view" id="homeView">
-        <div class="textoutput">
-            <pre id="result"></pre>
+    <header>
+        <div class="hero-text">
+            <h1 class="hero-title">万码归宗 · 虚实同源</h1>
+            <div class="hero-sub">SUDO EVOLVE <span style="color:var(--red)">//</span> 赛博武侠录</div>
         </div>
-        <div class="input-container">
-            <input type="text" id="prompt" placeholder="Enter your prompt">
-            <button onclick="aiGenerate()">Generate</button>
+    </header>
+
+    <!-- 江湖战绩 (Projects) -->
+    <section id="projects">
+        <h2 class="section-title">
+            <span>江</span><span>湖</span><span>战</span><span>绩</span>
+        </h2>
+        
+        <div class="projects-container">
+
+            <!-- Project 1: Eideo -->
+            <div class="card" data-tilt>
+                <div class="card-seal">影</div>
+                <div class="card-header">
+                    <h3>Eideo · 幻影留声</h3>
+                    <div class="card-icon">🎬</div>
+                </div>
+                <span class="card-tech">[ Qt6 :: QML :: FFmpeg :: Hardware Accel ]</span>
+                <p class="card-desc">
+                    集屏幕录制、实时推流、剪辑转码于一体的全能法宝。
+                    <br>融合 <b>Qt6</b> 之形与 <b>FFmpeg</b> 之魂，
+                    内修硬件加速心法，外练 QML 极简剑招。
+                    滤镜叠加如梦似幻，GIF 生成信手拈来。
+                </p>
+            </div>
+
+            <!-- Project 2: EvolveUI -->
+            <div class="card" data-tilt>
+                <div class="card-seal">基</div>
+                <div class="card-header">
+                    <h3>EvolveUI · 千机玲珑</h3>
+                    <div class="card-icon">🌌</div>
+                </div>
+                <span class="card-tech">[ Qt6 :: QML :: Components :: Responsive ]</span>
+                <p class="card-desc">
+                    打造现代界面的千机匣。
+                    <br>阴阳两仪（暗色模式）随心切换，
+                    响应式布局如水无常形。
+                    无论是桌面重器还是嵌入式微尘，皆可适配自如。
+                </p>
+            </div>
+
+            <!-- Project 3: Shader Renderer -->
+            <div class="card" data-tilt>
+                <div class="card-seal">虚</div>
+                <div class="card-header">
+                    <h3>Glsl Renderer · 炼虚化实</h3>
+                    <div class="card-icon">📝</div>
+                </div>
+                <span class="card-tech">[ C++17 :: OpenGL :: RAII :: ShaderToy-like ]</span>
+                <p class="card-desc">
+                    自研多片元着色器运行阵法。
+                    <br>以 <b>C++17</b> 为骨，<b>OpenGL</b> 为神。
+                    RAII 掌控资源生灭，FBO 构建自动灵力回路。
+                    纹理自反馈，实时渲染如掌中观纹，尽显数学之美。
+                </p>
+            </div>
+
+            <!-- Project 4: Device Monitor -->
+            <div class="card" data-tilt>
+                <div class="card-seal">眼</div>
+                <div class="card-header">
+                    <h3>Monitor · 天眼观气</h3>
+                    <div class="card-icon">🖥</div>
+                </div>
+                <span class="card-tech">[ Linux Tool :: Performance :: Widget ]</span>
+                <p class="card-desc">
+                    Linux 桌面轻量级观气法宝。
+                    <br>洞察 CPU 脉络，监测内存虚实。
+                    集成快速启动阵脚，夜间模式护眼宁神，
+                    于方寸之间掌控系统乾坤。
+                </p>
+            </div>
+
+            <!-- Project 5: Handwriting -->
+            <div class="card" data-tilt>
+                <div class="card-seal">书</div>
+                <div class="card-header">
+                    <h3>Handwriting · 笔墨问道</h3>
+                    <div class="card-icon">📊</div>
+                </div>
+                <span class="card-tech">[ MNIST :: TensorFlow :: PyTorch :: Data ]</span>
+                <p class="card-desc">
+                    自研手写数据采集系统。
+                    <br>将点滴墨迹化为 <b>MNIST</b> 经卷，
+                    兼容 PyTorch 与 TensorFlow 各大门派心法。
+                    为 AI 模型的飞升渡劫，提供最纯粹的训练养料。
+                </p>
+            </div>
+
         </div>
-    </div>
-    <div class="view" id="recentlyView" style="display: none;">
-        <h1>recentlyView</h1>
-    </div>
-    <div class="view" id="savedView" style="display: none;">
-        <h1>savedView</h1>
-    </div>
-    <div class="view" id="userView" style="display: none;">
-        <h1>userView</h1>
-    </div>
+    </section>
 
+    <footer>
+        <p style="font-family: var(--font-title); font-size: 1.5rem;">一入江湖岁月催 · 代码尽头是谁身</p>
+        <p style="margin-top:10px; font-size: 0.9rem;">&copy; 2025 Sudo Evolve</p>
+    </footer>
 
-    
+    <script>
+        // --- 1. 开场动画 (GSAP) ---
+        window.addEventListener("load", () => {
+            const tl = gsap.timeline();
+            
+            // 移除加载遮罩
+            tl.to(".loader", {
+                opacity: 0,
+                duration: 1,
+                pointerEvents: "none",
+                ease: "power2.inOut"
+            })
+            // 标题文字上浮
+            .to(".hero-title", {
+                opacity: 1,
+                y: 0,
+                duration: 1.5,
+                ease: "power3.out"
+            }, "-=0.5")
+            .to(".hero-sub", {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: "power3.out"
+            }, "-=1");
 
+            // 战绩板块滚动触发
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // 标题文字拆分动画
+            gsap.from(".section-title span", {
+                scrollTrigger: {
+                    trigger: ".section-title",
+                    start: "top 80%",
+                },
+                y: 50,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.1,
+                ease: "back.out(1.7)"
+            });
+
+            // 卡片交错入场
+            gsap.to(".card", {
+                scrollTrigger: {
+                    trigger: ".projects-container",
+                    start: "top 75%",
+                },
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                stagger: 0.2,
+                ease: "power2.out",
+                from: { y: 100, opacity: 0 } // 也可以写在to里用from效果，这里为了清晰
+            });
+        });
+
+        // --- 2. 水墨粒子背景 (Canvas) ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        
+        // 鼠标位置
+        let mouse = { x: null, y: null };
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        window.addEventListener('mousemove', e => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+            
+            // 自定义光标跟随
+            const cursor = document.getElementById('cursor');
+            cursor.style.left = e.x + 'px';
+            cursor.style.top = e.y + 'px';
+        });
+
+        // 交互效果：卡片 Hover 时光标变大
+        document.querySelectorAll('.card, a').forEach(el => {
+            el.addEventListener('mouseenter', () => document.getElementById('cursor').classList.add('hovered'));
+            el.addEventListener('mouseleave', () => document.getElementById('cursor').classList.remove('hovered'));
+        });
+
+        // 粒子类：结合“墨点”与“代码字符”
+        const chars = "01SUDOEVOLVEXY";
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 3 + 1;
+                this.char = chars[Math.floor(Math.random() * chars.length)];
+                this.isChar = Math.random() > 0.8; // 20% 概率是字符，80% 是墨点
+                this.alpha = Math.random() * 0.5 + 0.1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // 鼠标斥力
+                if (mouse.x != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx*dx + dy*dy);
+                    if (distance < 150) {
+                        const forceDirectionX = dx / distance;
+                        const forceDirectionY = dy / distance;
+                        const force = (150 - distance) / 150;
+                        this.vx -= forceDirectionX * force * 0.5;
+                        this.vy -= forceDirectionY * force * 0.5;
+                    }
+                }
+
+                // 边界反弹
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(10, 10, 10, ${this.alpha})`;
+                if (this.isChar) {
+                    ctx.font = '12px monospace';
+                    ctx.fillText(this.char, this.x, this.y);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                // 连线效果（构建经脉感）
+                particles.forEach(p => {
+                    let dx = p.x - this.x;
+                    let dy = p.y - this.y;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 80) {
+                        ctx.strokeStyle = `rgba(0, 0, 0, ${0.05})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(this.x, this.y);
+                        ctx.lineTo(p.x, p.y);
+                        ctx.stroke();
+                    }
+                });
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const count = (width * height) / 15000; // 根据屏幕大小决定数量
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+        }
+        initParticles();
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // --- 3. 3D Tilt 效果 (Vanilla JS 实现) ---
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((y - centerY) / centerY) * -10; // max tilt deg
+                const rotateY = ((x - centerX) / centerX) * 10;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+            });
+        });
+
+    </script>
 </body>
-<script src="script.js"></script>
 </html>
