@@ -206,6 +206,119 @@
             .poem-intro { display: none; }
         }
 
+        /* --- 新增：技能板块样式 --- */
+        .skills-section {
+            padding: 100px 50px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .skills-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            perspective: 1000px;
+        }
+
+        .skill-category {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid #ccc;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.05);
+        }
+        .skill-category:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.7);
+            border-color: var(--cinnabar);
+        }
+        
+        .cat-title {
+            font-family: var(--font-ink);
+            font-size: 2rem;
+            color: var(--cinnabar);
+            border-bottom: 2px solid var(--ink-black);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .skill-item {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 8px;
+        }
+        
+        .skill-name {
+            font-family: var(--font-body);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .skill-alias {
+            font-family: var(--font-cursive);
+            color: var(--ink-light);
+            font-size: 1.2rem;
+        }
+
+        .qi-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .qi-fill {
+            height: 100%;
+            background: var(--ink-black);
+            width: 0%; /* 初始为0，JS控制动画 */
+            position: relative;
+        }
+        /* 进度条末端的墨晕 */
+        .qi-fill::after {
+            content: '';
+            position: absolute;
+            right: -5px; top: -2px;
+            width: 10px; height: 10px;
+            background: var(--ink-black);
+            border-radius: 50%;
+            filter: blur(2px);
+        }
+
+        .skill-desc {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        /* 装饰用的印章背景 */
+        .bg-seal {
+            position: absolute;
+            right: -20px; bottom: -20px;
+            font-family: var(--font-ink);
+            font-size: 8rem;
+            color: var(--cinnabar);
+            opacity: 0.05;
+            pointer-events: none;
+            transform: rotate(-15deg);
+        }
+
     </style>
 </head>
 <body>
@@ -247,6 +360,129 @@
            不慕仙佛，唯信方寸之屏、一指之键。
             若程序有灵，愿以逻辑为笔，涤荡芜杂，复归清静之境。
         </p>
+    </section>
+
+    <!-- 技能板块：藏经阁 -->
+    <section class="skills-section">
+        <div class="skills-header">
+            <div class="seal" style="font-size: 1.2rem; margin-bottom: 15px;">武学</div>
+            <h2 class="hero-title" style="font-size: 4rem;">藏经阁 · 修为</h2>
+            <p style="font-family: var(--font-cursive); font-size: 1.5rem; color: var(--ink-light); margin-top: 10px;">
+                内修心法，外练招式，通晓乾坤之理
+            </p>
+        </div>
+
+        <div class="skills-grid">
+            
+            <!-- 第一卷：内功心法 (Languages) -->
+            <div class="skill-category">
+                <div class="bg-seal">心法</div>
+                <div class="cat-title">混元内功</div>
+                
+                <!-- C++ -->
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">C++</span>
+                        <span class="skill-alias">九阳神功</span>
+                    </div>
+                    <div class="qi-bar-bg"><div class="qi-fill" data-width="90%"></div></div>
+                    <div class="skill-desc">根基深厚，内力生生不息，掌管内存之生灭。</div>
+                </div>
+
+                <!-- Python -->
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">Python</span>
+                        <span class="skill-alias">灵蛇身法</span>
+                    </div>
+                    <div class="qi-bar-bg"><div class="qi-fill" data-width="95%" style="background: var(--bamboo);"></div></div>
+                    <div class="skill-desc">变化万千，出手如电，数据科学之利器。</div>
+                </div>
+
+                <!-- JavaScript -->
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">JavaScript</span>
+                        <span class="skill-alias">迷踪幻步</span>
+                    </div>
+                    <div class="qi-bar-bg"><div class="qi-fill" data-width="85%" style="background: var(--gold);"></div></div>
+                    <div class="skill-desc">游走于浏览器之间，幻化万物，异步随心。</div>
+                </div>
+            </div>
+
+            <!-- 第二卷：机关术数 (Frameworks) -->
+            <div class="skill-category">
+                <div class="bg-seal">机枢</div>
+                <div class="cat-title">天工机关</div>
+
+                <!-- Qt -->
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">Qt / QML</span>
+                        <span class="skill-alias">玲珑宝塔</span>
+                    </div>
+                    <div class="qi-bar-bg"><div class="qi-fill" data-width="90%" style="background: #41cd52;"></div></div>
+                    <div class="skill-desc">构建桌面宏大楼阁，信号槽如经脉相连。</div>
+                </div>
+
+                <!-- Flutter -->
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">Flutter</span>
+                        <span class="skill-alias">纵云梯</span>
+                    </div>
+                    <div class="qi-bar-bg"><div class="qi-fill" data-width="80%" style="background: #54c5f8;"></div></div>
+                    <div class="skill-desc">跨界而行，身轻如燕，一套身法行遍天下。</div>
+                </div>
+                
+                <!-- CMake -->
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">CMake</span>
+                        <span class="skill-alias">铸剑阵图</span>
+                    </div>
+                    <div class="qi-bar-bg"><div class="qi-fill" data-width="75%"></div></div>
+                    <div class="skill-desc">统筹编译之火候，成形神兵利器。</div>
+                </div>
+            </div>
+
+            <!-- 第三卷：乾坤法宝 (Tools & DB & OS) -->
+            <div class="skill-category">
+                <div class="bg-seal">道法</div>
+                <div class="cat-title">乾坤道法</div>
+
+                <!-- Linux/Shell -->
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">Linux / Shell</span>
+                        <span class="skill-alias">天地法则</span>
+                    </div>
+                    <div class="qi-bar-bg"><div class="qi-fill" data-width="88%"></div></div>
+                    <div class="skill-desc">言出法随，以字符敕令号令系统底层。</div>
+                </div>
+
+                <!-- Git -->
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">Git</span>
+                        <span class="skill-alias">回溯神术</span>
+                    </div>
+                    <div class="qi-bar-bg"><div class="qi-fill" data-width="92%" style="background: var(--cinnabar);"></div></div>
+                    <div class="skill-desc">穿梭时空，记录历史，不惧代码崩坏之劫。</div>
+                </div>
+
+                <!-- SQL -->
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">MySQL / SQLite</span>
+                        <span class="skill-alias">芥子纳须弥</span>
+                    </div>
+                    <div class="qi-bar-bg"><div class="qi-fill" data-width="80%" style="background: #666;"></div></div>
+                    <div class="skill-desc">纳万千数据于方寸之间，查询如探囊取物。</div>
+                </div>
+            </div>
+
+        </div>
     </section>
 
     <div class="project-scroll">
@@ -513,6 +749,34 @@
         document.querySelectorAll('a, .project-content').forEach(el => {
             el.addEventListener('mouseenter', () => cursor.classList.add('active'));
             el.addEventListener('mouseleave', () => cursor.classList.remove('active'));
+        });
+
+        // --- 新增：技能条真气注入动画 ---
+        gsap.utils.toArray('.qi-fill').forEach(bar => {
+            gsap.to(bar, {
+                scrollTrigger: {
+                    trigger: bar,
+                    start: "top 85%", // 当元素进入视口85%位置时开始
+                    toggleActions: "play none none reverse"
+                },
+                width: bar.getAttribute('data-width'),
+                duration: 1.5,
+                ease: "power4.out",
+                delay: 0.2
+            });
+        });
+
+        // 技能卡片的浮现动画
+        gsap.from(".skill-category", {
+            scrollTrigger: {
+                trigger: ".skills-grid",
+                start: "top 80%"
+            },
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.2, // 依次出现
+            ease: "back.out(1.7)"
         });
 
     </script>
