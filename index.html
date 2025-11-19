@@ -206,7 +206,6 @@
             .poem-intro { display: none; }
         }
 
-        /* --- 新增：技能板块样式 --- */
         .skills-section {
             padding: 100px 50px;
             max-width: 1400px;
@@ -307,7 +306,6 @@
             font-style: italic;
         }
 
-        /* 装饰用的印章背景 */
         .bg-seal {
             position: absolute;
             right: -20px; bottom: -20px;
@@ -362,7 +360,6 @@
         </p>
     </section>
 
-    <!-- 技能板块：藏经阁 -->
     <section class="skills-section">
         <div class="skills-header">
             <div class="seal" style="font-size: 1.2rem; margin-bottom: 15px;">武学</div>
@@ -374,12 +371,10 @@
 
         <div class="skills-grid">
             
-            <!-- 第一卷：内功心法 (Languages) -->
             <div class="skill-category">
                 <div class="bg-seal">心法</div>
                 <div class="cat-title">混元内功</div>
                 
-                <!-- C++ -->
                 <div class="skill-item">
                     <div class="skill-header">
                         <span class="skill-name">C++</span>
@@ -389,7 +384,6 @@
                     <div class="skill-desc">根基深厚，内力生生不息，掌管内存之生灭。</div>
                 </div>
 
-                <!-- Python -->
                 <div class="skill-item">
                     <div class="skill-header">
                         <span class="skill-name">Python</span>
@@ -399,7 +393,6 @@
                     <div class="skill-desc">变化万千，出手如电，数据科学之利器。</div>
                 </div>
 
-                <!-- JavaScript -->
                 <div class="skill-item">
                     <div class="skill-header">
                         <span class="skill-name">JavaScript</span>
@@ -410,7 +403,6 @@
                 </div>
             </div>
 
-            <!-- 第二卷：机关术数 (Frameworks) -->
             <div class="skill-category">
                 <div class="bg-seal">机枢</div>
                 <div class="cat-title">天工机关</div>
@@ -425,7 +417,6 @@
                     <div class="skill-desc">构建桌面宏大楼阁，信号槽如经脉相连。</div>
                 </div>
 
-                <!-- Flutter -->
                 <div class="skill-item">
                     <div class="skill-header">
                         <span class="skill-name">Flutter</span>
@@ -435,7 +426,6 @@
                     <div class="skill-desc">跨界而行，身轻如燕，一套身法行遍天下。</div>
                 </div>
                 
-                <!-- CMake -->
                 <div class="skill-item">
                     <div class="skill-header">
                         <span class="skill-name">CMake</span>
@@ -446,12 +436,10 @@
                 </div>
             </div>
 
-            <!-- 第三卷：乾坤法宝 (Tools & DB & OS) -->
             <div class="skill-category">
                 <div class="bg-seal">道法</div>
                 <div class="cat-title">乾坤道法</div>
 
-                <!-- Linux/Shell -->
                 <div class="skill-item">
                     <div class="skill-header">
                         <span class="skill-name">Linux / Shell</span>
@@ -471,7 +459,6 @@
                     <div class="skill-desc">穿梭时空，记录历史，不惧代码崩坏之劫。</div>
                 </div>
 
-                <!-- SQL -->
                 <div class="skill-item">
                     <div class="skill-header">
                         <span class="skill-name">MySQL / SQLite</span>
@@ -751,12 +738,11 @@
             el.addEventListener('mouseleave', () => cursor.classList.remove('active'));
         });
 
-        // --- 新增：技能条真气注入动画 ---
         gsap.utils.toArray('.qi-fill').forEach(bar => {
             gsap.to(bar, {
                 scrollTrigger: {
                     trigger: bar,
-                    start: "top 85%", // 当元素进入视口85%位置时开始
+                    start: "top 85%",
                     toggleActions: "play none none reverse"
                 },
                 width: bar.getAttribute('data-width'),
@@ -766,7 +752,6 @@
             });
         });
 
-        // 技能卡片的浮现动画
         gsap.from(".skill-category", {
             scrollTrigger: {
                 trigger: ".skills-grid",
@@ -775,7 +760,7 @@
             y: 50,
             opacity: 0,
             duration: 1,
-            stagger: 0.2, // 依次出现
+            stagger: 0.2,
             ease: "back.out(1.7)"
         });
 
