@@ -640,19 +640,14 @@
         function initIntro() {
             introW = introCanvas.width = window.innerWidth;
             introH = introCanvas.height = window.innerHeight;
-            
             introCtx.fillStyle = '#f4f1e8';
             introCtx.fillRect(0, 0, introW, introH);
         }
         initIntro();
         window.addEventListener('resize', initIntro);
 
-        const dropState = { 
-            y: -50, 
-            radius: 10, 
-            scale: 1,
-            phase: 'drop'
-        };
+        const dropState = { y: -50, radius: 8, phase: 'drop' };
+        const rippleState = { radius: 0, opacity: 1 };
 
         function drawWobblyCircle(ctx, x, y, radius, color, composite) {
             ctx.save();
@@ -660,9 +655,10 @@
             
             ctx.beginPath();
             const points = 20;
+
             for (let i = 0; i <= points; i++) {
                 const angle = (i / points) * Math.PI * 2;
-                const r = radius + (Math.random() * radius * 0.1); 
+                const r = radius + (Math.random() * radius * 0.05); 
                 const px = x + Math.cos(angle) * r;
                 const py = y + Math.sin(angle) * r;
                 if (i === 0) ctx.moveTo(px, py);
@@ -675,26 +671,14 @@
         }
 
         function startIntroAnimation() {
-            const tl = gsap.timeline({
-                onComplete: () => {
-                    gsap.to(introCanvas, { 
-                        opacity: 0, 
-                        duration: 1, 
-                        onComplete: () => {
-                            introCanvas.style.display = 'none';
-                            document.body.style.overflow = 'auto';
-                            
-                            startHeroAnimations();
-                        }
-                    });
-                }
-            });
+            const tl = gsap.timeline();
 
             tl.to(dropState, {
                 y: introH / 2,
                 duration: 0.8,
                 ease: "power2.in",
                 onUpdate: () => {
+
                     introCtx.fillStyle = '#f4f1e8';
                     introCtx.fillRect(0, 0, introW, introH);
                     
@@ -704,21 +688,65 @@
                     introCtx.fill();
                     
                     introCtx.beginPath();
-                    introCtx.moveTo(introW/2 - 5, dropState.y);
-                    introCtx.lineTo(introW/2, dropState.y - 40);
-                    introCtx.lineTo(introW/2 + 5, dropState.y);
+                    introCtx.moveTo(introW/2 - 4, dropState.y);
+                    introCtx.lineTo(introW/2, dropState.y - 30);
+                    introCtx.lineTo(introW/2 + 4, dropState.y);
                     introCtx.fill();
                 }
             });
 
-            tl.to(dropState, {
-                scale: 300,
-                duration: 1.5,
+            tl.call(() => {
+                startHeroAnimations();
+                document.body.style.overflow = 'auto';
+            });
+
+            tl.to(rippleState, {
+                radius: Math.max(introW, introH) * 1.5,
+                duration: 2.2,
                 ease: "power2.out",
                 onUpdate: () => {
-                    const currentRadius = dropState.radius * dropState.scale;
+                    const cx = introW / 2;
+                    const cy = introH / 2;
+                    const r = rippleState.radius;
+
+                    introCtx.globalCompositeOperation = 'source-over';
+                    introCtx.fillStyle = '#f4f1e8';
+                    introCtx.fillRect(0, 0, introW, introH);
+
+                    introCtx.globalCompositeOperation = 'destination-out';
                     
-                    drawWobblyCircle(introCtx, introW/2, introH/2, currentRadius, '#000', 'destination-out');
+                    introCtx.beginPath();
+                    introCtx.arc(cx, cy, r, 0, Math.PI*2);
+                    introCtx.fill();
+
+                    if(r > 20) {
+                        introCtx.beginPath();
+                    }
+
+                    introCtx.globalCompositeOperation = 'source-over';
+                    introCtx.lineWidth = r * 0.05;
+
+                    introCtx.beginPath();
+                    introCtx.arc(cx, cy, r, 0, Math.PI*2);
+                    introCtx.strokeStyle = `rgba(18, 18, 18, ${1 - r/(Math.max(introW,introH)*0.8)})`; // 渐隐
+                    introCtx.stroke();
+
+                    const r2 = r * 1.2 + 20;
+                    introCtx.beginPath();
+                    introCtx.arc(cx, cy, r2, 0, Math.PI*2);
+                    introCtx.lineWidth = r * 0.02;
+                    introCtx.strokeStyle = `rgba(138, 37, 37, ${0.5 - r/(Math.max(introW,introH))})`; // 朱砂色淡淡的圈
+                    introCtx.stroke();
+                    
+                    if (r > 0) {
+                        introCtx.fillStyle = `rgba(18,18,18, ${0.1 * (1 - r/1000)})`;
+                        introCtx.beginPath();
+                        introCtx.arc(cx, cy, r * 0.8, 0, Math.PI*2);
+                        introCtx.fill();
+                    }
+                },
+                onComplete: () => {
+                    introCanvas.style.display = 'none';
                 }
             });
         }
@@ -726,23 +754,36 @@
         window.onload = startIntroAnimation;
 
         function startHeroAnimations() {
-            gsap.to("nav", { opacity: 1, duration: 0.5 });
+            gsap.to("nav", { opacity: 1, duration: 1.5, ease: "power2.out" });
             
-            gsap.to(".hero-main", { opacity: 1, duration: 0.5 });
+            gsap.to(".hero-main", { 
+                opacity: 1, 
+                y: 0,
+                scale: 1,
+                duration: 1.2, 
+                ease: "power3.out" 
+            });
+            
+            gsap.set(".hero-main", { y: 50 }); 
+            gsap.to(".hero-main", {
+                y: 0, opacity: 1, duration: 1.5, ease: "power2.out"
+            });
 
             gsap.to(".poem-intro", {
                 opacity: 1,
-                duration: 0.5,
-                delay: 0.1,
+                x: 0,
+                duration: 1.5,
+                delay: 0.2,
                 ease: "power2.out"
             });
+            gsap.from(".poem-intro", { x: -30, duration: 1.5, delay: 0.2 });
 
             gsap.from(".hero-title", {
-                y: 100,
+                y: 50,
                 opacity: 0,
-                duration: 1,
-                delay: 0.2,
-                ease: "power3.out"
+                duration: 1.5,
+                ease: "power3.out",
+                delay: 0.1
             });
         }
         
