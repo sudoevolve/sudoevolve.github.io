@@ -1004,13 +1004,41 @@
         }
         animateBg();
 
-        // 切换模式逻辑
+        //跟随系统 + 手动切换
+
         const toggleBtn = document.getElementById('theme-toggle');
+        
+        // 1. 获取系统的颜色偏好
+        const systemScheme = window.matchMedia('(prefers-color-scheme: dark)');
+
+        // 2. 统一的主题设置函数
+        function applyTheme(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+            
+            // 更新全局状态变量 (控制雪花/墨水逻辑)
+            isDarkMode = isDark;
+            
+            // 重置墨水/雾气数组，这样切换后新生成的粒子颜色才会正确
+            inks = []; 
+        }
+
+        // 3. 初始化：页面加载时，立即应用系统的当前设置
+        applyTheme(systemScheme.matches);
+
+        // 4. 监听系统变化：如果你在系统设置里切换了深色/浅色，网页会自动跟着变
+        systemScheme.addEventListener('change', (e) => {
+            applyTheme(e.matches);
+        });
+
+        // 5. 手动点击按钮切换 (覆盖当前状态)
         toggleBtn.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            isDarkMode = document.body.classList.contains('dark-mode');
-            // 清空墨水，让它们重新以新颜色生成
-            inks = [];
+            // 基于当前网页的实际状态进行反转
+            const currentIsDark = document.body.classList.contains('dark-mode');
+            applyTheme(!currentIsDark);
         });
 
         // 鼠标跟随
