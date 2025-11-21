@@ -13,6 +13,7 @@
 
     <style>
         :root {
+            /* 核心变量 */
             --ink-black: #121212;
             --ink-light: #454545;
             --rice-paper: #f4f1e8;
@@ -20,19 +21,85 @@
             --bamboo: #5d6b4e;
             --gold: #bfa678;
             
+            /* 动态主题变量 (默认为日间) */
+            --bg-color: var(--rice-paper);
+            --text-primary: var(--ink-black);
+            --text-secondary: #444;
+            --card-bg: rgba(255,255,255,0.6);
+            --card-border: #dcdcdc;
+            --nav-blend: multiply;
+            --cursor-color: var(--ink-black);
+            --cursor-blend: multiply;
+            
             --font-cursive: 'Zhi Mang Xing', cursive;
             --font-ink: 'Ma Shan Zheng', cursive;
             --font-body: 'Noto Serif SC', serif;
         }
 
+        /* 夜间模式变量覆写 */
+        body.dark-mode {
+            --bg-color: #1a1b1f; /* 寒夜深灰 */
+            --text-primary: #e0e0e0; /* 霜白 */
+            --text-secondary: #a0a0a0;
+            --ink-black: #e0e0e0; /* 将原本的黑色墨迹文字反转为白色 */
+            --ink-light: #ccc;
+            --card-bg: rgba(30, 30, 35, 0.7);
+            --card-border: #444;
+            --nav-blend: normal; /* 夜间混合模式调整 */
+            --cursor-color: #e0e0e0;
+            --cursor-blend: difference;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
 
         body {
-            background-color: var(--rice-paper);
+            background-color: var(--bg-color);
+            /* 纹理叠加 */
             background-image: url('https://www.transparenttextures.com/patterns/rice-paper-3.png');
-            color: var(--ink-black);
+            color: var(--text-primary);
             font-family: var(--font-body);
             overflow: hidden;
+            transition: background-color 0.8s ease, color 0.8s ease;
+        }
+        
+        body.dark-mode {
+            background-blend-mode: multiply; /* 让纹理变暗 */
+        }
+
+        /* 模式切换按钮 */
+        #theme-toggle {
+            position: fixed;
+            top: 30px;
+            right: 50px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--cinnabar);
+            background: transparent;
+            z-index: 1000;
+            cursor: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-ink);
+            font-size: 1.2rem;
+            color: var(--cinnabar);
+            transition: transform 0.3s;
+            pointer-events: auto;
+            overflow: hidden;
+        }
+        #theme-toggle::before {
+            content: "日";
+            position: absolute;
+            transition: 0.5s;
+        }
+        body.dark-mode #theme-toggle::before {
+            content: "月";
+            transform: rotate(360deg);
+        }
+        #theme-toggle:hover {
+            background: var(--cinnabar);
+            color: #fff;
         }
 
         canvas#intro-canvas {
@@ -44,30 +111,48 @@
         #cursor {
             position: fixed; top: 0; left: 0; 
             width: 30px; height: 30px;
-            background: radial-gradient(circle, var(--ink-black) 0%, transparent 70%);
+            background: radial-gradient(circle, var(--cursor-color) 0%, transparent 70%);
             border-radius: 50%;
             pointer-events: none; 
             z-index: 1000001;
             transform: translate(-50%, -50%);
-            mix-blend-mode: multiply;
+            mix-blend-mode: var(--cursor-blend);
             transition: transform 0.1s ease-out;
         }
         #cursor.active { 
             transform: translate(-50%, -50%) scale(2.5); 
             background: radial-gradient(circle, var(--cinnabar) 0%, transparent 70%); 
+            mix-blend-mode: normal;
         }
 
         canvas#bg-ink-canvas {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: -1; 
-            opacity: 0.15; 
+            opacity: 0.3; 
             pointer-events: none;
+            transition: opacity 1s;
         }
+
+        /* 梅花装饰 - 仅夜间显示 */
+        .plum-branch {
+            position: fixed;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+            filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+        }
+        body.dark-mode .plum-branch {
+            opacity: 0.6;
+        }
+        .plum-bl { bottom: -50px; left: -50px; width: 400px; transform: rotate(-10deg); }
+        .plum-tr { top: -50px; right: -50px; width: 300px; transform: rotate(170deg); }
 
         .v-text {
             writing-mode: vertical-rl;
             text-orientation: upright;
             letter-spacing: 0.3em;
+            margin-top: 60px;
         }
         .seal {
             border: 2px solid var(--cinnabar);
@@ -82,7 +167,8 @@
         nav {
             position: fixed; top: 0; width: 100%; padding: 30px 50px;
             display: flex; justify-content: space-between; align-items: flex-start;
-            z-index: 100; mix-blend-mode: multiply;
+            z-index: 100; 
+            mix-blend-mode: var(--nav-blend);
             opacity: 0; 
         }
         .brand-seal {
@@ -109,6 +195,7 @@
             height: 60vh;
             opacity: 0;
             will-change: transform;
+            color: var(--text-primary);
         }
 
         .hero-main {
@@ -121,15 +208,17 @@
             font-family: var(--font-ink);
             font-size: 7rem;
             line-height: 1.2;
-            color: var(--ink-black);
+            color: var(--text-primary);
             text-shadow: 4px 4px 0 rgba(0,0,0,0.1);
             margin-bottom: 20px;
+            transition: color 0.5s;
         }
         .hero-subtitle {
             font-size: 1.2rem; letter-spacing: 5px;
             border-top: 1px solid var(--cinnabar);
             border-bottom: 1px solid var(--cinnabar);
             padding: 10px 0; display: inline-block;
+            color: var(--text-primary);
         }
 
         .intro-section {
@@ -138,7 +227,8 @@
             text-align: center;
         }
         .intro-quote {
-            font-family: var(--font-cursive); font-size: 2rem; color: var(--ink-light);
+            font-family: var(--font-cursive); font-size: 2rem; 
+            color: var(--ink-light);
             margin-bottom: 40px;
         }
 
@@ -157,13 +247,14 @@
             display: grid; grid-template-columns: 1fr 1.5fr;
             gap: 60px;
             max-width: 1200px; width: 100%;
-            background: rgba(255,255,255,0.6);
+            background: var(--card-bg);
             backdrop-filter: blur(5px);
             padding: 60px;
-            border: 1px solid #dcdcdc;
+            border: 1px solid var(--card-border);
             box-shadow: 0 20px 50px rgba(0,0,0,0.05);
             transform: translateY(50px); opacity: 0;
             will-change: transform;
+            transition: background 0.5s, border 0.5s;
         }
 
         .proj-left {
@@ -176,7 +267,7 @@
             font-family: var(--font-cursive);
             font-size: 2rem;
             line-height: 1.5;
-            color: var(--ink-black);
+            color: var(--text-primary);
             margin-bottom: 30px;
         }
         .proj-title {
@@ -189,29 +280,38 @@
             font-size: 0.9rem; display: block;
         }
         .proj-desc {
-            font-size: 1.1rem; line-height: 2; color: #444; margin-bottom: 30px;
+            font-size: 1.1rem; line-height: 2; 
+            color: var(--text-secondary); 
+            margin-bottom: 30px;
         }
         .btn-view {
-            border: 1px solid var(--ink-black);
+            border: 1px solid var(--text-primary);
             padding: 10px 30px;
-            text-decoration: none; color: var(--ink-black);
+            text-decoration: none; 
+            color: var(--text-primary);
             font-family: var(--font-body);
             transition: background 0.3s, color 0.3s;
             position: relative; overflow: hidden;
             display: inline-block;
         }
-        .btn-view:hover { background: var(--ink-black); color: #fff; }
+        .btn-view:hover { background: var(--text-primary); color: var(--bg-color); }
 
         .ink-splash {
             position: absolute; z-index: -1; pointer-events: none;
             opacity: 0.1; width: 400px;
             will-change: transform;
         }
+        /* 夜间模式下墨迹变为白色雾气 */
+        body.dark-mode .ink-splash {
+            filter: invert(1);
+            opacity: 0.08;
+        }
 
         footer {
             height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: var(--ink-black); color: #888;
+            background: #111; color: #888;
             text-align: center;
+            border-top: 1px solid #333;
         }
         .footer-poem {
             font-family: var(--font-cursive); font-size: 2.5rem; color: #ccc; margin-bottom: 30px;
@@ -223,6 +323,8 @@
             .hero-title { font-size: 4rem; }
             .poem-intro { display: none; }
             .tilt-card { transform: none !important; }
+            #theme-toggle { top: 20px; right: 20px; }
+            nav { padding: 20px; }
         }
 
         .skills-section {
@@ -244,20 +346,21 @@
         }
 
         .skill-category {
-            background: rgba(255, 255, 255, 0.4);
-            border: 1px solid #ccc;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
             padding: 30px;
             position: relative;
             overflow: hidden;
             box-shadow: 5px 5px 15px rgba(0,0,0,0.05);
             will-change: transform;
+            transition: background 0.5s;
         }
         
         .cat-title {
             font-family: var(--font-ink);
             font-size: 2rem;
             color: var(--cinnabar);
-            border-bottom: 2px solid var(--ink-black);
+            border-bottom: 2px solid var(--text-primary);
             padding-bottom: 10px;
             margin-bottom: 20px;
             display: inline-block;
@@ -279,6 +382,7 @@
             font-family: var(--font-body);
             font-weight: bold;
             font-size: 1.1rem;
+            color: var(--text-primary);
         }
         
         .skill-alias {
@@ -290,30 +394,31 @@
         .qi-bar-bg {
             width: 100%;
             height: 6px;
-            background: rgba(0,0,0,0.1);
+            background: rgba(128,128,128,0.2);
             border-radius: 3px;
             overflow: hidden;
         }
         
         .qi-fill {
             height: 100%;
-            background: var(--ink-black);
+            background: var(--text-primary);
             width: 0%;
             position: relative;
+            transition: background 0.5s;
         }
         .qi-fill::after {
             content: '';
             position: absolute;
             right: -5px; top: -2px;
             width: 10px; height: 10px;
-            background: var(--ink-black);
+            background: var(--text-primary);
             border-radius: 50%;
             filter: blur(2px);
         }
 
         .skill-desc {
             font-size: 0.85rem;
-            color: #666;
+            color: var(--text-secondary);
             margin-top: 5px;
             font-style: italic;
         }
@@ -333,13 +438,37 @@
 </head>
 <body>
 
+    <!-- 开屏动画Canvas -->
     <canvas id="intro-canvas"></canvas>
+    <!-- 鼠标跟随 -->
     <div id="cursor"></div>
+    <!-- 背景特效 (墨水/雪花) -->
     <canvas id="bg-ink-canvas"></canvas>
+    
+    <!-- 主题切换按钮 -->
+    <button id="theme-toggle" title="切换昼夜"></button>
+
+    <!-- 梅花装饰SVG (夜间显示) -->
+    <svg class="plum-branch plum-bl" viewBox="0 0 100 100" overflow="visible">
+        <path d="M0,100 Q30,70 60,60 T100,40" stroke="#333" stroke-width="2" fill="none" opacity="0.5" />
+        <path d="M60,60 Q70,50 65,30" stroke="#333" stroke-width="1.5" fill="none" opacity="0.5" />
+        <!-- 花朵 -->
+        <circle cx="60" cy="60" r="3" fill="#8a2525" />
+        <circle cx="65" cy="30" r="2.5" fill="#8a2525" />
+        <circle cx="100" cy="40" r="4" fill="#8a2525" />
+        <circle cx="20" cy="80" r="2" fill="#8a2525" />
+    </svg>
+    <svg class="plum-branch plum-tr" viewBox="0 0 100 100" overflow="visible">
+        <path d="M100,0 Q70,30 40,40 T0,60" stroke="#333" stroke-width="2" fill="none" opacity="0.5" />
+        <path d="M40,40 Q30,50 35,70" stroke="#333" stroke-width="1.5" fill="none" opacity="0.5" />
+        <circle cx="40" cy="40" r="3" fill="#8a2525" />
+        <circle cx="35" cy="70" r="2.5" fill="#8a2525" />
+        <circle cx="0" cy="60" r="4" fill="#8a2525" />
+    </svg>
 
     <nav>
         <div class="brand-seal">苏</div>
-        <div class="v-text" style="font-family: var(--font-cursive); font-size: 1.2rem; height: 150px;">
+        <div class="v-text" style="font-family: var(--font-cursive); font-size: 1.2rem; height: 150px; color: var(--text-primary);">
             <span>悟道</span><br><span>修身</span><br><span>编程</span>
         </div>
     </nav>
@@ -355,7 +484,7 @@
             <div class="hero-subtitle">
                 SUDO EVOLVE <span style="color:var(--cinnabar); margin: 0 10px;">●</span> 数理通玄
             </div>
-            <p style="margin-top: 30px; color: #666; font-style: italic;">
+            <p style="margin-top: 30px; color: var(--text-secondary); font-style: italic;">
                 "以 Root 之权，行进化之事"
             </p>
         </div>
@@ -365,7 +494,7 @@
         <div class="intro-quote">
             " 满堂花醉三千客，一剑霜寒十四州 "
         </div>
-        <p style="line-height: 2; font-size: 1.1rem;">
+        <p style="line-height: 2; font-size: 1.1rem; color: var(--text-secondary);">
           余本寒士，潜心数理，常出入于 Linux 之深邃，游观于图形之玄机。
             <br>
            不慕仙佛，唯信方寸之屏、一指之键。
@@ -384,7 +513,7 @@
 
         <div class="skills-grid">
             
-            <!-- 技能卡片 1: 心法 -->
+            <!-- 技能卡片 1 -->
             <div class="skill-category tilt-card">
                 <div class="bg-seal">心法</div>
                 <div class="cat-title">混元内功</div>
@@ -417,7 +546,7 @@
                 </div>
             </div>
 
-            <!-- 技能卡片 2: 机枢 -->
+            <!-- 技能卡片 2 -->
             <div class="skill-category tilt-card">
                 <div class="bg-seal">机枢</div>
                 <div class="cat-title">天工机关</div>
@@ -450,7 +579,7 @@
                 </div>
             </div>
 
-            <!-- 技能卡片 3: 道法 -->
+            <!-- 技能卡片 3 -->
             <div class="skill-category tilt-card">
                 <div class="bg-seal">道法</div>
                 <div class="cat-title">乾坤道法</div>
@@ -499,7 +628,7 @@
                     <div>
                         <div class="seal">摄魂</div>
                         <h2 class="proj-title">幻影留声</h2>
-                        <div style="font-size: 1.2rem; margin-top:5px;">Eideo</div>
+                        <div style="font-size: 1.2rem; margin-top:5px; color: var(--text-primary);">Eideo</div>
                     </div>
                 </div>
                 <div class="proj-right">
@@ -525,7 +654,7 @@
                     <div>
                         <div class="seal">千机</div>
                         <h2 class="proj-title">玲珑机枢</h2>
-                        <div style="font-size: 1.2rem; margin-top:5px;">EvolveUI</div>
+                        <div style="font-size: 1.2rem; margin-top:5px; color: var(--text-primary);">EvolveUI</div>
                     </div>
                 </div>
                 <div class="proj-right">
@@ -552,7 +681,7 @@
                     <div>
                         <div class="seal">造化</div>
                         <h2 class="proj-title">炼虚化实</h2>
-                        <div style="font-size: 1.2rem; margin-top:5px;">Glsl Renderer</div>
+                        <div style="font-size: 1.2rem; margin-top:5px; color: var(--text-primary);">Glsl Renderer</div>
                     </div>
                 </div>
                 <div class="proj-right">
@@ -578,7 +707,7 @@
                     <div>
                         <div class="seal">天眼</div>
                         <h2 class="proj-title">天眼观气</h2>
-                        <div style="font-size: 1.2rem; margin-top:5px;">System Monitor</div>
+                        <div style="font-size: 1.2rem; margin-top:5px; color: var(--text-primary);">System Monitor</div>
                     </div>
                 </div>
                 <div class="proj-right">
@@ -603,7 +732,7 @@
                     <div>
                         <div class="seal">问道</div>
                         <h2 class="proj-title">笔墨问道</h2>
-                        <div style="font-size: 1.2rem; margin-top:5px;">AI Trainer</div>
+                        <div style="font-size: 1.2rem; margin-top:5px; color: var(--text-primary);">AI Trainer</div>
                     </div>
                 </div>
                 <div class="proj-right">
@@ -633,6 +762,7 @@
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
+        // --- 开屏动画 (保持不变) ---
         const introCanvas = document.getElementById('intro-canvas');
         const introCtx = introCanvas.getContext('2d');
         let introW, introH;
@@ -646,47 +776,23 @@
         initIntro();
         window.addEventListener('resize', initIntro);
 
-        const dropState = { y: -50, radius: 8, phase: 'drop' };
+        const dropState = { y: -50, radius: 8 };
         const rippleState = { radius: 0, opacity: 1 };
-
-        function drawWobblyCircle(ctx, x, y, radius, color, composite) {
-            ctx.save();
-            if(composite) ctx.globalCompositeOperation = composite;
-            
-            ctx.beginPath();
-            const points = 20;
-
-            for (let i = 0; i <= points; i++) {
-                const angle = (i / points) * Math.PI * 2;
-                const r = radius + (Math.random() * radius * 0.05); 
-                const px = x + Math.cos(angle) * r;
-                const py = y + Math.sin(angle) * r;
-                if (i === 0) ctx.moveTo(px, py);
-                else ctx.lineTo(px, py);
-            }
-            ctx.closePath();
-            ctx.fillStyle = color;
-            ctx.fill();
-            ctx.restore();
-        }
 
         function startIntroAnimation() {
             const tl = gsap.timeline();
-
             tl.to(dropState, {
                 y: introH / 2,
                 duration: 0.8,
                 ease: "power2.in",
                 onUpdate: () => {
-
                     introCtx.fillStyle = '#f4f1e8';
                     introCtx.fillRect(0, 0, introW, introH);
-                    
                     introCtx.beginPath();
                     introCtx.arc(introW/2, dropState.y, dropState.radius, 0, Math.PI*2);
                     introCtx.fillStyle = '#121212';
                     introCtx.fill();
-                    
+                    // 尾迹
                     introCtx.beginPath();
                     introCtx.moveTo(introW/2 - 4, dropState.y);
                     introCtx.lineTo(introW/2, dropState.y - 30);
@@ -708,96 +814,45 @@
                     const cx = introW / 2;
                     const cy = introH / 2;
                     const r = rippleState.radius;
-
                     introCtx.globalCompositeOperation = 'source-over';
                     introCtx.fillStyle = '#f4f1e8';
                     introCtx.fillRect(0, 0, introW, introH);
-
                     introCtx.globalCompositeOperation = 'destination-out';
-                    
                     introCtx.beginPath();
                     introCtx.arc(cx, cy, r, 0, Math.PI*2);
                     introCtx.fill();
-
-                    if(r > 20) {
-                        introCtx.beginPath();
-                    }
-
+                    // 边缘装饰
                     introCtx.globalCompositeOperation = 'source-over';
                     introCtx.lineWidth = r * 0.05;
-
                     introCtx.beginPath();
                     introCtx.arc(cx, cy, r, 0, Math.PI*2);
-                    introCtx.strokeStyle = `rgba(18, 18, 18, ${1 - r/(Math.max(introW,introH)*0.8)})`; // 渐隐
+                    introCtx.strokeStyle = `rgba(18, 18, 18, ${1 - r/(Math.max(introW,introH)*0.8)})`; 
                     introCtx.stroke();
-
-                    const r2 = r * 1.2 + 20;
-                    introCtx.beginPath();
-                    introCtx.arc(cx, cy, r2, 0, Math.PI*2);
-                    introCtx.lineWidth = r * 0.02;
-                    introCtx.strokeStyle = `rgba(138, 37, 37, ${0.5 - r/(Math.max(introW,introH))})`; // 朱砂色淡淡的圈
-                    introCtx.stroke();
-                    
-                    if (r > 0) {
-                        introCtx.fillStyle = `rgba(18,18,18, ${0.1 * (1 - r/1000)})`;
-                        introCtx.beginPath();
-                        introCtx.arc(cx, cy, r * 0.8, 0, Math.PI*2);
-                        introCtx.fill();
-                    }
                 },
                 onComplete: () => {
                     introCanvas.style.display = 'none';
                 }
             });
         }
-
         window.onload = startIntroAnimation;
 
         function startHeroAnimations() {
             gsap.to("nav", { opacity: 1, duration: 1.5, ease: "power2.out" });
-            
-            gsap.to(".hero-main", { 
-                opacity: 1, 
-                y: 0,
-                scale: 1,
-                duration: 1.2, 
-                ease: "power3.out" 
-            });
-            
+            gsap.to(".hero-main", { opacity: 1, y: 0, scale: 1, duration: 1.2, ease: "power3.out" });
             gsap.set(".hero-main", { y: 50 }); 
-            gsap.to(".hero-main", {
-                y: 0, opacity: 1, duration: 1.5, ease: "power2.out"
-            });
-
-            gsap.to(".poem-intro", {
-                opacity: 1,
-                x: 0,
-                duration: 1.5,
-                delay: 0.2,
-                ease: "power2.out"
-            });
+            gsap.to(".hero-main", { y: 0, opacity: 1, duration: 1.5, ease: "power2.out" });
+            gsap.to(".poem-intro", { opacity: 1, x: 0, duration: 1.5, delay: 0.2, ease: "power2.out" });
             gsap.from(".poem-intro", { x: -30, duration: 1.5, delay: 0.2 });
-
-            gsap.from(".hero-title", {
-                y: 50,
-                opacity: 0,
-                duration: 1.5,
-                ease: "power3.out",
-                delay: 0.1
-            });
+            gsap.from(".hero-title", { y: 50, opacity: 0, duration: 1.5, ease: "power3.out", delay: 0.1 });
         }
         
+        // --- 滚动动画 ---
         const projects = document.querySelectorAll('.project-content');
-        projects.forEach((proj, index) => {
+        projects.forEach((proj) => {
             gsap.fromTo(proj, 
                 { opacity: 0, y: 100 },
                 {
-                    scrollTrigger: {
-                        trigger: proj,
-                        start: "top 85%",
-                        end: "top 40%",
-                        scrub: 1,
-                    },
+                    scrollTrigger: { trigger: proj, start: "top 85%", end: "top 40%", scrub: 1 },
                     opacity: 1, y: 0, ease: "power2.out"
                 }
             );
@@ -807,12 +862,7 @@
             const speed = img.dataset.speed || 0.2;
             gsap.to(img, {
                 y: (i, target) => -100 * speed,
-                scrollTrigger: {
-                    trigger: img,
-                    start: "top bottom",
-                    end: "bottom top",
-                    scrub: true
-                }
+                scrollTrigger: { trigger: img, start: "top bottom", end: "bottom top", scrub: true }
             });
         });
 
@@ -835,7 +885,6 @@
                 const y = e.clientY - rect.top;
                 const centerX = rect.width / 2;
                 const centerY = rect.height / 2;
-
                 const rotateX = ((y - centerY) / centerY) * -3;
                 const rotateY = ((x - centerX) / centerX) * 3;
                 
@@ -858,24 +907,32 @@
             });
         });
 
+        // --- 背景效果：墨水 (日) + 雪花 (夜) ---
         const bgCanvas = document.getElementById('bg-ink-canvas');
         const bgCtx = bgCanvas.getContext('2d');
-        let bgW, bgH, inks = [];
-        const MAX_INKS = 15;
+        let bgW, bgH, inks = [], snows = [];
+        const MAX_INKS = 12;
+        const MAX_SNOWS = 100;
+        let isDarkMode = false;
         
         function resizeBg() { bgW = bgCanvas.width = window.innerWidth; bgH = bgCanvas.height = window.innerHeight; }
         window.addEventListener('resize', resizeBg);
         resizeBg();
 
+        // 墨水类
         class BgInkDrop {
             constructor() {
+                this.reset();
+            }
+            reset() {
                 this.x = Math.random() * bgW;
                 this.y = Math.random() * bgH;
                 this.radius = 0;
                 this.maxRadius = Math.random() * 80 + 40;
                 this.opacity = 0.8;
                 this.speed = Math.random() * 1.2 + 0.8;
-                this.color = Math.random() > 0.85 ? '#8a2525' : '#1a1a1a';
+                // 夜间为白色(雾), 日间为深色(墨)
+                this.color = isDarkMode ? '#dddddd' : (Math.random() > 0.85 ? '#8a2525' : '#1a1a1a');
                 this.alive = true;
             }
             update() {
@@ -887,25 +944,81 @@
                 bgCtx.beginPath();
                 bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 bgCtx.fillStyle = this.color;
-                bgCtx.globalAlpha = this.opacity * 0.15;
+                // 夜间雾气更淡
+                bgCtx.globalAlpha = isDarkMode ? this.opacity * 0.08 : this.opacity * 0.15;
                 bgCtx.fill();
                 bgCtx.globalAlpha = 1;
             }
         }
+
+        // 雪花类
+        class SnowFlake {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * bgW;
+                this.y = Math.random() * -bgH; // 从上方开始
+                this.radius = Math.random() * 3 + 1;
+                this.speedY = Math.random() * 2 + 1;
+                this.speedX = (Math.random() - 0.5) * 1;
+                this.opacity = Math.random() * 0.6 + 0.4;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                if (this.y > bgH) this.reset();
+            }
+            draw() {
+                bgCtx.beginPath();
+                bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                bgCtx.fillStyle = '#ffffff';
+                bgCtx.globalAlpha = this.opacity;
+                bgCtx.fill();
+                bgCtx.globalAlpha = 1;
+            }
+        }
+
+        // 初始化雪花
+        for(let i=0; i<MAX_SNOWS; i++) {
+            snows.push(new SnowFlake());
+        }
+
         function animateBg() {
             bgCtx.clearRect(0, 0, bgW, bgH);
+            
+            // 绘制墨水/雾气 (日夜皆有，但颜色不同)
             if (inks.length < MAX_INKS && Math.random() < 0.01) inks.push(new BgInkDrop());
             inks.forEach(ink => { ink.update(); ink.draw(); });
             inks = inks.filter(ink => ink.alive);
+
+            // 绘制雪花 (仅夜间)
+            if (isDarkMode) {
+                snows.forEach(snow => {
+                    snow.update();
+                    snow.draw();
+                });
+            }
+
             requestAnimationFrame(animateBg);
         }
         animateBg();
 
+        // 切换模式逻辑
+        const toggleBtn = document.getElementById('theme-toggle');
+        toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            isDarkMode = document.body.classList.contains('dark-mode');
+            // 清空墨水，让它们重新以新颜色生成
+            inks = [];
+        });
+
+        // 鼠标跟随
         const cursor = document.getElementById('cursor');
         let mouseX = -100, mouseY = -100;
         window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
         gsap.ticker.add(() => { gsap.set(cursor, { left: mouseX, top: mouseY }); });
-        document.querySelectorAll('a, .project-content, .skill-category').forEach(el => {
+        document.querySelectorAll('a, .project-content, .skill-category, button').forEach(el => {
             el.addEventListener('mouseenter', () => cursor.classList.add('active'));
             el.addEventListener('mouseleave', () => cursor.classList.remove('active'));
         });
