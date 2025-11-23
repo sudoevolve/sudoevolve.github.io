@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Black Hole Simulation - Fixed</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000; }
+        canvas { display: block; }
+        #loading {
+            position: absolute; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%);
+            color: white; font-family: sans-serif; pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">Loading Singularity...</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/FXAAShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/Pass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+
+    <script>
+        // ================= 场景初始化 =================
+        const scene = new THREE.Scene();
+        // 使用正交相机作为画布载体，不参与透视计算
+        const dummyCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: false, // Shader中自带抗锯齿处理，关闭原生AA以提升性能
+            powerPreference: "high-performance"
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // 限制像素比防止过卡
+        document.body.appendChild(renderer.domElement);
+
+        const composer = new THREE.EffectComposer(renderer);
+        const renderPass = new THREE.RenderPass(scene, dummyCamera);
+        const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.15, 0.4, 0.7);
+        const fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
+        fxaaPass.material.uniforms.resolution.value.x = 1 / (window.innerWidth * renderer.getPixelRatio());
+        fxaaPass.material.uniforms.resolution.value.y = 1 / (window.innerHeight * renderer.getPixelRatio());
+        composer.addPass(renderPass);
+        composer.addPass(bloomPass);
+        composer.addPass(fxaaPass);
+
+        // ================= 虚拟相机控制 =================
+        // 这个相机负责计算我们在看哪里，但并不直接渲染画面
+        const viewCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+        viewCamera.position.set(0, 0, 7);
+        
+        const controls = new THREE.OrbitControls(viewCamera, renderer.domElement);
+        controls.target.set(0, 0, 0); // 强制锁定中心
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.enablePan = false; // 禁止平移，防止用户把黑洞拖出屏幕
+        controls.minDistance = 2.5;
+        controls.maxDistance = 15;
+
+        // ================= 着色器程序 (核心修复) =================
+        const fragmentShader = `
+            uniform float iTime;
+            uniform vec2 iResolution;
+            uniform mat4 viewMatrixInverse;
+            uniform mat4 projectionMatrixInverse;
+
+            #define STEPS 100          // 步进次数
+            #define BH_RADIUS 0.8      // 黑洞半径
+            #define DISK_INNER 2.0     // 吸积盘内径 (相较于黑洞半径的倍数)
+            #define DISK_OUTER 6.5     // 吸积盘外径
+            
+            // 工具：二维旋转矩阵
+            mat2 rot(float a) {
+                float s = sin(a), c = cos(a);
+                return mat2(c, -s, s, c);
+            }
+
+            // 工具：随机数 (用于抖动消除条纹)
+            float hash(vec2 p) {
+                return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+            }
+
+            // 3D 噪声函数 (不使用 UV 映射，彻底消除接缝)
+            float noise(vec3 p) {
+                vec3 ip = floor(p);
+                vec3 fp = fract(p);
+                fp = fp * fp * (3.0 - 2.0 * fp); // Smoothstep
+                
+                float n = ip.x + ip.y * 57.0 + 113.0 * ip.z;
+                
+                return mix(mix(mix(fract(sin(n)*43758.5453), fract(sin(n+1.0)*43758.5453), fp.x),
+                               mix(fract(sin(n+57.0)*43758.5453), fract(sin(n+58.0)*43758.5453), fp.x), fp.y),
+                           mix(mix(fract(sin(n+113.0)*43758.5453), fract(sin(n+114.0)*43758.5453), fp.x),
+                               mix(fract(sin(n+170.0)*43758.5453), fract(sin(n+171.0)*43758.5453), fp.x), fp.y), fp.z);
+            }
+
+            // 分形布朗运动 (FBM) - 生成云雾质感
+            float fbm(vec3 p) {
+                float f = 0.0;
+                float w = 0.5;
+                // 降低循环次数，减少高频细节，解决“圈太多”的问题
+                for(int i=0; i<4; i++) { 
+                    f += w * noise(p);
+                    p *= 2.0; // 频率
+                    w *= 0.5; // 振幅
+                }
+                return f;
+            }
+
+            void main() {
+                // 坐标归一化，确保 (0,0) 永远在屏幕正中心
+                vec2 uv = (gl_FragCoord.xy * 2.0 - iResolution.xy) / iResolution.y;
+                
+                // 1. 射线生成 (Ray Generation) - 严格遵循相机矩阵
+                // 从 NDC 坐标反推世界坐标射线方向
+                vec4 clipPos = vec4(uv.x * (iResolution.x/iResolution.y) * (iResolution.y/iResolution.x), uv.y, -1.0, 1.0); 
+                // 上面这行修正了纵横比问题，更稳健的写法如下：
+                vec4 rayClip = vec4((gl_FragCoord.xy / iResolution.xy * 2.0 - 1.0), -1.0, 1.0);
+                vec4 rayView = projectionMatrixInverse * rayClip;
+                vec3 rayDirView = normalize(rayView.xyz / rayView.w);
+                vec3 rd = (viewMatrixInverse * vec4(rayDirView, 0.0)).xyz;
+                vec3 ro = (viewMatrixInverse * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+
+                vec3 col = vec3(0.0);
+                vec3 p = ro;
+                
+                // 累积变量
+                float accDensity = 0.0;     // 吸积盘密度
+                vec3 accColor = vec3(0.0);  // 吸积盘颜色
+                
+                // 【关键修复】Dithering (抖动)
+                // 给起始位置加一点随机偏移，打散同心圆条纹
+                float jitter = hash(uv + iTime) * 0.1; 
+                float t = jitter; 
+
+                // === 光线步进循环 ===
+                for(int i = 0; i < STEPS; i++) {
+                    float d2 = dot(p, p);       // 距离平方
+                    float d = sqrt(d2);         // 距离
+                    
+                    // 1. 事件视界 (黑洞本体)
+                    if(d < BH_RADIUS) {
+                        col = vec3(0.0); // 纯黑
+                        // 不要在视界内继续计算，直接阻断
+                        break;
+                    }
+
+                    // 2. 引力透镜 (光线弯曲)
+                    // 模拟强引力场对光线的拉扯
+                    float gravity = (BH_RADIUS * BH_RADIUS) / (d2 + 0.1);
+                    vec3 toCenter = normalize(-p);
+                    // 修正弯曲力度，使其更平滑
+                    rd = normalize(rd + toCenter * gravity * 0.25 * (0.2 + min(0.8, 1.0/d)));
+                    
+                    // 3. 吸积盘渲染 (体积光)
+                    // 使用垂直距离衰减，模拟薄盘
+                    float distToPlane = abs(p.y);
+                    // 盘厚度随距离变大 (类似喇叭口)
+                    float diskH = 0.08; 
+                    
+                    // 只在盘附近采样，节省性能
+                    if(distToPlane < diskH * 3.0 && d < DISK_OUTER && d > DISK_INNER * 0.8) {
+                        
+                        // 坐标变换：让纹理旋转
+                        // 速度随半径衰减 (开普勒运动)
+                        float speed = 6.0 / (d + 0.1);
+                        float rotAngle = iTime * speed;
+                        
+                        // 【关键修复】不使用 atan，而是直接旋转坐标 p
+                        // 这样就绝对不会有接缝
+                        vec3 rotP = p;
+                        rotP.xz *= rot(rotAngle); 
+                        
+                        // 采样噪声
+                        // 在 XZ 平面上拉伸噪声，形成环状纹理
+                        // 降低频率 (* 1.5) 解决“内部圈太多”的问题
+                        float signal = fbm(vec3(length(rotP.xz) * 1.5, rotP.y * 4.0, rotP.z * 0.5));
+                        
+                        // 形状切割
+                        float radialFade = smoothstep(DISK_INNER * 0.8, DISK_INNER + 0.5, d) * 
+                                           smoothstep(DISK_OUTER, DISK_OUTER - 2.0, d);
+                        float verticalFade = exp(-20.0 * (distToPlane*distToPlane)); // 高斯衰减
+                        
+                        float density = signal * radialFade * verticalFade;
+                        
+                        if(density > 0.01) {
+                            // 多普勒效应 (Doppler Beaming)
+                            // 计算光线与盘流向的点积
+                            vec3 flowDir = normalize(vec3(-p.z, 0.0, p.x));
+                            float doppler = dot(rd, flowDir);
+                            float beaming = 1.0;
+                            
+                            // 颜色映射：黑体辐射温度
+                            vec3 hot = vec3(1.0, 0.95, 0.8);
+                            vec3 mid = vec3(1.0, 0.5, 0.1);
+                            vec3 outer = vec3(1, 0.8, 0.6);
+                            
+                            // 根据距离混合颜色
+                            float tempGradient = smoothstep(DISK_OUTER, DISK_INNER, d);
+                            vec3 baseCol = mix(outer, mid, tempGradient);
+                            baseCol = mix(baseCol, hot, pow(tempGradient, 3.0));
+                            
+                            // 累积颜色
+                            float stepContrib = density * 0.2; // 每次步进贡献度
+                            accColor += baseCol * stepContrib * beaming * (1.0 - accDensity);
+                            accDensity += stepContrib;
+                            
+                            if(accDensity > 0.98) break; // 太厚了就不用算了
+                        }
+                        float ringCenter = BH_RADIUS * 1.45;
+                        float ringWidth = 0.22;
+                        float ringRad = smoothstep(ringCenter - ringWidth, ringCenter, d) * smoothstep(ringCenter + ringWidth, ringCenter, d);
+                        float ringVertical = exp(-16.0 * (distToPlane*distToPlane));
+                        float ringStep = ringRad * ringVertical;
+                        accColor += vec3(1.0, 0.97, 0.85) * ringStep * 0.15 * (1.0 - accDensity);
+                        accDensity += ringStep * 0.08;
+                    }
+
+                    // 4. 步进移动
+                    // 动态步长：离中心越近步子越小，保证精度
+                    float stepSize = max(0.04, d * 0.05);
+                    p += rd * stepSize;
+                    
+                    // 逃逸条件
+                    if(d > 20.0) {
+                        // 星空背景
+                        float stars = pow(hash(rd.xy * 10.0), 200.0) * 0.8;
+                        col += vec3(stars) * (1.0 - accDensity);
+                        break; 
+                    }
+                }
+                
+                // 合并吸积盘颜色
+                col += accColor;
+                
+                // 光子环 (Photon Ring) - 视界边缘的极亮细线
+                // 使用几何方法简单模拟：如果最终颜色还是黑的，但accDensity很高，说明在视界边缘
+                // 或者简单地：
+                // 这里我们不额外画线，因为物理模拟足够好了，加上一点辉光处理即可
+
+                // === 后处理 ===
+                
+                // 1. ACES Tone Mapping (电影级色调)
+                col *= 1.35; // 稍微提亮
+                float a = 2.51, b = 0.03, c = 2.43, d = 0.59, e = 0.14;
+                col = clamp((col * (a * col + b)) / (col * (c * col + d) + e), 0.0, 1.0);
+                
+                // 2. Gamma 校正
+                col = pow(col, vec3(1.0 / 2.2));
+                
+                gl_FragColor = vec4(col, 1.0);
+            }
+        `;
+
+        const vertexShader = `
+            varying vec2 vUv;
+            void main() {
+                vUv = uv;
+                gl_Position = vec4(position, 1.0);
+            }
+        `;
+
+        // ================= 绑定与运行 =================
+        const material = new THREE.ShaderMaterial({
+            vertexShader: vertexShader,
+            fragmentShader: fragmentShader,
+            uniforms: {
+                iTime: { value: 0 },
+                iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+                viewMatrixInverse: { value: new THREE.Matrix4() },
+                projectionMatrixInverse: { value: new THREE.Matrix4() }
+            }
+        });
+
+        const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+        mesh.frustumCulled = false;
+        scene.add(mesh);
+
+        // 移除 loading 文字
+        document.getElementById('loading').style.display = 'none';
+
+        function animate(time) {
+            requestAnimationFrame(animate);
+            controls.update();
+            
+            // 传递相机矩阵
+            viewCamera.updateMatrixWorld();
+            viewCamera.updateProjectionMatrix();
+            
+            material.uniforms.iTime.value = time * 0.001;
+            material.uniforms.viewMatrixInverse.value.copy(viewCamera.matrixWorld);
+            material.uniforms.projectionMatrixInverse.value.copy(viewCamera.projectionMatrixInverse);
+            
+            composer.render();
+        }
+
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            material.uniforms.iResolution.value.set(window.innerWidth, window.innerHeight);
+            viewCamera.aspect = window.innerWidth / window.innerHeight;
+            viewCamera.updateProjectionMatrix();
+            composer.setSize(window.innerWidth, window.innerHeight);
+            bloomPass.setSize(window.innerWidth, window.innerHeight);
+            fxaaPass.material.uniforms.resolution.value.x = 1 / (window.innerWidth * renderer.getPixelRatio());
+            fxaaPass.material.uniforms.resolution.value.y = 1 / (window.innerHeight * renderer.getPixelRatio());
+        });
+
+        animate();
+    </script>
+</body>
+</html>

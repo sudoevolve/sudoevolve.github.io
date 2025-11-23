@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>20种风格全套UI控件库</title>
+    <style>
+        /* ================= 全局重置与基础布局 ================= */
+        :root {
+            --bg-body: #f4f4f5;
+            --text-main: #333;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        header { text-align: center; margin-bottom: 60px; }
+        h1 { font-size: 2.2rem; margin-bottom: 10px; color: #111; }
+        p.subtitle { color: #666; font-size: 1rem; }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 40px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* 卡片基础容器 */
+        .card {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px; /* 控件之间的间距 */
+            position: relative;
+            transition: transform 0.2s;
+        }
+        .card h2 { font-size: 1.1rem; margin: 0 0 5px 0; opacity: 0.9; font-weight: 700; text-transform: uppercase; }
+
+        /* 标签组布局 */
+        .label-group { font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; display: block; opacity: 0.8; }
+        .row { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+        
+        /* ================= 核心控件重置 (Reset) ================= */
+        
+        /* 1. 输入框 & 按钮 */
+        input[type="text"], select, button {
+            width: 100%; padding: 10px 12px; box-sizing: border-box; outline: none; font-size: 14px; margin: 0;
+        }
+
+        /* 2. 下拉框 (Select) - 移除默认箭头，准备自定义 */
+        select {
+            -webkit-appearance: none; appearance: none;
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+            cursor: pointer;
+        }
+
+        .ui-select { position: relative; width: 100%; }
+        .ui-select-display { width: 100%; padding: 10px 12px; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; cursor: pointer; font: inherit; transition: background-color .12s ease, border-color .12s ease, color .12s ease; }
+        .ui-select-chevron { width: 12px; height: 12px; margin-left: 8px; flex-shrink: 0; }
+        .ui-select-chevron svg { transition: transform .15s ease; }
+        .ui-select-dropdown { position: absolute; left: 0; right: 0; top: 100%; max-height: 220px; overflow: auto; z-index: 1000; display: none; box-sizing: border-box; opacity: 0; transform: translateY(4px); transition: opacity .12s ease, transform .12s ease; }
+        .ui-select.open .ui-select-dropdown { display: block; opacity: 1; transform: translateY(0); }
+        .ui-select.open .ui-select-chevron svg { transform: rotate(180deg); }
+        .ui-select-option { padding: 8px 12px; cursor: pointer; transition: background-color .12s ease; }
+        .ui-select-option.active { font-weight: 600; }
+
+        .card button { transition: transform .18s ease; }
+        .card button:hover { transform: translateY(-1px); }
+        .card button:active { transform: translateY(0); }
+
+        /* 3. Checkbox & Radio - 隐藏默认，完全自定义 */
+        input[type="checkbox"], input[type="radio"] {
+            -webkit-appearance: none; appearance: none;
+            width: 18px; height: 18px;
+            cursor: pointer; position: relative;
+            margin-right: 6px; vertical-align: text-bottom;
+            transition: 0.2s;
+            display: inline-block;
+        }
+        label { cursor: pointer; display: flex; align-items: center; font-size: 14px; }
+
+        /* 4. Range Slider - 重置 */
+        input[type="range"] {
+            -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer; margin: 10px 0;
+        }
+        input[type="range"]:focus { outline: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; }
+
+        /* 5. Toggle Switch - 结构 */
+        .switch-wrap { display: flex; align-items: center; justify-content: space-between; }
+        .switch-control { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch-control input { opacity: 0; width: 0; height: 0; }
+        .slider-track {
+            position: absolute; cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .3s; border-radius: 34px;
+        }
+        .slider-track:before {
+            position: absolute; content: "";
+            height: 18px; width: 18px;
+            left: 3px; bottom: 3px;
+            background-color: white; transition: .3s; border-radius: 50%;
+        }
+        .switch-control input:checked + .slider-track:before { transform: translateX(20px); }
+
+        /* ============================================================
+           20种风格详细定义 (Input, Select, Radio, Checkbox, Slider, Switch, Button)
+           ============================================================ */
+
+        /* --- 1. Flat (扁平化) --- */
+        .style-flat { background: #fff; border: 1px solid #e1e4e8; border-radius: 6px; }
+        .style-flat input[type="text"], .style-flat select { background-color: #f6f8fa; border: 1px solid #d1d5da; border-radius: 6px; color: #24292e; }
+        .style-flat select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2324292e'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-flat button { background: #0366d6; color: white; border: none; border-radius: 6px; font-weight: 600; }
+        /* Check/Radio */
+        .style-flat input[type="checkbox"], .style-flat input[type="radio"] { border: 1px solid #d1d5da; background: #fff; border-radius: 3px; }
+        .style-flat input[type="radio"] { border-radius: 50%; }
+        .style-flat input[type="checkbox"]:checked, .style-flat input[type="radio"]:checked { background: #0366d6; border-color: #0366d6; box-shadow: inset 0 0 0 3px #fff; }
+        /* Range */
+        .style-flat input[type="range"]::-webkit-slider-runnable-track { height: 6px; background: #e1e4e8; border-radius: 3px; }
+        .style-flat input[type="range"]::-webkit-slider-thumb { height: 16px; width: 16px; background: #0366d6; border-radius: 50%; margin-top: -5px; }
+        /* Switch */
+        .style-flat .slider-track { background: #e1e4e8; }
+        .style-flat input:checked + .slider-track { background: #2ea44f; }
+
+        /* --- 2. Material (质感) --- */
+        .style-material { background: #fff; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+        .style-material input[type="text"], .style-material select { background-color: #f5f5f5; border: none; border-bottom: 2px solid #6200ee; border-radius: 4px 4px 0 0; transition: background-color 0.2s; }
+        .style-material input[type="text"]:focus { background: #ececec; }
+        .style-material select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236200ee'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-material button { background: #6200ee; color: white; border: none; border-radius: 4px; text-transform: uppercase; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        /* Check/Radio */
+        .style-material input[type="checkbox"], .style-material input[type="radio"] { border: 2px solid #757575; }
+        .style-material input[type="radio"] { border-radius: 50%; }
+        .style-material input[type="checkbox"]:checked { background: #6200ee; border-color: #6200ee; }
+        .style-material input[type="checkbox"]:checked::after { content: '✔'; color: white; font-size: 12px; position: absolute; left: 2px; top: -1px; }
+        .style-material input[type="radio"]:checked { border: 5px solid #6200ee; }
+        /* Switch */
+        .style-material .slider-track { background: #b0b0b0; }
+        .style-material input:checked + .slider-track { background: #b39ddb; }
+        .style-material input:checked + .slider-track:before { background: #6200ee; }
+        /* Slider */
+        .style-material input[type="range"]::-webkit-slider-runnable-track { height: 4px; background: #e0e0e0; }
+        .style-material input[type="range"]::-webkit-slider-thumb { height: 16px; width: 16px; background: #6200ee; border-radius: 50%; margin-top: -6px; box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+
+
+        /* --- 3. Neumorphism (新拟态) --- */
+        .style-neu { background: #e0e5ec; border-radius: 20px; box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255, 0.5); }
+        .style-neu input[type="text"], .style-neu select { 
+            background-color: #e0e5ec; border: none; border-radius: 50px; 
+            box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #fff; padding-left: 15px;
+        }
+        .style-neu select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23555'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-neu button {
+            background: #e0e5ec; color: #555; border: none; border-radius: 50px; 
+            box-shadow: 6px 6px 10px #a3b1c6, -6px -6px 10px #fff;
+        }
+        .style-neu button:active { box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #fff; }
+        /* Check/Radio */
+        .style-neu input[type="checkbox"], .style-neu input[type="radio"] { 
+            background: #e0e5ec; box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #fff; border-radius: 4px; border: none;
+        }
+        .style-neu input[type="radio"] { border-radius: 50%; }
+        .style-neu input[type="checkbox"]:checked, .style-neu input[type="radio"]:checked { 
+            box-shadow: inset 2px 2px 5px #a3b1c6, inset -2px -2px 5px #fff; 
+        }
+        .style-neu input[type="checkbox"]:checked::after { content: ''; width: 8px; height: 8px; background: #555; border-radius: 50%; position: absolute; top: 5px; left: 5px; }
+        .style-neu input[type="radio"]:checked::after { content: ''; width: 8px; height: 8px; background: #007aff; border-radius: 50%; position: absolute; top: 5px; left: 5px; }
+        /* Switch */
+        .style-neu .slider-track { background: #e0e5ec; box-shadow: inset 3px 3px 5px #a3b1c6, inset -3px -3px 5px #fff; }
+        .style-neu .slider-track:before { background: #e0e5ec; box-shadow: 2px 2px 4px #a3b1c6, -2px -2px 4px #fff; }
+        .style-neu input:checked + .slider-track:before { background: #007aff; }
+
+        /* --- 4. Glassmorphism (毛玻璃) --- */
+        .style-glass { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .style-glass .glass-inner { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.3); padding: 20px; }
+        .style-glass input[type="text"], .style-glass select { background-color: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; border-radius: 6px; }
+        .style-glass select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-glass option { color: #333; }
+        .style-glass button { background: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.5); color: white; border-radius: 6px; }
+        /* Check/Radio */
+        .style-glass input[type="checkbox"], .style-glass input[type="radio"] { border: 1px solid rgba(255,255,255,0.6); background: transparent; border-radius: 3px; }
+        .style-glass input[type="radio"] { border-radius: 50%; }
+        .style-glass input[type="checkbox"]:checked, .style-glass input[type="radio"]:checked { background: rgba(255,255,255,0.8); }
+        /* Slider */
+        .style-glass input[type="range"]::-webkit-slider-runnable-track { background: rgba(0,0,0,0.2); height: 4px; border-radius: 2px; }
+        .style-glass input[type="range"]::-webkit-slider-thumb { background: white; width: 14px; height: 14px; border-radius: 50%; margin-top: -5px; }
+        /* Switch */
+        .style-glass .slider-track { background: rgba(0,0,0,0.3); }
+        .style-glass input:checked + .slider-track { background: rgba(255,255,255,0.4); }
+
+        /* --- 5. Brutalism (粗野主义) --- */
+        .style-brutal { background: #fff; border: 4px solid #000; box-shadow: 8px 8px 0 #000; }
+        .style-brutal input[type="text"], .style-brutal select, .style-brutal button { 
+            border: 3px solid #000; border-radius: 0; background-color: #ffff00; color: black; font-weight: bold; font-family: monospace;
+        }
+        .style-brutal select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-brutal button { background: #ff00ff; box-shadow: 4px 4px 0 #000; }
+        .style-brutal button:active { transform: translate(4px, 4px); box-shadow: none; }
+        /* Check/Radio */
+        .style-brutal input[type="checkbox"], .style-brutal input[type="radio"] { border: 3px solid #000; background: #fff; border-radius: 0; width: 20px; height: 20px; }
+        .style-brutal input[type="checkbox"]:checked { background: #000; }
+        .style-brutal input[type="radio"]:checked { background: #000; border-radius: 50%; border: 3px solid #000; box-shadow: inset 0 0 0 3px #fff; }
+        /* Slider */
+        .style-brutal input[type="range"]::-webkit-slider-runnable-track { height: 10px; background: #fff; border: 3px solid #000; }
+        .style-brutal input[type="range"]::-webkit-slider-thumb { width: 12px; height: 24px; background: #000; border-radius: 0; margin-top: -7px; }
+        /* Switch */
+        .style-brutal .slider-track { background: #fff; border: 3px solid #000; border-radius: 0; }
+        .style-brutal .slider-track:before { background: #000; border: 1px solid #000; border-radius: 0; }
+        .style-brutal input:checked + .slider-track { background: #00ff00; }
+
+        /* --- 6. Cyberpunk (赛博朋克) --- */
+        .style-cyber { background: #0a0a0a; border: 1px solid #0ff; color: #0ff; font-family: monospace; }
+        .style-cyber input[type="text"], .style-cyber select { background-color: #1a1a1a; border: 1px solid #0ff; color: #0ff; clip-path: polygon(0 0, 100% 0, 100% 80%, 95% 100%, 0 100%); }
+        .style-cyber select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300ffff'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-cyber button { background: transparent; border: 1px solid #f0f; color: #f0f; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
+        .style-cyber button:hover { background: #f0f; color: #000; box-shadow: 0 0 15px #f0f; }
+        /* Check/Radio */
+        .style-cyber input[type="checkbox"], .style-cyber input[type="radio"] { border: 1px solid #f0f; background: black; }
+        .style-cyber input[type="checkbox"]:checked { background: #f0f; box-shadow: 0 0 8px #f0f; }
+        .style-cyber input[type="radio"] { border-radius: 0; transform: rotate(45deg); }
+        .style-cyber input[type="radio"]:checked { background: #0ff; border-color: #0ff; box-shadow: 0 0 8px #0ff; }
+        /* Slider */
+        .style-cyber input[type="range"]::-webkit-slider-runnable-track { height: 2px; background: #333; border: 1px solid #0ff; }
+        .style-cyber input[type="range"]::-webkit-slider-thumb { width: 10px; height: 16px; background: #f0f; border-radius: 0; margin-top: -8px; box-shadow: 0 0 5px #f0f; }
+        /* Switch */
+        .style-cyber .slider-track { background: #000; border: 1px solid #0ff; border-radius: 0; }
+        .style-cyber .slider-track:before { background: #0ff; border-radius: 0; box-shadow: 0 0 5px #0ff; }
+        .style-cyber input:checked + .slider-track:before { background: #f0f; transform: translateX(20px); box-shadow: 0 0 5px #f0f; }
+
+        /* --- 7. Claymorphism (黏土风) --- */
+        .style-clay { background: #eef2f9; }
+        .style-clay .clay-inner { background: #fff; border-radius: 20px; padding: 20px; box-shadow: 8px 8px 16px #d1d9e6, -8px -8px 16px #ffffff; }
+        .style-clay input[type="text"], .style-clay select { background-color: #eef2f9; border: none; border-radius: 15px; box-shadow: inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff; }
+        .style-clay select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236d5dfc'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-clay button { background: #6d5dfc; color: white; border: none; border-radius: 15px; box-shadow: 5px 5px 10px #babbbc, -5px -5px 10px #ffffff; }
+        /* Check/Radio */
+        .style-clay input[type="checkbox"], .style-clay input[type="radio"] { background: #eef2f9; border-radius: 5px; box-shadow: inset 2px 2px 4px #d1d9e6, inset -2px -2px 4px #ffffff; border: none; }
+        .style-clay input[type="radio"] { border-radius: 50%; }
+        .style-clay input[type="checkbox"]:checked, .style-clay input[type="radio"]:checked { background: #6d5dfc; box-shadow: 2px 2px 5px #d1d9e6, -2px -2px 5px #ffffff; }
+        /* Switch */
+        .style-clay .slider-track { background: #eef2f9; box-shadow: inset 2px 2px 5px #d1d9e6, inset -2px -2px 5px #ffffff; }
+        .style-clay .slider-track:before { background: #6d5dfc; box-shadow: 2px 2px 5px #babbbc; }
+
+        /* --- 8. Pixel (像素风) --- */
+        .style-pixel { background: #2d3436; border: 4px solid #fff; font-family: 'Courier New', monospace; image-rendering: pixelated; }
+        .style-pixel h2 { color: #fab1a0; }
+        .style-pixel input[type="text"], .style-pixel select { background-color: #000; border: 2px solid #fff; color: #00b894; font-family: inherit; box-shadow: 3px 3px 0 #000; }
+        .style-pixel select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300b894'%3E%3Cpath d='M4 10h16v4H4z'/%3E%3C/svg%3E"); }
+        .style-pixel button { background: #e17055; border: 2px solid #fff; color: #fff; box-shadow: 4px 4px 0 #000; }
+        /* Check/Radio */
+        .style-pixel input[type="checkbox"], .style-pixel input[type="radio"] { border: 2px solid #fff; background: #000; width: 20px; height: 20px; }
+        .style-pixel input[type="radio"] { border-radius: 0; }
+        .style-pixel input[type="checkbox"]:checked, .style-pixel input[type="radio"]:checked { background: #00b894; box-shadow: inset 2px 2px 0 #000; }
+        /* Slider */
+        .style-pixel input[type="range"]::-webkit-slider-runnable-track { height: 8px; background: #636e72; border: 2px solid white; }
+        .style-pixel input[type="range"]::-webkit-slider-thumb { width: 12px; height: 24px; background: #fab1a0; border: 2px solid white; border-radius: 0; margin-top: -10px; }
+        /* Switch */
+        .style-pixel .slider-track { background: #000; border: 2px solid white; border-radius: 0; }
+        .style-pixel .slider-track:before { background: #b2bec3; border-radius: 0; width: 14px; height: 14px; }
+        .style-pixel input:checked + .slider-track { background: #00b894; }
+        .style-pixel input:checked + .slider-track:before { background: white; }
+
+        /* --- 9. Gradient (渐变) --- */
+        .style-gradient { background: #fff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .style-gradient h2 { background: linear-gradient(to right, #fa709a, #fee140); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .style-gradient input[type="text"], .style-gradient select { border: 2px solid #eee; border-radius: 8px; background-color: white; }
+        .style-gradient input[type="text"]:focus, .style-gradient select:focus { border-image: linear-gradient(to right, #fa709a, #fee140); border-image-slice: 1; }
+        .style-gradient select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fa709a'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-gradient button { background: linear-gradient(to right, #fa709a, #fee140); border: none; color: white; border-radius: 20px; font-weight: bold; }
+        /* Check/Radio */
+        .style-gradient input[type="checkbox"], .style-gradient input[type="radio"] { border: 1px solid #ddd; background: #eee; }
+        .style-gradient input[type="radio"] { border-radius: 50%; }
+        .style-gradient input[type="checkbox"]:checked, .style-gradient input[type="radio"]:checked { background-image: linear-gradient(to bottom right, #fa709a, #fee140); border: none; }
+        /* Slider */
+        .style-gradient input[type="range"]::-webkit-slider-runnable-track { height: 6px; background: #eee; border-radius: 3px; }
+        .style-gradient input[type="range"]::-webkit-slider-thumb { height: 18px; width: 18px; background: #fa709a; border-radius: 50%; margin-top: -6px; }
+        /* Switch */
+        .style-gradient .slider-track { background: #eee; }
+        .style-gradient input:checked + .slider-track { background: linear-gradient(to right, #fa709a, #fee140); }
+
+        /* --- 10. Skeuomorphism (拟物化) --- */
+        .style-skeuo { background: linear-gradient(#f2f2f2, #dcdcdc); border: 1px solid #aaa; border-radius: 6px; }
+        .style-skeuo input[type="text"], .style-skeuo select { border: 1px solid #a0a0a0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.15); background-color: #fff; border-radius: 4px; }
+        .style-skeuo select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-skeuo button { background: linear-gradient(#fff, #e0e0e0); border: 1px solid #999; color: #333; box-shadow: 0 1px 3px rgba(0,0,0,0.2); border-radius: 4px; text-shadow: 0 1px 0 #fff; }
+        .style-skeuo button:active { background: linear-gradient(#e0e0e0, #fff); box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); }
+        /* Check/Radio */
+        .style-skeuo input[type="checkbox"], .style-skeuo input[type="radio"] { background: linear-gradient(#fff, #eee); border: 1px solid #999; box-shadow: 0 1px 0 #fff, inset 0 1px 2px rgba(0,0,0,0.1); }
+        .style-skeuo input[type="radio"] { border-radius: 50%; }
+        .style-skeuo input[type="checkbox"]:checked::after { content: '✔'; position: absolute; left: 3px; font-size: 12px; color: #333; }
+        .style-skeuo input[type="radio"]:checked { background: #555; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); border: 3px solid #eee; }
+        /* Switch */
+        .style-skeuo .slider-track { background: linear-gradient(#ccc, #eee); border: 1px solid #999; box-shadow: inset 0 1px 4px rgba(0,0,0,0.2); }
+        .style-skeuo .slider-track:before { background: linear-gradient(#fff, #ddd); border: 1px solid #999; box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+        .style-skeuo input:checked + .slider-track { background: linear-gradient(#4cd964, #28a53c); }
+
+        /* --- 11. Dark Mode (暗黑) --- */
+        .style-dark { background: #121212; color: #eee; border: 1px solid #333; }
+        .style-dark input[type="text"], .style-dark select { background-color: #2c2c2c; border: 1px solid #444; color: white; border-radius: 4px; }
+        .style-dark select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-dark button { background: #bb86fc; color: #000; border: none; border-radius: 4px; font-weight: bold; }
+        /* Check/Radio */
+        .style-dark input[type="checkbox"], .style-dark input[type="radio"] { border: 2px solid #555; background: #121212; }
+        .style-dark input[type="radio"] { border-radius: 50%; }
+        .style-dark input[type="checkbox"]:checked, .style-dark input[type="radio"]:checked { background: #03dac6; border-color: #03dac6; }
+        .style-dark input[type="radio"]:checked { box-shadow: inset 0 0 0 3px #121212; }
+        /* Switch */
+        .style-dark .slider-track { background: #333; border: 1px solid #555; }
+        .style-dark .slider-track:before { background: #121212; box-shadow: 0 0 2px #fff; }
+        .style-dark input:checked + .slider-track { background: #bb86fc; border-color: #bb86fc; }
+
+        /* --- 12. Hand Drawn (手绘风) --- */
+        .style-hand { background: #fffdf0; font-family: 'Comic Sans MS', 'Chalkboard SE', cursive; border: 2px solid #222; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; }
+        .style-hand input[type="text"], .style-hand select { background-color: transparent; border: 2px solid #222; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; }
+        .style-hand select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23222'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-hand button { background: #ffcc00; border: 2px solid #222; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; font-weight: bold; }
+        /* Check/Radio */
+        .style-hand input[type="checkbox"] { border: 2px solid #222; border-radius: 2px; }
+        .style-hand input[type="radio"] { border: 2px solid #222; border-radius: 50%; }
+        .style-hand input[type="checkbox"]:checked { background: #222; }
+        .style-hand input[type="radio"]:checked { background: #222; box-shadow: inset 0 0 0 3px #fffdf0; }
+        /* Switch */
+        .style-hand .slider-track { background: transparent; border: 2px solid #222; }
+        .style-hand .slider-track:before { background: #222; border-radius: 50%; }
+        .style-hand input:checked + .slider-track { background: #ffcc00; }
+
+        /* --- 13. Outline (线框) --- */
+        .style-outline { background: #2c3e50; color: white; border: 2px solid white; }
+        .style-outline input[type="text"], .style-outline select { background-color: transparent; border: 2px solid white; color: white; }
+        .style-outline select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-outline option { background: #2c3e50; }
+        .style-outline button { background: transparent; border: 2px solid white; color: white; font-weight: bold; transition: 0.2s; }
+        .style-outline button:hover { background: white; color: #2c3e50; }
+        /* Check/Radio */
+        .style-outline input[type="checkbox"], .style-outline input[type="radio"] { border: 2px solid white; background: transparent; }
+        .style-outline input[type="radio"] { border-radius: 50%; }
+        .style-outline input[type="checkbox"]:checked { background: white; }
+        .style-outline input[type="radio"]:checked { background: white; box-shadow: inset 0 0 0 4px #2c3e50; }
+        /* Switch */
+        .style-outline .slider-track { border: 2px solid white; background: transparent; }
+        .style-outline .slider-track:before { background: white; }
+        .style-outline input:checked + .slider-track { background: rgba(255,255,255,0.2); }
+
+        /* --- 14. Corporate (企业) --- */
+        .style-corp { background: white; border: 1px solid #dfe6e9; border-top: 4px solid #0056b3; }
+        .style-corp input[type="text"], .style-corp select { border: 1px solid #ced4da; border-radius: 4px; }
+        .style-corp select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-corp button { background: #0056b3; color: white; border: 1px solid #0056b3; border-radius: 4px; }
+        .style-corp button:hover { background: #004494; }
+        /* Check/Radio */
+        .style-corp input[type="checkbox"], .style-corp input[type="radio"] { border: 1px solid #ced4da; }
+        .style-corp input[type="radio"] { border-radius: 50%; }
+        .style-corp input[type="checkbox"]:checked, .style-corp input[type="radio"]:checked { background: #0056b3; border-color: #0056b3; }
+        .style-corp input[type="radio"]:checked { box-shadow: inset 0 0 0 3px #fff; }
+        /* Switch */
+        .style-corp .slider-track { background: #ced4da; }
+        .style-corp input:checked + .slider-track { background: #0056b3; }
+
+        /* --- 15. Neon (霓虹) --- */
+        .style-neon { background: #050505; color: #fff; border: 1px solid #222; }
+        .style-neon h2 { text-shadow: 0 0 10px #0f0; color: #0f0; }
+        .style-neon input[type="text"], .style-neon select { background-color: transparent; border: 1px solid #0f0; color: #0f0; box-shadow: 0 0 5px #0f0; }
+        .style-neon select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230f0'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-neon button { background: transparent; border: 1px solid #0f0; color: #0f0; text-shadow: 0 0 5px #0f0; box-shadow: 0 0 8px #0f0; }
+        /* Check/Radio */
+        .style-neon input[type="checkbox"], .style-neon input[type="radio"] { border: 1px solid #0f0; background: transparent; box-shadow: 0 0 3px #0f0; }
+        .style-neon input[type="radio"] { border-radius: 50%; }
+        .style-neon input[type="checkbox"]:checked, .style-neon input[type="radio"]:checked { background: #0f0; box-shadow: 0 0 10px #0f0; }
+        /* Slider */
+        .style-neon input[type="range"]::-webkit-slider-runnable-track { height: 2px; background: #333; border: 1px solid #0f0; }
+        .style-neon input[type="range"]::-webkit-slider-thumb { background: #000; border: 2px solid #0f0; width: 14px; height: 14px; border-radius: 50%; margin-top: -6px; box-shadow: 0 0 8px #0f0; }
+        /* Switch */
+        .style-neon .slider-track { background: transparent; border: 1px solid #0f0; box-shadow: 0 0 5px #0f0; }
+        .style-neon .slider-track:before { background: #0f0; box-shadow: 0 0 10px #0f0; }
+        .style-neon input:checked + .slider-track { background: rgba(0,255,0,0.2); }
+
+        /* --- 16. Bauhaus (包豪斯) --- */
+        .style-bauhaus { background: #f0f0f0; border-left: 10px solid #d12828; padding-left: 30px; }
+        .style-bauhaus input[type="text"], .style-bauhaus select { border: 3px solid #111; border-radius: 0; background-color: #fff; }
+        .style-bauhaus select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-bauhaus button { background: #1b5eab; color: white; border: none; border-radius: 50%; width: 50px; height: 50px; padding: 0; margin-left: auto; display: block; }
+        /* Check/Radio */
+        .style-bauhaus input[type="checkbox"] { width: 20px; height: 20px; border: 3px solid #111; background: #fabb00; border-radius: 0; }
+        .style-bauhaus input[type="radio"] { width: 20px; height: 20px; border: 3px solid #111; background: #fabb00; border-radius: 50%; }
+        .style-bauhaus input[type="checkbox"]:checked, .style-bauhaus input[type="radio"]:checked { background: #111; }
+        /* Switch */
+        .style-bauhaus .slider-track { background: #111; border-radius: 0; }
+        .style-bauhaus .slider-track:before { background: #fabb00; border-radius: 0; }
+        .style-bauhaus input:checked + .slider-track { background: #1b5eab; }
+
+        /* --- 17. Y2K (千禧风) --- */
+        .style-y2k { background: linear-gradient(180deg, #fff, #dceeff); border: 2px solid blue; border-radius: 10px; }
+        .style-y2k h2 { color: #f0f; font-family: Verdana, sans-serif; letter-spacing: -1px; }
+        .style-y2k input[type="text"], .style-y2k select { border: 2px inset blue; background-color: #e0ffff; color: blue; }
+        .style-y2k select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='blue'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-y2k button { background: linear-gradient(to bottom, #f0f, #a0a); border: 2px outset #f0f; color: white; font-weight: bold; border-radius: 4px; }
+        /* Check/Radio */
+        .style-y2k input[type="checkbox"], .style-y2k input[type="radio"] { border: 1px solid blue; background: #ffdf00; }
+        .style-y2k input[type="radio"] { border-radius: 50%; }
+        .style-y2k input[type="checkbox"]:checked, .style-y2k input[type="radio"]:checked { background: #0f0; border-color: #00f; }
+        /* Slider */
+        .style-y2k input[type="range"]::-webkit-slider-runnable-track { height: 6px; background: pink; border: 1px solid blue; }
+        .style-y2k input[type="range"]::-webkit-slider-thumb { width: 10px; height: 20px; background: blue; border-radius: 0; margin-top: -7px; }
+        /* Switch */
+        .style-y2k .slider-track { background: pink; border: 1px solid blue; }
+        .style-y2k .slider-track:before { background: blue; border-radius: 0; }
+        .style-y2k input:checked + .slider-track { background: #0f0; }
+
+        /* --- 18. Paper (纸张) --- */
+        .style-paper { background: #fffef0; box-shadow: 3px 3px 8px rgba(0,0,0,0.1); background-image: radial-gradient(#ccc 1px, transparent 1px); background-size: 15px 15px; }
+        .style-paper input[type="text"], .style-paper select { background-color: #fff; border: 1px solid #333; box-shadow: 3px 3px 0 rgba(0,0,0,0.1); }
+        .style-paper select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-paper button { background: #222; color: #fff; border: none; transform: rotate(-1deg); box-shadow: 3px 3px 0 rgba(0,0,0,0.2); font-family: 'Courier New', monospace; }
+        /* Check/Radio */
+        .style-paper input[type="checkbox"], .style-paper input[type="radio"] { border: 1px solid #333; background: #fff; }
+        .style-paper input[type="radio"] { border-radius: 50%; }
+        .style-paper input[type="checkbox"]:checked, .style-paper input[type="radio"]:checked { background: #333; box-shadow: 2px 2px 0 rgba(0,0,0,0.2); }
+        /* Switch */
+        .style-paper .slider-track { background: #fff; border: 1px solid #333; }
+        .style-paper .slider-track:before { background: #333; }
+        .style-paper input:checked + .slider-track { background: #ffeb3b; }
+
+        /* --- 19. Mono (单色调) --- */
+        .style-mono { background: #3c6382; color: #fff; }
+        .style-mono input[type="text"], .style-mono select { background-color: #60a3bc; border: none; color: white; }
+        .style-mono select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-mono button { background: #0a3d62; color: white; border: none; }
+        /* Check/Radio */
+        .style-mono input[type="checkbox"], .style-mono input[type="radio"] { background: #60a3bc; border: none; }
+        .style-mono input[type="radio"] { border-radius: 50%; }
+        .style-mono input[type="checkbox"]:checked, .style-mono input[type="radio"]:checked { background: #fff; }
+        /* Switch */
+        .style-mono .slider-track { background: #60a3bc; }
+        .style-mono .slider-track:before { background: #0a3d62; }
+        .style-mono input:checked + .slider-track { background: #fff; }
+
+        /* --- 20. iOS --- */
+        .style-ios { background: #f2f2f7; border-radius: 12px; }
+        .style-ios input[type="text"], .style-ios select { background-color: #fff; border: none; border-radius: 8px; font-size: 16px; padding: 12px; }
+        .style-ios select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23999'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .style-ios button { background: #007aff; color: white; border: none; border-radius: 8px; font-weight: 500; font-size: 16px; }
+        /* Check/Radio */
+        .style-ios input[type="checkbox"], .style-ios input[type="radio"] { border: 1px solid #d1d1d6; background: #fff; width: 22px; height: 22px; }
+        .style-ios input[type="radio"] { border-radius: 50%; }
+        .style-ios input[type="checkbox"]:checked, .style-ios input[type="radio"]:checked { background: #007aff; border-color: #007aff; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E"); background-size: 16px; background-position: center; background-repeat: no-repeat; }
+        /* Switch */
+        .style-ios .slider-track { background: #e9e9ea; }
+        .style-ios .slider-track:before { box-shadow: 0 3px 8px rgba(0,0,0,0.15), 0 3px 1px rgba(0,0,0,0.06); }
+        .style-ios input:checked + .slider-track { background: #34c759; }
+
+        .style-material button { position: relative; overflow: hidden; }
+        .style-material button .ripple-effect { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.6); transform: translate(-50%, -50%) scale(1); animation: ripple .6s ease-out; pointer-events: none; }
+        @keyframes ripple { to { transform: translate(-50%, -50%) scale(40); opacity: 0; } }
+
+        .card.style-neu:hover { transform: translateY(-4px); }
+        .card.style-neu { transition: transform .25s ease, box-shadow .25s ease; }
+
+        .style-glass .glass-inner { position: relative; overflow: hidden; }
+        .style-glass .glass-inner::after { content: ""; position: absolute; left: -40%; top: -100%; width: 80%; height: 300%; background: linear-gradient(115deg, rgba(255,255,255,0.05), rgba(255,255,255,0.35), rgba(255,255,255,0.05)); transform: rotate(10deg); animation: sweep 4s ease-in-out infinite; }
+        @keyframes sweep { 0% { transform: translateX(-20%) translateY(-10%) rotate(10deg); } 50% { transform: translateX(40%) translateY(10%) rotate(10deg); } 100% { transform: translateX(-20%) translateY(-10%) rotate(10deg); } }
+
+        .card.style-brutal:hover { transform: translate(-2px, -2px) rotate(-1deg); box-shadow: 10px 10px 0 #000; }
+        .style-brutal button:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #000; }
+        .style-brutal button { transition: transform .12s steps(2), box-shadow .12s steps(2); }
+
+        .style-cyber .ui-select-display, .style-cyber button { animation: neonPulse 2.5s ease-in-out infinite alternate; }
+        @keyframes neonPulse { 0% { box-shadow: 0 0 6px #0ff, 0 0 12px #0ff inset; } 100% { box-shadow: 0 0 14px #0ff, 0 0 24px #0ff inset; } }
+
+        .style-neon .ui-select-display, .style-neon button { animation: neonGlow 2s ease-in-out infinite alternate; }
+        @keyframes neonGlow { 0% { box-shadow: 0 0 6px #0f0, 0 0 12px #0f0; text-shadow: 0 0 6px #0f0; } 100% { box-shadow: 0 0 14px #0f0, 0 0 28px #0f0; text-shadow: 0 0 14px #0f0; } }
+
+        .style-pixel button { transition: transform .12s steps(3); }
+        .style-pixel button:hover { transform: translate(2px, -2px); }
+        .style-pixel button:active { transform: translate(4px, 0); }
+
+        .style-gradient button { background-size: auto; animation: none; }
+        @keyframes gradientShift { 0% { background-position: 0 0; } 100% { background-position: 200% 0; } }
+
+        .style-outline button { transition: box-shadow .2s ease, color .2s ease; }
+        .style-outline button:hover { box-shadow: inset 0 0 0 2px white; }
+
+        .style-bauhaus button { transition: transform .25s ease; }
+        .style-bauhaus button:hover { transform: rotate(25deg); }
+
+        .style-y2k h2 { animation: shimmer 3s linear infinite; background: linear-gradient(90deg, #f0f, #0ff, #f0f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% 100%; }
+        @keyframes shimmer { 0% { background-position: 0 0; } 100% { background-position: 200% 0; } }
+
+        .card.style-paper:hover { transform: rotate(-0.5deg) translateY(-2px); transition: transform .2s ease; }
+        .style-paper button:hover { transform: rotate(-1deg); transition: transform .12s ease; }
+
+        .style-dark button:hover { animation: glitch .7s steps(2) infinite; }
+        @keyframes glitch { 0% { text-shadow: 2px 0 #f00, -2px 0 #0ff; } 100% { text-shadow: -2px 0 #f00, 2px 0 #0ff; } }
+
+        .style-ios .slider-track:before { transition: .2s cubic-bezier(.2,1.4,.3,1); }
+        .style-ios input:checked + .slider-track:before { animation: iosBounce .25s; }
+        @keyframes iosBounce { 0% { transform: translateX(0) scale(0.95); } 60% { transform: translateX(20px) scale(1.06); } 100% { transform: translateX(20px) scale(1); } }
+
+        .card input[type="text"], .ui-select-display { transition: box-shadow .18s ease, transform .12s ease, border-color .18s ease, background-color .18s ease, color .18s ease; will-change: transform, box-shadow; }
+        .card input[type="text"]:focus { transform: translateY(-1px); }
+        .card input[type="checkbox"], .card input[type="radio"] { transition: transform .12s ease, box-shadow .18s ease; }
+        .card input[type="checkbox"]:checked, .card input[type="radio"]:checked { transform: scale(1.07); }
+        .card input[type="range"]::-webkit-slider-thumb { transition: transform .15s ease, box-shadow .18s ease; }
+        .card input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+        .switch-control .slider-track:before { transition: transform .2s ease, box-shadow .2s ease; }
+        .switch-control input:checked + .slider-track:before { transform: translateX(20px) scale(1.04); }
+
+        .style-flat input[type="text"]:focus { border-color: #0366d6; box-shadow: 0 0 0 3px rgba(3,102,214,0.15); }
+        .style-material input[type="text"]:focus { box-shadow: 0 3px 0 #6200ee inset; }
+        .style-material .ui-select.open .ui-select-display { box-shadow: 0 0 0 2px rgba(98,0,238,0.2); }
+        .style-neu input[type="text"]:focus { transform: translateY(-2px); }
+        .style-glass input[type="text"]:focus, .style-glass .ui-select.open .ui-select-display { box-shadow: 0 0 0 2px rgba(255,255,255,0.4); }
+        .style-cyber input[type="text"]:focus, .style-cyber .ui-select.open .ui-select-display { box-shadow: 0 0 12px #0ff, inset 0 0 12px #0ff; }
+        .style-neon input[type="text"]:focus, .style-neon .ui-select.open .ui-select-display { box-shadow: 0 0 12px #0f0, 0 0 24px #0f0; }
+        .style-pixel input[type="range"]::-webkit-slider-thumb:hover { transform: translate(2px, -2px) scale(1.1); }
+        .style-gradient input[type="text"]:focus, .style-gradient .ui-select.open .ui-select-display { transform: scale(1.01); }
+        .style-skeuo input[type="text"]:focus { box-shadow: inset 0 2px 4px rgba(0,0,0,0.25); }
+        .style-dark input[type="text"]:focus { box-shadow: 0 0 0 2px rgba(187,134,252,0.25); }
+        .style-hand input[type="text"]:focus { transform: rotate(0.5deg); }
+        .style-outline input[type="text"]:focus, .style-outline .ui-select.open .ui-select-display { box-shadow: inset 0 0 0 2px white; }
+        .style-corp input[type="text"]:focus { box-shadow: 0 0 0 3px rgba(0,86,179,0.15); }
+        .style-bauhaus input[type="text"]:focus { transform: skewX(-2deg); }
+        .style-y2k input[type="text"]:focus { box-shadow: 0 0 0 2px rgba(255,0,255,0.3), 0 0 0 4px rgba(0,0,255,0.15); }
+        .style-paper input[type="text"]:focus { transform: rotate(-0.5deg); }
+        .style-mono input[type="range"]::-webkit-slider-thumb:hover { box-shadow: 0 0 0 3px rgba(255,255,255,0.3); }
+        .style-ios input[type="text"]:focus { box-shadow: 0 0 0 3px rgba(0,122,255,0.2); }
+        .style-ios .ui-select.open .ui-select-display { box-shadow: 0 0 0 2px rgba(0,122,255,0.25); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>20种风格全套 UI 控件演示</h1>
+        <p class="subtitle">包含：输入框、下拉框、单选组、多选组、滑块、开关、按钮</p>
+    </header>
+
+    <div class="grid-container">
+
+        <!-- 1. Flat -->
+        <div class="card style-flat">
+            <h2>1. Flat 扁平化</h2>
+            <input type="text" placeholder="Username">
+            <select><option>Select Option</option><option>Option A</option><option>Option B</option></select>
+            <div>
+                <span class="label-group">Radio Group</span>
+                <div class="row">
+                    <label><input type="radio" name="flat-r" checked> Option 1</label>
+                    <label><input type="radio" name="flat-r"> Option 2</label>
+                </div>
+            </div>
+            <div>
+                <span class="label-group">Checkbox Group</span>
+                <div class="row">
+                    <label><input type="checkbox" checked> Apple</label>
+                    <label><input type="checkbox"> Banana</label>
+                </div>
+            </div>
+            <div class="switch-wrap">
+                <span class="label-group">Toggle</span>
+                <label class="switch-control">
+                    <input type="checkbox" checked>
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="40">
+            <button>Submit Form</button>
+        </div>
+
+        <!-- 2. Material -->
+        <div class="card style-material">
+            <h2>2. Material 质感</h2>
+            <input type="text" placeholder="Input text">
+            <select><option>Choose item...</option><option>Item 1</option></select>
+            <div>
+                <span class="label-group">Single Choice</span>
+                <div class="row">
+                    <label><input type="radio" name="mat-r" checked> Yes</label>
+                    <label><input type="radio" name="mat-r"> No</label>
+                </div>
+            </div>
+            <div>
+                <span class="label-group">Multiple Choice</span>
+                <div class="row">
+                    <label><input type="checkbox" checked> Read</label>
+                    <label><input type="checkbox"> Write</label>
+                </div>
+            </div>
+            <div class="switch-wrap">
+                <span class="label-group">Enable</span>
+                <label class="switch-control">
+                    <input type="checkbox" checked>
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="60">
+            <button>CONFIRM</button>
+        </div>
+
+        <!-- 3. Neumorphism -->
+        <div class="card style-neu">
+            <h2>3. Neumorphism</h2>
+            <input type="text" placeholder="Soft UI...">
+            <select><option>Soft Select</option></select>
+            <div class="row">
+                <label><input type="radio" name="neu-r" checked> On</label>
+                <label><input type="radio" name="neu-r"> Off</label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" checked> Smooth</label>
+                <label><input type="checkbox"> Clean</label>
+            </div>
+            <div class="switch-wrap">
+                <span class="label-group">Power</span>
+                <label class="switch-control">
+                    <input type="checkbox" checked>
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="50">
+            <button>Press Me</button>
+        </div>
+
+        <!-- 4. Glass -->
+        <div class="card style-glass">
+            <div class="glass-inner">
+                <h2>4. Glassmorphism</h2>
+                <div style="display:flex; flex-direction:column; gap:15px;">
+                    <input type="text" placeholder="Blurry input">
+                    <select><option>Glass Select</option></select>
+                    <div class="row">
+                        <label><input type="radio" name="glass-r" checked> A</label>
+                        <label><input type="radio" name="glass-r"> B</label>
+                    </div>
+                    <div class="row">
+                        <label><input type="checkbox" checked> Frost</label>
+                        <label><input type="checkbox"> Blur</label>
+                    </div>
+                    <div class="switch-wrap">
+                        <span>Mode</span>
+                        <label class="switch-control">
+                            <input type="checkbox" checked>
+                            <span class="slider-track"></span>
+                        </label>
+                    </div>
+                    <input type="range" value="70">
+                    <button>Submit</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Brutalism -->
+        <div class="card style-brutal">
+            <h2>5. Brutalism</h2>
+            <input type="text" placeholder="RAW_DATA">
+            <select><option>CHOOSE_ONE</option></select>
+            <div class="row">
+                <label><input type="radio" name="brut-r" checked> TRUE</label>
+                <label><input type="radio" name="brut-r"> FALSE</label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" checked> BOLD</label>
+                <label><input type="checkbox"> LOUD</label>
+            </div>
+            <div class="switch-wrap">
+                <span>FORCE</span>
+                <label class="switch-control">
+                    <input type="checkbox">
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="90">
+            <button>EXECUTE</button>
+        </div>
+
+        <!-- 6. Cyberpunk -->
+        <div class="card style-cyber">
+            <h2>6. Cyberpunk</h2>
+            <input type="text" placeholder="Net_Runner">
+            <select><option>Select_Mod</option></select>
+            <div class="row">
+                <label><input type="radio" name="cyber-r" checked> Human</label>
+                <label><input type="radio" name="cyber-r"> Robot</label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" checked> Hack</label>
+                <label><input type="checkbox"> Slash</label>
+            </div>
+            <div class="switch-wrap">
+                <span>Connect</span>
+                <label class="switch-control">
+                    <input type="checkbox" checked>
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="80">
+            <button>UPLOAD</button>
+        </div>
+
+        <!-- 7. Clay -->
+        <div class="card style-clay">
+            <div class="clay-inner">
+                <h2>7. Clay 黏土</h2>
+                <div style="display:flex; flex-direction:column; gap:15px;">
+                    <input type="text" placeholder="Soft...">
+                    <select><option>Dropdown</option></select>
+                    <div class="row">
+                        <label><input type="radio" name="clay-r" checked> 1</label>
+                        <label><input type="radio" name="clay-r"> 2</label>
+                    </div>
+                    <div class="row">
+                        <label><input type="checkbox" checked> Play</label>
+                        <label><input type="checkbox"> Doh</label>
+                    </div>
+                    <div class="switch-wrap">
+                        <span>Float</span>
+                        <label class="switch-control">
+                            <input type="checkbox" checked>
+                            <span class="slider-track"></span>
+                        </label>
+                    </div>
+                    <input type="range" value="50">
+                    <button>Click</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. Pixel -->
+        <div class="card style-pixel">
+            <h2>8. 8-Bit Pixel</h2>
+            <input type="text" placeholder="PLAYER NAME">
+            <select><option>WEAPON</option></select>
+            <div class="row">
+                <label><input type="radio" name="pix-r" checked> 1P</label>
+                <label><input type="radio" name="pix-r"> 2P</label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" checked> SOUND</label>
+                <label><input type="checkbox"> MUSIC</label>
+            </div>
+            <div class="switch-wrap">
+                <span>POWER</span>
+                <label class="switch-control">
+                    <input type="checkbox">
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="25">
+            <button>START</button>
+        </div>
+
+        <!-- 9. Gradient -->
+        <div class="card style-gradient">
+            <h2>9. Gradient</h2>
+            <input type="text" placeholder="Colorful...">
+            <select><option>Vibrant</option></select>
+            <div class="row">
+                <label><input type="radio" name="grad-r" checked> Hot</label>
+                <label><input type="radio" name="grad-r"> Cold</label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" checked> Red</label>
+                <label><input type="checkbox"> Blue</label>
+            </div>
+            <div class="switch-wrap">
+                <span>Glow</span>
+                <label class="switch-control">
+                    <input type="checkbox" checked>
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="60">
+            <button>Action</button>
+        </div>
+
+        <!-- 10. Skeuo -->
+        <div class="card style-skeuo">
+            <h2>10. Skeuomorphism</h2>
+            <input type="text" placeholder="Real input">
+            <select><option>Standard</option></select>
+            <div class="row">
+                <label><input type="radio" name="sk-r" checked> AM</label>
+                <label><input type="radio" name="sk-r"> PM</label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" checked> Rec</label>
+                <label><input type="checkbox"> Mute</label>
+            </div>
+            <div class="switch-wrap">
+                <span>Power</span>
+                <label class="switch-control">
+                    <input type="checkbox" checked>
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="75">
+            <button>Push Button</button>
+        </div>
+
+        <!-- 11. Dark -->
+        <div class="card style-dark">
+            <h2>11. Dark Mode</h2>
+            <input type="text" placeholder="Search...">
+            <select><option>Filters</option></select>
+            <div class="row">
+                <label><input type="radio" name="drk-r" checked> Light</label>
+                <label><input type="radio" name="drk-r"> Heavy</label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" checked> Night</label>
+                <label><input type="checkbox"> Day</label>
+            </div>
+            <div class="switch-wrap">
+                <span>Toggle</span>
+                <label class="switch-control">
+                    <input type="checkbox" checked>
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="30">
+            <button>Submit</button>
+        </div>
+
+        <!-- 12. Hand Drawn -->
+        <div class="card style-hand">
+            <h2>12. Hand Drawn</h2>
+            <input type="text" placeholder="Sketchy...">
+            <select><option>Pick one</option></select>
+            <div class="row">
+                <label><input type="radio" name="hnd-r" checked> This</label>
+                <label><input type="radio" name="hnd-r"> That</label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" checked> Do it</label>
+                <label><input type="checkbox"> Later</label>
+            </div>
+            <div class="switch-wrap">
+                <span>Switch</span>
+                <label class="switch-control">
+                    <input type="checkbox">
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="50">
+            <button>Save</button>
+        </div>
+
+        <!-- 13. Outline -->
+        <div class="card style-outline">
+            <h2>13. Outline</h2>
+            <input type="text" placeholder="Ghost input">
+            <select><option>Ghost Select</option></select>
+            <div class="row">
+                <label><input type="radio" name="out-r" checked> A</label>
+                <label><input type="radio" name="out-r"> B</label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" checked> X</label>
+                <label><input type="checkbox"> Y</label>
+            </div>
+            <div class="switch-wrap">
+                <span>Visible</span>
+                <label class="switch-control">
+                    <input type="checkbox" checked>
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="20">
+            <button>Enter</button>
+        </div>
+
+        <!-- 14. Corporate -->
+        <div class="card style-corp">
+            <h2>14. Corporate</h2>
+            <input type="text" placeholder="Full Name">
+            <select><option>Department</option></select>
+            <div class="row">
+                <label><input type="radio" name="corp-r" checked> Male</label>
+                <label><input type="radio" name="corp-r"> Female</label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" checked> Agree</label>
+                <label><input type="checkbox"> Subscribe</label>
+            </div>
+            <div class="switch-wrap">
+                <span>Active</span>
+                <label class="switch-control">
+                    <input type="checkbox" checked>
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="80">
+            <button>Register</button>
+        </div>
+
+        <!-- 15. Neon -->
+        <div class="card style-neon">
+            <h2>15. Neon Glow</h2>
+            <input type="text" placeholder="Glowing...">
+            <select><option>Select Neon</option></select>
+            <div class="row">
+                <label><input type="radio" name="neon-r" checked> High</label>
+                <label><input type="radio" name="neon-r"> Low</label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" checked> Laser</label>
+                <label><input type="checkbox"> Beam</label>
+            </div>
+            <div class="switch-wrap">
+                <span>Power</span>
+                <label class="switch-control">
+                    <input type="checkbox" checked>
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="100">
+            <button>ACTIVATE</button>
+        </div>
+
+        <!-- 16. Bauhaus -->
+        <div class="card style-bauhaus">
+            <h2>16. Bauhaus</h2>
+            <input type="text" placeholder="Form">
+            <select><option>Function</option></select>
+            <div class="row">
+                <label><input type="radio" name="bau-r" checked> Circle</label>
+                <label><input type="radio" name="bau-r"> Square</label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" checked> Red</label>
+                <label><input type="checkbox"> Blue</label>
+            </div>
+            <div class="switch-wrap">
+                <span>Grid</span>
+                <label class="switch-control">
+                    <input type="checkbox" checked>
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="60">
+            <button>Go</button>
+        </div>
+
+        <!-- 17. Y2K -->
+        <div class="card style-y2k">
+            <h2>17. Y2K</h2>
+            <input type="text" placeholder="Chat...">
+            <select><option>Mood</option></select>
+            <div class="row">
+                <label><input type="radio" name="y2k-r" checked> Cool</label>
+                <label><input type="radio" name="y2k-r"> Rad</label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" checked> Music</label>
+                <label><input type="checkbox"> Style</label>
+            </div>
+            <div class="switch-wrap">
+                <span>Bling</span>
+                <label class="switch-control">
+                    <input type="checkbox" checked>
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="90">
+            <button>Send</button>
+        </div>
+
+        <!-- 18. Paper -->
+        <div class="card style-paper">
+            <h2>18. Paper</h2>
+            <input type="text" placeholder="Write here...">
+            <select><option>Type...</option></select>
+            <div class="row">
+                <label><input type="radio" name="pap-r" checked> Pen</label>
+                <label><input type="radio" name="pap-r"> Pencil</label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" checked> Fold</label>
+                <label><input type="checkbox"> Cut</label>
+            </div>
+            <div class="switch-wrap">
+                <span>Tape</span>
+                <label class="switch-control">
+                    <input type="checkbox" checked>
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="30">
+            <button>Note</button>
+        </div>
+
+        <!-- 19. Mono -->
+        <div class="card style-mono">
+            <h2>19. Mono</h2>
+            <input type="text" placeholder="Blue input...">
+            <select><option>Blue Select</option></select>
+            <div class="row">
+                <label><input type="radio" name="mono-r" checked> 1</label>
+                <label><input type="radio" name="mono-r"> 0</label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" checked> A</label>
+                <label><input type="checkbox"> B</label>
+            </div>
+            <div class="switch-wrap">
+                <span>State</span>
+                <label class="switch-control">
+                    <input type="checkbox" checked>
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="50">
+            <button>Process</button>
+        </div>
+
+        <!-- 20. iOS -->
+        <div class="card style-ios">
+            <h2>20. iOS</h2>
+            <input type="text" placeholder="Settings">
+            <select><option>WiFi</option></select>
+            <div class="row">
+                <label><input type="radio" name="ios-r" checked> On</label>
+                <label><input type="radio" name="ios-r"> Off</label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" checked> Sync</label>
+                <label><input type="checkbox"> Cloud</label>
+            </div>
+            <div class="switch-wrap">
+                <span>Airplane</span>
+                <label class="switch-control">
+                    <input type="checkbox">
+                    <span class="slider-track"></span>
+                </label>
+            </div>
+            <input type="range" value="70">
+            <button>Update</button>
+        </div>
+
+    </div>
+
+</body>
+<script>
+(function(){
+  var selects = Array.prototype.slice.call(document.querySelectorAll('.card select'));
+  function isDark(c){
+    var m = c && c.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    if(!m) return false;
+    var r = +m[1], g = +m[2], b = +m[3];
+    return (0.2126*r + 0.7152*g + 0.0722*b) < 128;
+  }
+  function parse(c){
+    var m = c && c.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d*\.?\d+))?\)/);
+    if(!m) return null;
+    return { r: +m[1], g: +m[2], b: +m[3], a: m[4]!==undefined ? +m[4] : 1 };
+  }
+  selects.forEach(function(sel){
+    if(sel.dataset.customized==='1') return;
+    var cs = getComputedStyle(sel);
+    var bg = cs.backgroundColor || '#fff';
+    var color = cs.color || '#333';
+    var bw = cs.borderTopWidth || cs.borderWidth || '1px';
+    var bc = cs.borderTopColor || cs.borderColor || 'rgba(0,0,0,0.2)';
+    var brTL = cs.borderTopLeftRadius || '4px';
+    var brTR = cs.borderTopRightRadius || '4px';
+    var brBR = cs.borderBottomRightRadius || '4px';
+    var brBL = cs.borderBottomLeftRadius || '4px';
+    var wrap = document.createElement('div');
+    wrap.className = 'ui-select';
+    var display = document.createElement('div');
+    display.className = 'ui-select-display';
+    display.style.backgroundColor = bg;
+    var bgParsed = parse(bg);
+    var labelColor = color;
+    if(bgParsed){
+      var bgLum = 0.2126*bgParsed.r + 0.7152*bgParsed.g + 0.0722*bgParsed.b;
+      var colorParsed = parse(color);
+      if(colorParsed){
+        var colLum = 0.2126*colorParsed.r + 0.7152*colorParsed.g + 0.0722*colorParsed.b;
+        if(Math.abs(bgLum - colLum) < 45) labelColor = bgLum < 128 ? '#fff' : '#111';
+      } else {
+        labelColor = bgLum < 128 ? '#fff' : '#111';
+      }
+    }
+    display.style.color = labelColor;
+    display.style.border = bw + ' solid ' + bc;
+    display.style.borderTopLeftRadius = brTL;
+    display.style.borderTopRightRadius = brTR;
+    display.style.borderBottomRightRadius = brBR;
+    display.style.borderBottomLeftRadius = brBL;
+    display.style.font = cs.font;
+    var label = document.createElement('span');
+    label.textContent = (sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].text) || '';
+    var arrow = document.createElement('span');
+    arrow.className = 'ui-select-chevron';
+    arrow.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" fill="'+color+'"><path d="M7 10l5 5 5-5z"/></svg>';
+    display.appendChild(label);
+    display.appendChild(arrow);
+    var dd = document.createElement('div');
+    dd.className = 'ui-select-dropdown';
+    var rgba = parse(bg);
+    var ddBg;
+    if(!rgba || rgba.a === 0){
+      ddBg = isDark(color) ? 'rgba(0,0,0,0.95)' : 'rgba(255,255,255,0.95)';
+    } else if(rgba.a < 0.85){
+      ddBg = 'rgba('+rgba.r+','+rgba.g+','+rgba.b+',0.95)';
+    } else {
+      ddBg = bg;
+    }
+    dd.style.backgroundColor = ddBg;
+    dd.style.border = bw + ' solid ' + bc;
+    dd.style.borderRadius = '6px';
+    var ddParsed = parse(ddBg);
+    var ddTextColor = color;
+    if(ddParsed){
+      var ddLum = 0.2126*ddParsed.r + 0.7152*ddParsed.g + 0.0722*ddParsed.b;
+      var cp = parse(color);
+      if(cp){
+        var cl = 0.2126*cp.r + 0.7152*cp.g + 0.0722*cp.b;
+        if(Math.abs(ddLum - cl) < 45) ddTextColor = ddLum < 128 ? '#fff' : '#111';
+      } else {
+        ddTextColor = ddLum < 128 ? '#fff' : '#111';
+      }
+    }
+    dd.style.color = ddTextColor;
+    dd.style.boxShadow = '0 8px 20px rgba(0,0,0,0.15)';
+    var hoverBg = isDark(ddBg) ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+    Array.prototype.slice.call(sel.options).forEach(function(opt,i){
+      var item = document.createElement('div');
+      item.className = 'ui-select-option' + (sel.selectedIndex===i ? ' active' : '');
+      item.textContent = opt.text;
+      item.style.font = cs.font;
+      item.style.color = ddTextColor;
+      item.addEventListener('mouseenter',function(){ item.style.background = hoverBg; });
+      item.addEventListener('mouseleave',function(){ item.style.background = 'transparent'; });
+      item.addEventListener('click',function(){
+        sel.selectedIndex = i;
+        label.textContent = opt.text;
+        Array.prototype.slice.call(dd.querySelectorAll('.ui-select-option')).forEach(function(el){ el.classList.remove('active'); });
+        item.classList.add('active');
+        sel.dispatchEvent(new Event('change',{bubbles:true}));
+        wrap.classList.remove('open');
+      });
+      dd.appendChild(item);
+    });
+    wrap.appendChild(display);
+    wrap.appendChild(dd);
+    sel.style.position='absolute';
+    sel.style.opacity='0';
+    sel.style.pointerEvents='none';
+    sel.dataset.customized='1';
+    sel.parentNode.insertBefore(wrap, sel);
+    display.tabIndex = 0;
+    display.addEventListener('click', function(e){
+      e.stopPropagation();
+      var o = wrap.classList.toggle('open');
+      if(o){
+        var rect = dd.getBoundingClientRect();
+        var vh = window.innerHeight;
+        if(rect.bottom > vh){ dd.style.top='auto'; dd.style.bottom='100%'; } else { dd.style.top='100%'; dd.style.bottom='auto'; }
+      }
+    });
+    display.addEventListener('keydown', function(e){
+      var items = Array.prototype.slice.call(dd.querySelectorAll('.ui-select-option'));
+      var idx = items.findIndex(function(el){ return el.classList.contains('active'); });
+      if(e.key==='ArrowDown'){
+        e.preventDefault();
+        var ni = Math.min(items.length-1, idx+1);
+        if(items[idx]) items[idx].classList.remove('active');
+        items[ni].classList.add('active');
+        items[ni].scrollIntoView({block:'nearest'});
+      }
+      if(e.key==='ArrowUp'){
+        e.preventDefault();
+        var niu = Math.max(0, idx-1);
+        if(items[idx]) items[idx].classList.remove('active');
+        items[niu].classList.add('active');
+        items[niu].scrollIntoView({block:'nearest'});
+      }
+      if(e.key==='Enter'){
+        e.preventDefault();
+        var cur = dd.querySelector('.ui-select-option.active');
+        if(cur) cur.click();
+      }
+      if(e.key==='Escape'){
+        wrap.classList.remove('open');
+      }
+    });
+  });
+  document.addEventListener('click', function(){
+    Array.prototype.slice.call(document.querySelectorAll('.ui-select.open')).forEach(function(s){ s.classList.remove('open'); });
+  });
+})();
+ (function(){
+   var btns = Array.prototype.slice.call(document.querySelectorAll('.style-material button'));
+   btns.forEach(function(btn){
+     btn.addEventListener('click', function(e){
+       var rect = btn.getBoundingClientRect();
+       var x = e.clientX - rect.left;
+       var y = e.clientY - rect.top;
+       var ripple = document.createElement('span');
+       ripple.className = 'ripple-effect';
+       ripple.style.left = x + 'px';
+       ripple.style.top = y + 'px';
+       btn.appendChild(ripple);
+       setTimeout(function(){ ripple && ripple.remove(); }, 600);
+     });
+   });
+ })();
+</script>
+</html>

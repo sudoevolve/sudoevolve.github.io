@@ -296,6 +296,11 @@
         }
         .btn-view:hover { background: var(--text-primary); color: var(--bg-color); }
 
+        footer .btn-view { color: #ccc; border-color: #ccc; }
+        footer .btn-view:hover { background: #ccc; color: #111; }
+        body.dark-mode footer .btn-view { color: #e0e0e0; border-color: #e0e0e0; }
+        body.dark-mode footer .btn-view:hover { background: #e0e0e0; color: #1a1b1f; }
+
         .ink-splash {
             position: absolute; z-index: -1; pointer-events: none;
             opacity: 0.1; width: 400px;
@@ -756,6 +761,11 @@
         <div style="margin-top: 40px;">
             <p>&copy; 2025 苏渡 · 弈沃 (Sudo Evolve)</p>
             <p style="font-size: 0.8rem; opacity: 0.6; margin-top:10px;">Powered by Tea & Code</p>
+            <div style="margin-top: 20px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                <a class="btn-view" href="pages/UI%20kits.html">UI 套件</a>
+                <a class="btn-view" href="pages/blackhole.html">黑洞</a>
+                <a class="btn-view" href="pages/pics.html">图片</a>
+            </div>
         </div>
     </footer>
 
