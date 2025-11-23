@@ -1,9 +1,9 @@
-。<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusFlow V2 - 修复增强版</title>
+    <title>NexusFlow</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -39,14 +39,8 @@
             opacity: 0;
         }
 
-        .grid-item {
-            width: calc(50% - 16px);
-            margin-bottom: 24px;
-            opacity: 0; /* 初始不可见，等待动画 */
-        }
-
-        @media (min-width: 768px) { .grid-item { width: calc(33.333% - 16px); } }
-        @media (min-width: 1280px) { .grid-item { width: calc(20% - 16px); } }
+        #gallery { position: relative; }
+        .grid-item { position: absolute; width: 0; margin-bottom: 0; opacity: 0; will-change: transform; }
 
         .img-container {
             transform-style: preserve-3d;
@@ -125,9 +119,9 @@
 
     <!-- JS 库 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
-    <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="wallpaper.js"></script>
 
     <script>
         // --- 配置 ---
@@ -138,48 +132,76 @@
 
         // 状态变量
         let isLoading = false;
-        let msnry; // Masonry 实例
+        let columns = 0;
+        let colHeights = [];
+        let colLefts = [];
+        let columnWidth = 0;
 
-        // API 源
-        const apiSources = [
-            { name: 'Picsum', fn: (w, h) => `https://picsum.photos/id/${Math.floor(Math.random()*1000)}/${w}/${h}` },
-            { name: 'LoremFlickr', fn: (w, h) => `https://loremflickr.com/${w}/${h}/cyberpunk,neon,tech?random=${Math.random()}` },
-            { name: 'PlaceIMG', fn: (w, h) => `https://placeimg.com/${w}/${h}/tech?t=${Math.random()}` }
-        ];
+        // 使用聚合抓取函数 fetchWallpapers（来自 wallpaper.js）替代所有单一图片 API
 
-        // --- 1. 初始化 Masonry ---
-        // 使用原生 JS 初始化，便于控制
         const grid = document.querySelector('#gallery');
-        msnry = new Masonry(grid, {
-            itemSelector: '.grid-item',
-            columnWidth: '.grid-item',
-            gutter: CONFIG.gutter,
-            percentPosition: true,
-            transitionDuration: 0 // 关闭 Masonry 自带动画，用 GSAP
-        });
+        function computeColumns(){
+            const w = grid.clientWidth;
+            const cols = w < 768 ? 2 : (w < 1280 ? 3 : 5);
+            if(cols === columns && columnWidth) return;
+            columns = cols;
+            columnWidth = Math.floor((w - CONFIG.gutter*(columns-1)) / columns);
+            colHeights = new Array(columns).fill(0);
+            colLefts = [];
+            for(let i=0;i<columns;i++){ colLefts[i] = i*(columnWidth + CONFIG.gutter); }
+        }
+        function placeItem(el){
+            el.style.width = columnWidth + 'px';
+            el.style.position = 'absolute';
+            const h = el.offsetHeight;
+            let idx = 0; let min = colHeights[0];
+            for(let i=1;i<columns;i++){ if(colHeights[i] < min){ min = colHeights[i]; idx = i; } }
+            el.style.transform = 'translate('+colLefts[idx]+'px,'+min+'px)';
+            colHeights[idx] = min + h + CONFIG.gutter;
+            grid.style.height = Math.max.apply(null,colHeights) + 'px';
+        }
+        function layoutNew(items){
+            computeColumns();
+            for(let i=0;i<items.length;i++){ placeItem(items[i]); }
+        }
+        function layoutAll(){
+            computeColumns();
+            colHeights = new Array(columns).fill(0);
+            const items = Array.prototype.slice.call(grid.querySelectorAll('.grid-item'));
+            for(let i=0;i<items.length;i++){ placeItem(items[i]); }
+        }
+        window.__imgLoaded = function(img){
+            const item = img.closest('.grid-item');
+            if(item){
+                const cont = item.querySelector('.img-container');
+                if(cont) cont.style.height = '';
+                layoutAll();
+            }
+        };
+        window.addEventListener('resize', function(){ layoutAll(); });
 
-        // --- 2. 生成图片数据 ---
-        function createElements(count) {
-            let elements = [];
-            for (let i = 0; i < count; i++) {
+        // --- 2. 生成图片元素（基于抓取结果） ---
+        function buildElements(items) {
+            const elements = [];
+            for (let i = 0; i < items.length; i++) {
+                const it = items[i] || {};
                 const width = 600;
-                const height = Math.floor(Math.random() * (800 - 400 + 1)) + 400; // 随机高度
-                
-                // 随机选择源 (优先用 Picsum 和 Flickr 因为比较稳)
-                const source = apiSources[Math.floor(Math.random() * 2)]; 
-                const url = source.fn(width, height);
+                const height = (it.width && it.height) ? Math.round(width * (it.height / it.width)) : Math.floor(Math.random() * (800 - 400 + 1)) + 400;
+                const url = it.url;
+                const api = it.source || 'unknown';
+                const dim = (it.width && it.height) ? `${it.width}x${it.height}` : `${width}x${height}`;
 
                 const div = document.createElement('div');
                 div.className = 'grid-item';
                 div.innerHTML = `
-                    <div class="img-container relative rounded-xl overflow-hidden bg-gray-800 cursor-pointer group">
+                    <div class="img-container relative rounded-xl overflow-hidden bg-gray-800 cursor-pointer group" style="height:${height}px">
                         <div class="skeleton absolute inset-0 z-0"></div>
                         <img src="${url}" 
                              class="relative z-10 w-full block opacity-0 transition-opacity duration-700" 
                              loading="lazy"
-                             data-api="${source.name}"
-                             data-dim="${width}x${height}"
-                             onload="this.style.opacity=1; this.previousElementSibling.style.display='none';"
+                             data-api="${api}"
+                             data-dim="${dim}"
+                             onload="this.style.opacity=1; this.previousElementSibling.style.display='none'; if(window.__imgLoaded) __imgLoaded(this);"
                              onerror="this.parentElement.parentElement.style.display='none'" 
                         >
                         <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 flex items-center justify-center">
@@ -193,46 +215,36 @@
         }
 
         // --- 3. 加载逻辑 ---
-        function loadImages() {
+        async function loadImages() {
             if (isLoading) return;
             isLoading = true;
-            
-            // 显示 Loading
             gsap.to('#loader', { opacity: 1, duration: 0.2 });
-            document.getElementById('status-indicator').innerText = "DOWNLOADING...";
+            document.getElementById('status-indicator').innerText = "FETCHING WALLPAPERS...";
 
-            // 模拟一点点延迟，让动画更自然
-            setTimeout(() => {
-                const newElems = createElements(CONFIG.batchSize);
-                
-                // 1. 先把元素加入 DOM
+            try {
+                const orientation = (window.innerWidth > window.innerHeight) ? 'landscape' : 'portrait';
+                const params = new URLSearchParams(location.search);
+                const query = params.get('q') || '';
+                const items = await window.fetchWallpapers({ count: CONFIG.batchSize, orientation, query, sources: ['unsplash','picsum'] });
+                const newElems = buildElements(items);
+
                 const fragment = document.createDocumentFragment();
                 newElems.forEach(el => fragment.appendChild(el));
                 grid.appendChild(fragment);
-
-                // 2. 追加给 Masonry
-                msnry.appended(newElems);
-
-                // 3. 等待这批图片下载完成（或者失败）再重新布局
-                // 这是一个关键点：imagesLoaded 确保图片有高度了再布局，防止重叠
-                imagesLoaded(grid, function() {
-                    msnry.layout();
-                    
-                    // 4. GSAP 入场动画
-                    gsap.to(newElems, {
-                        opacity: 1,
-                        y: 0,
-                        duration: 0.8,
-                        stagger: 0.05,
-                        ease: "power2.out",
-                        onComplete: () => {
-                            isLoading = false;
-                            gsap.to('#loader', { opacity: 0, duration: 0.2 });
-                            document.getElementById('status-indicator').innerText = "SYSTEM READY";
-                        }
-                    });
-                });
-            }, 500);
+                layoutNew(newElems);
+                gsap.fromTo(newElems,
+                    { opacity: 0 },
+                    { opacity: 1, duration: 0.8, stagger: 0.05, ease: "power2.out", onComplete: () => {
+                        isLoading = false;
+                        gsap.to('#loader', { opacity: 0, duration: 0.2 });
+                        document.getElementById('status-indicator').innerText = "SYSTEM READY";
+                    }}
+                );
+            } catch (e) {
+                isLoading = false;
+                gsap.to('#loader', { opacity: 0, duration: 0.2 });
+                document.getElementById('status-indicator').innerText = "NETWORK ERROR";
+            }
         }
 
         // --- 4. 无限滚动 (IntersectionObserver) ---
