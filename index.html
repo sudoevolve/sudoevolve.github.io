@@ -321,6 +321,32 @@
         .footer-poem {
             font-family: var(--font-cursive); font-size: 2.5rem; color: #ccc; margin-bottom: 30px;
         }
+        .footer-links {
+            margin-top: 20px;
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .friend-links {
+            margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .friend-links-title {
+            font-size: 0.78rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            opacity: 0.68;
+        }
+        .friend-links-row {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
 
         @media (max-width: 768px) {
             .project-content { grid-template-columns: 1fr; text-align: center; transform: none !important; }
@@ -628,22 +654,22 @@
             <div class="project-content tilt-card">
                 <div class="proj-left">
                     <div class="proj-poem">
-                        起舞弄清影<br>何似在人间
+                        删繁就简<br>一气呵成
                     </div>
                     <div>
-                        <div class="seal">摄魂</div>
-                        <h2 class="proj-title">幻影留声</h2>
-                        <div style="font-size: 1.2rem; margin-top:5px; color: var(--text-primary);">Eideo</div>
+                        <div class="seal">器骨</div>
+                        <h2 class="proj-title">界面铸形</h2>
+                        <div style="font-size: 1.2rem; margin-top:5px; color: var(--text-primary);">EUI</div>
                     </div>
                 </div>
                 <div class="proj-right">
-                    <span class="tech-stack">> Qt6 / QML / FFmpeg / Hardware Accel</span>
+                    <span class="tech-stack">> C++ / OpenGL / GLFW / Immediate Mode</span>
                     <p class="proj-desc">
-                        此器名曰 Eideo，能摄光影于瞬息，录万象于方寸。  
-                        集录屏、推流、转码于一体，内秉硬件加速之精，外循 QML 简净之法。  
-                        滤镜如烟云流转，GIF 若墨迹生辉，实为文士录事之良器。
+                        此器名曰 EUI，循即时模式之道，以统一 OpenGL 渲染路径驭 GLFW 之形。  
+                        组件可搭，布局可塑，事件与绘制同机而发。  
+                        宜为桌面工具、原型试作与高性能 2D 界面之基。
                     </p>
-                    <a href="https://github.com/sudoevolve/Eideo" class="btn-view">查看秘籍</a>
+                    <a href="https://github.com/sudoevolve/EUI" class="btn-view">查看器谱</a>
                 </div>
             </div>
         </div>
@@ -654,23 +680,22 @@
             <div class="project-content tilt-card">
                 <div class="proj-left">
                     <div class="proj-poem">
-                        九层之台<br>起于累土
+                        随心染色<br>应物成形
                     </div>
                     <div>
-                        <div class="seal">千机</div>
-                        <h2 class="proj-title">玲珑机枢</h2>
-                        <div style="font-size: 1.2rem; margin-top:5px; color: var(--text-primary);">EvolveUI</div>
+                        <div class="seal">玄材</div>
+                        <h2 class="proj-title">质律成章</h2>
+                        <div style="font-size: 1.2rem; margin-top:5px; color: var(--text-primary);">material-components-qml</div>
                     </div>
                 </div>
                 <div class="proj-right">
-                    <span class="tech-stack">> Qt6 / QML / Component Library</span>
+                    <span class="tech-stack">> Qt Quick / QML / C++ / Material Design 3</span>
                     <p class="proj-desc">
-                        工欲善其事，必先利其器。此乃打造现代界面的千机匣。
-                        阴阳两仪（暗色模式）随心切换，响应式布局如水无常形。
-                        无论是桌面重器还是嵌入式微尘，皆可适配自如。
-                        以此为基，万丈高楼平地起。
+                        此卷演 Material Design 3 于 Qt Quick 之间，兼得 QML 之灵动与 C++ 之根骨。  
+                        动态取色、组件成套、自适布局与桌面小组件并行不悖。  
+                        若欲以 Qt 构现代界面，此乃可循之正脉。
                     </p>
-                    <a href="https://github.com/sudoevolve/EvolveUI" class="btn-view">查看图纸</a>
+                    <a href="https://github.com/sudoevolve/material-components-qml" class="btn-view">查看图纸</a>
                 </div>
             </div>
         </div>
@@ -707,22 +732,22 @@
             <div class="project-content tilt-card">
                 <div class="proj-left">
                     <div class="proj-poem">
-                        明察秋毫<br>心如明镜
+                        起舞弄清影<br>何似在人间
                     </div>
                     <div>
-                        <div class="seal">天眼</div>
-                        <h2 class="proj-title">天眼观气</h2>
-                        <div style="font-size: 1.2rem; margin-top:5px; color: var(--text-primary);">System Monitor</div>
+                        <div class="seal">摄魂</div>
+                        <h2 class="proj-title">幻影留声</h2>
+                        <div style="font-size: 1.2rem; margin-top:5px; color: var(--text-primary);">Eideo</div>
                     </div>
                 </div>
                 <div class="proj-right">
-                    <span class="tech-stack">> Linux / Performance Tool</span>
+                    <span class="tech-stack">> Qt6 / QML / FFmpeg / Hardware Accel</span>
                     <p class="proj-desc">
-                        此为 Linux 桌面之观气镜，轻而不弱，明而不炫。  
-                        能察 CPU 之呼吸，知内存之盈虚。  
-                        启动如风，夜视如月，于方寸之间，通达系统之枢机。
+                        此器名曰 Eideo，能摄光影于瞬息，录万象于方寸。  
+                        集录屏、推流、转码于一体，内秉硬件加速之精，外循 QML 简净之法。  
+                        滤镜如烟云流转，GIF 若墨迹生辉，实为文士录事之良器。
                     </p>
-                    <a href="#" class="btn-view">获取法宝</a>
+                    <a href="https://github.com/sudoevolve/Eideo" class="btn-view">查看秘籍</a>
                 </div>
             </div>
         </div>
@@ -761,10 +786,18 @@
         <div style="margin-top: 40px;">
             <p>&copy; 2025 苏渡 · 弈沃 (Sudo Evolve)</p>
             <p style="font-size: 0.8rem; opacity: 0.6; margin-top:10px;">Powered by Tea & Code</p>
-            <div style="margin-top: 20px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+            <div class="footer-links">
                 <a class="btn-view" href="pages/UI%20kits.html">UI 套件</a>
                 <a class="btn-view" href="pages/blackhole.html">黑洞</a>
                 <a class="btn-view" href="pages/layout.html">布局</a>
+                <a class="btn-view" href="pages/ai.html">AI</a>
+            </div>
+            <div class="friend-links">
+                <div class="friend-links-title">友链</div>
+                <div class="friend-links-row">
+                    <a class="btn-view" href="https://sudoevolve.github.io/cppNote/" target="_blank" rel="noopener noreferrer">C++ Note</a>
+                    <a class="btn-view" href="https://meow2030.github.io/Qtcraft/" target="_blank" rel="noopener noreferrer">Qtcraft</a>
+                </div>
             </div>
         </div>
     </footer>

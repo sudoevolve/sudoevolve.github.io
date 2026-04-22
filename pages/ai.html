@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI 编程模式图解</title>
+<style>
+    :root {
+        --bg: #f5efe3;
+        --surface: rgba(255, 251, 245, 0.78);
+        --surface-strong: #fffaf2;
+        --text: #1d1b18;
+        --muted: #726758;
+        --line: rgba(60, 42, 21, 0.12);
+        --accent: #0f766e;
+        --accent-soft: rgba(15, 118, 110, 0.12);
+        --accent-2: #d97706;
+        --accent-3: #2563eb;
+        --danger-soft: rgba(190, 24, 93, 0.12);
+        --shadow: 0 18px 50px rgba(53, 39, 24, 0.12);
+        --radius-xl: 30px;
+        --radius-lg: 22px;
+        --radius-md: 16px;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        margin: 0;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        color: var(--text);
+        background:
+            radial-gradient(circle at 15% 20%, rgba(37, 99, 235, 0.10), transparent 26%),
+            radial-gradient(circle at 85% 12%, rgba(217, 119, 6, 0.12), transparent 24%),
+            radial-gradient(circle at 76% 80%, rgba(15, 118, 110, 0.12), transparent 28%),
+            linear-gradient(180deg, #fff7ed 0%, #f6efe5 38%, #efe5d2 100%);
+        min-height: 100vh;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .page {
+        width: min(1180px, calc(100% - 28px));
+        margin: 0 auto;
+        padding: 24px 0 72px;
+    }
+
+    .hero {
+        position: relative;
+        overflow: hidden;
+        padding: 34px 34px 30px;
+        border: 1px solid rgba(255, 255, 255, 0.55);
+        border-radius: 34px;
+        background:
+            linear-gradient(135deg, rgba(255, 248, 236, 0.94), rgba(255, 252, 247, 0.82)),
+            linear-gradient(135deg, rgba(15, 118, 110, 0.06), rgba(37, 99, 235, 0.05));
+        box-shadow: 0 30px 70px rgba(84, 57, 21, 0.16);
+        backdrop-filter: blur(18px);
+    }
+
+    .hero::before,
+    .hero::after {
+        content: "";
+        position: absolute;
+        border-radius: 999px;
+        filter: blur(6px);
+        opacity: 0.75;
+        pointer-events: none;
+    }
+
+    .hero::before {
+        width: 280px;
+        height: 280px;
+        right: -60px;
+        top: -110px;
+        background: radial-gradient(circle, rgba(15, 118, 110, 0.20), transparent 68%);
+    }
+
+    .hero::after {
+        width: 220px;
+        height: 220px;
+        left: -70px;
+        bottom: -90px;
+        background: radial-gradient(circle, rgba(217, 119, 6, 0.18), transparent 70%);
+    }
+
+    .hero-top {
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        border: 1px solid rgba(15, 118, 110, 0.10);
+    }
+
+    .hero-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .chip-link {
+        padding: 10px 13px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.60);
+        border: 1px solid rgba(29, 27, 24, 0.08);
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .hero h1 {
+        position: relative;
+        margin: 22px 0 14px;
+        font-size: clamp(36px, 5vw, 72px);
+        line-height: 0.98;
+        letter-spacing: -0.04em;
+        max-width: 920px;
+    }
+
+    .hero-grid {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 22px;
+        align-items: end;
+    }
+
+    .hero-copy {
+        max-width: 760px;
+    }
+
+    .hero-copy p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.9;
+    }
+
+    .toolbar {
+        margin-top: 22px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+    }
+
+    button {
+        appearance: none;
+        border: 0;
+        cursor: pointer;
+        border-radius: 999px;
+        padding: 13px 18px;
+        font-size: 15px;
+        font-weight: 700;
+        color: #fffaf5;
+        background: linear-gradient(135deg, #0f766e, #1d4ed8);
+        box-shadow: 0 14px 24px rgba(15, 118, 110, 0.24);
+        transition: transform 160ms ease, opacity 160ms ease, box-shadow 160ms ease;
+    }
+
+    button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 18px 28px rgba(15, 118, 110, 0.28);
+    }
+
+    button:disabled {
+        opacity: 0.72;
+        cursor: wait;
+        transform: none;
+    }
+
+    .status {
+        min-height: 20px;
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+    .hero-panel {
+        padding: 20px;
+        border-radius: 24px;
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 250, 243, 0.70));
+        border: 1px solid rgba(29, 27, 24, 0.08);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .hero-panel-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--muted);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .big-ratio {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 18px;
+    }
+
+    .ratio-item {
+        padding: 16px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid rgba(29, 27, 24, 0.08);
+    }
+
+    .ratio-item strong {
+        display: block;
+        font-size: 28px;
+        letter-spacing: -0.04em;
+        margin-bottom: 6px;
+    }
+
+    .ratio-item span {
+        display: block;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .section {
+        margin-top: 22px;
+        padding: 26px;
+        border-radius: var(--radius-xl);
+        background: var(--surface);
+        border: 1px solid rgba(255, 255, 255, 0.52);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(14px);
+    }
+
+    .section-head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        justify-content: space-between;
+        align-items: end;
+        margin-bottom: 22px;
+    }
+
+    .section-head h2 {
+        margin: 0;
+        font-size: clamp(26px, 3vw, 40px);
+        line-height: 1.08;
+        letter-spacing: -0.04em;
+    }
+
+    .section-head p {
+        margin: 10px 0 0;
+        max-width: 740px;
+        color: var(--muted);
+        line-height: 1.8;
+        font-size: 15px;
+    }
+
+    .section-tag {
+        padding: 10px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--accent);
+        border: 1px solid rgba(15, 118, 110, 0.10);
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .overview-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+
+    .overview-card {
+        position: relative;
+        min-height: 230px;
+        border-radius: 24px;
+        padding: 18px;
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(253, 248, 240, 0.88));
+        border: 1px solid rgba(29, 27, 24, 0.08);
+        overflow: hidden;
+    }
+
+    .overview-card::before {
+        content: "";
+        position: absolute;
+        inset: auto -26px -26px auto;
+        width: 120px;
+        height: 120px;
+        border-radius: 999px;
+        background: radial-gradient(circle, rgba(15, 118, 110, 0.10), transparent 68%);
+    }
+
+    .overview-index {
+        display: inline-flex;
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        align-items: center;
+        justify-content: center;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .overview-card h3 {
+        margin: 14px 0 8px;
+        font-size: 22px;
+        letter-spacing: -0.03em;
+    }
+
+    .overview-card .alias {
+        color: var(--accent-3);
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .overview-card p {
+        margin: 12px 0 0;
+        color: var(--muted);
+        line-height: 1.8;
+        font-size: 14px;
+    }
+
+    .overview-card .scene {
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px dashed rgba(29, 27, 24, 0.10);
+        color: var(--text);
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .ladder {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 18px;
+    }
+
+    .ladder-panel {
+        padding: 22px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.82);
+        border: 1px solid rgba(29, 27, 24, 0.08);
+    }
+
+    .ladder-track {
+        display: grid;
+        gap: 12px;
+        margin-top: 18px;
+    }
+
+    .ladder-step {
+        display: grid;
+        grid-template-columns: 38px 1fr;
+        gap: 12px;
+        align-items: start;
+        padding: 14px;
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(255, 251, 245, 1), rgba(250, 244, 233, 1));
+        border: 1px solid rgba(29, 27, 24, 0.06);
+    }
+
+    .step-no {
+        width: 38px;
+        height: 38px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, rgba(15, 118, 110, 0.18), rgba(37, 99, 235, 0.18));
+        color: var(--text);
+        font-weight: 800;
+    }
+
+    .ladder-step strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 16px;
+    }
+
+    .ladder-step p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .visual-canvas {
+        min-height: 100%;
+        display: grid;
+        place-items: center;
+    }
+
+    .orbit {
+        position: relative;
+        width: min(100%, 420px);
+        aspect-ratio: 1;
+    }
+
+    .orbit-ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 1px dashed rgba(29, 27, 24, 0.18);
+    }
+
+    .orbit-ring:nth-child(2) {
+        inset: 12%;
+    }
+
+    .orbit-ring:nth-child(3) {
+        inset: 24%;
+    }
+
+    .orbit-core {
+        position: absolute;
+        inset: 34%;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        padding: 18px;
+        background: linear-gradient(135deg, #0f766e, #2563eb);
+        color: white;
+        box-shadow: 0 18px 34px rgba(37, 99, 235, 0.20);
+    }
+
+    .orbit-core strong {
+        display: block;
+        font-size: 18px;
+        margin-bottom: 4px;
+    }
+
+    .orbit-core span {
+        font-size: 13px;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.86);
+    }
+
+    .orbit-chip {
+        position: absolute;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 96px;
+        padding: 10px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid rgba(29, 27, 24, 0.08);
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text);
+        box-shadow: 0 12px 20px rgba(29, 27, 24, 0.08);
+    }
+
+    .chip-vibe { top: 6%; left: 50%; transform: translateX(-50%); }
+    .chip-agent { top: 24%; right: -2%; }
+    .chip-harness { bottom: 21%; right: 4%; }
+    .chip-ralph { bottom: 2%; left: 50%; transform: translateX(-50%); }
+    .chip-bmad { bottom: 23%; left: -2%; }
+    .chip-sdd { top: 25%; left: 1%; }
+
+    .flow-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+
+    .flow-card {
+        border-radius: 24px;
+        padding: 18px;
+        background: rgba(255, 255, 255, 0.86);
+        border: 1px solid rgba(29, 27, 24, 0.08);
+    }
+
+    .flow-card h3 {
+        margin: 6px 0 12px;
+        font-size: 22px;
+        letter-spacing: -0.03em;
+    }
+
+    .mini-tag {
+        display: inline-flex;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .flow-line {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .flow-step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 14px;
+        border-radius: 16px;
+        background: linear-gradient(180deg, #fffdf8, #f8f2e9);
+        border: 1px solid rgba(29, 27, 24, 0.06);
+        font-size: 14px;
+        color: var(--text);
+    }
+
+    .flow-badge {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        font-size: 12px;
+        font-weight: 800;
+        color: white;
+        background: linear-gradient(135deg, #d97706, #f97316);
+        flex: 0 0 auto;
+    }
+
+    .flow-note {
+        margin-top: 14px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .matrix-wrap {
+        overflow-x: auto;
+        border-radius: 24px;
+        border: 1px solid rgba(29, 27, 24, 0.08);
+        background: rgba(255, 255, 255, 0.86);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+    }
+
+    th,
+    td {
+        padding: 16px 18px;
+        text-align: left;
+        border-bottom: 1px solid rgba(29, 27, 24, 0.08);
+        vertical-align: top;
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    th {
+        background: rgba(250, 244, 233, 0.92);
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .level {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: rgba(15, 118, 110, 0.10);
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .mode-card-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .mode-card {
+        border-radius: 24px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.86);
+        border: 1px solid rgba(29, 27, 24, 0.08);
+    }
+
+    .mode-card h3 {
+        margin: 10px 0 6px;
+        font-size: 24px;
+        letter-spacing: -0.03em;
+    }
+
+    .mode-sub {
+        color: var(--accent-3);
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .mode-card p {
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.85;
+    }
+
+    .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+    }
+
+    .pill {
+        padding: 8px 10px;
+        border-radius: 999px;
+        background: rgba(29, 27, 24, 0.06);
+        color: var(--text);
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .quote {
+        padding: 22px;
+        border-radius: 24px;
+        background:
+            linear-gradient(135deg, rgba(15, 118, 110, 0.10), rgba(37, 99, 235, 0.08)),
+            rgba(255, 255, 255, 0.88);
+        border: 1px solid rgba(29, 27, 24, 0.08);
+    }
+
+    .quote p {
+        margin: 0;
+        font-size: 22px;
+        line-height: 1.6;
+        letter-spacing: -0.02em;
+    }
+
+    .quote small {
+        display: block;
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .footer-note {
+        margin-top: 20px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.9;
+    }
+
+    pre {
+        margin: 0;
+        padding: 24px;
+        border-radius: 24px;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        background: linear-gradient(180deg, #1a2238, #121829);
+        color: #e7f1ff;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        font-size: 14px;
+        line-height: 1.75;
+        font-family: Consolas, "Cascadia Code", monospace;
+    }
+
+    code {
+        font-family: Consolas, "Cascadia Code", monospace;
+        background: rgba(29, 27, 24, 0.06);
+        padding: 2px 6px;
+        border-radius: 7px;
+    }
+
+    .source-link {
+        color: var(--accent);
+        font-weight: 700;
+    }
+
+    .comic-section {
+        background:
+            linear-gradient(180deg, rgba(255, 251, 245, 0.86), rgba(255, 247, 235, 0.78));
+    }
+
+    .comic-poster,
+    .comic-card {
+        border: 2px solid rgba(46, 36, 26, 0.72);
+        background: #fff4dc;
+        box-shadow: 8px 8px 0 rgba(46, 36, 26, 0.10);
+    }
+
+    .comic-poster {
+        position: relative;
+        overflow: hidden;
+        border-radius: 28px;
+        padding: 12px;
+    }
+
+    .comic-poster svg,
+    .comic-card svg {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .comic-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+
+    .comic-card {
+        border-radius: 24px;
+        overflow: hidden;
+    }
+
+    .comic-card-body {
+        padding: 16px 18px 18px;
+        border-top: 2px solid rgba(46, 36, 26, 0.70);
+        background: rgba(255, 250, 240, 0.88);
+    }
+
+    .comic-card h3 {
+        margin: 0 0 8px;
+        font-size: 22px;
+        letter-spacing: -0.03em;
+    }
+
+    .comic-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .comic-note {
+        margin-top: 16px;
+        padding: 14px 16px;
+        border: 2px solid rgba(46, 36, 26, 0.62);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--text);
+        font-size: 15px;
+        line-height: 1.8;
+    }
+
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+    }
+
+    .feature-card {
+        min-height: 190px;
+        padding: 18px;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.86);
+        border: 1px solid rgba(29, 27, 24, 0.08);
+    }
+
+    .feature-card strong {
+        display: block;
+        margin: 12px 0 8px;
+        font-size: 18px;
+        letter-spacing: -0.02em;
+    }
+
+    .feature-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .feature-icon {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(15, 118, 110, 0.16), rgba(217, 119, 6, 0.14));
+        border: 1px solid rgba(29, 27, 24, 0.08);
+        font-weight: 900;
+        color: var(--text);
+    }
+
+    @media (max-width: 1024px) {
+        .hero-grid,
+        .ladder,
+        .flow-grid,
+        .overview-grid,
+        .mode-card-grid,
+        .comic-grid,
+        .feature-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .big-ratio {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 720px) {
+        .page {
+            width: min(100% - 16px, 1180px);
+            padding-top: 10px;
+        }
+
+        .hero,
+        .section {
+            padding: 18px;
+            border-radius: 24px;
+        }
+
+        .hero h1 {
+            font-size: 38px;
+            line-height: 1.02;
+        }
+
+        .orbit {
+            max-width: 320px;
+        }
+
+        .orbit-chip {
+            min-width: 76px;
+            padding: 8px 10px;
+            font-size: 11px;
+        }
+
+        .comic-poster {
+            overflow-x: auto;
+        }
+
+        .comic-poster svg {
+            min-width: 760px;
+        }
+    }
+</style>
+</head>
+<body>
+<main class="page">
+    <section class="hero">
+        <div class="hero-top">
+            <div class="eyebrow">AI Coding Landscape 2026</div>
+            <div class="hero-links">
+                <a class="chip-link" href="#overview">6 种模式总览</a>
+                <a class="chip-link" href="#visual">图例导览</a>
+                <a class="chip-link" href="#matrix">选型矩阵</a>
+                <a class="chip-link" href="#markdown">复制摘要</a>
+            </div>
+        </div>
+
+        <h1>AI 编程不等于 Vibe Coding</h1>
+
+        <div class="hero-grid">
+            <div class="hero-copy">
+                <p>
+                    <strong>AI 编程已经从“随手和模型聊天”进化到多种工作模式并存</strong>。
+                    从快速验证到规范驱动，从个人对话到智能体协作，不同场景需要不同的工程方法。
+                </p>
+                <div class="toolbar">
+                    <button id="copyButton" type="button">复制核心摘要</button>
+                    <div class="status" id="copyStatus">一键复制核心摘要。</div>
+                </div>
+            </div>
+
+            <aside class="hero-panel">
+                <div class="hero-panel-title">核心内容</div>
+                <div class="big-ratio">
+                    <div class="ratio-item">
+                        <strong>6</strong>
+                        <span>种主流 AI 编程模式，从 Vibe 到 SDD。</span>
+                    </div>
+                    <div class="ratio-item">
+                        <strong>1→6</strong>
+                        <span>从随性尝试走向规范、约束、角色化与文档驱动。</span>
+                    </div>
+                    <div class="ratio-item">
+                        <strong>可组合</strong>
+                        <span>这些模式并不互斥，实际项目可以混用。</span>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+    <section class="section" id="overview">
+        <div class="section-head">
+            <div>
+                <h2>6 种模式总览</h2>
+                <p>
+                    主结论很直接：如果只会说 “我会 Vibe Coding”，说明还停留在 AI 编程的入门阶段。
+                    更成熟的表达方式，是知道不同模式分别解决什么问题、适合什么场景、如何组合使用。
+                </p>
+            </div>
+            <div class="section-tag">核心地图</div>
+        </div>
+
+        <div class="overview-grid">
+            <article class="overview-card">
+                <div class="overview-index">01</div>
+                <h3>Vibe Coding</h3>
+                <div class="alias">氛围编程</div>
+                <p>核心是自然语言驱动，用表达力换编码速度，先把东西做出来。</p>
+                <div class="scene"><strong>适合：</strong>小工具、原型验证、个人项目、非程序员快速出结果。</div>
+            </article>
+
+            <article class="overview-card">
+                <div class="overview-index">02</div>
+                <h3>Agentic Engineering</h3>
+                <div class="alias">智能体工程</div>
+                <p>可理解为 Vibe 的规范版，强调方案、拆解、执行、验收闭环。</p>
+                <div class="scene"><strong>适合：</strong>中大型项目、团队协作、长期维护产品。</div>
+            </article>
+
+            <article class="overview-card">
+                <div class="overview-index">03</div>
+                <h3>Harness Engineering</h3>
+                <div class="alias">驾驭工程</div>
+                <p>不是优化模型本身，而是给智能体搭运行约束、反馈循环和可靠工作流。</p>
+                <div class="scene"><strong>适合：</strong>高可靠交付、复杂项目、稳定性优先的工程环境。</div>
+            </article>
+
+            <article class="overview-card">
+                <div class="overview-index">04</div>
+                <h3>Ralph Wiggum Loop</h3>
+                <div class="alias">循环执行模式</div>
+                <p>把 AI 放进检查循环中，一轮轮干活，直到需求清单完成为止。</p>
+                <div class="scene"><strong>适合：</strong>可拆解任务、无人值守执行、清单式交付。</div>
+            </article>
+
+            <article class="overview-card">
+                <div class="overview-index">05</div>
+                <h3>BMAD</h3>
+                <div class="alias">敏捷 AI 开发方法</div>
+                <p>通过角色化智能体组织开发流程，让分析、产品、架构、执行分层协作。</p>
+                <div class="scene"><strong>适合：</strong>从零到一完整产品、标准化团队 AI 流程。</div>
+            </article>
+
+            <article class="overview-card">
+                <div class="overview-index">06</div>
+                <h3>SDD</h3>
+                <div class="alias">规范驱动开发</div>
+                <p>把规范文档当成唯一真相源，先写清楚规则，再让 AI 按规格实现。</p>
+                <div class="scene"><strong>适合：</strong>需求明确、质量要求高、接口边界强的项目。</div>
+            </article>
+        </div>
+    </section>
+
+    <section class="section" id="visual">
+        <div class="section-head">
+            <div>
+                <h2>一张图看分层</h2>
+                <p>
+                    这不是“谁取代谁”的关系，而是一条从低约束到高约束、从个人直觉到工程系统的升级路径。
+                </p>
+            </div>
+            <div class="section-tag">模式分层</div>
+        </div>
+
+        <div class="ladder">
+            <div class="ladder-panel">
+                <div class="hero-panel-title">认知阶梯</div>
+                <div class="ladder-track">
+                    <div class="ladder-step">
+                        <div class="step-no">1</div>
+                        <div>
+                            <strong>直接对话</strong>
+                            <p>Vibe Coding 追求快。核心问题不是语法，而是你能不能把需求说清楚。</p>
+                        </div>
+                    </div>
+                    <div class="ladder-step">
+                        <div class="step-no">2</div>
+                        <div>
+                            <strong>流程化执行</strong>
+                            <p>Agentic Engineering 要求先有任务拆解，再把执行交给 AI，并进行验收。</p>
+                        </div>
+                    </div>
+                    <div class="ladder-step">
+                        <div class="step-no">3</div>
+                        <div>
+                            <strong>系统级约束</strong>
+                            <p>Harness Engineering 把“如何让 AI 稳定工作”提升成工程系统设计问题。</p>
+                        </div>
+                    </div>
+                    <div class="ladder-step">
+                        <div class="step-no">4</div>
+                        <div>
+                            <strong>自动循环</strong>
+                            <p>Ralph Wiggum Loop 把任务变成可反复验证的循环，适合无人值守推进。</p>
+                        </div>
+                    </div>
+                    <div class="ladder-step">
+                        <div class="step-no">5</div>
+                        <div>
+                            <strong>角色化协作</strong>
+                            <p>BMAD 让不同职责的智能体各司其职，形成接近团队分工的开发节奏。</p>
+                        </div>
+                    </div>
+                    <div class="ladder-step">
+                        <div class="step-no">6</div>
+                        <div>
+                            <strong>规范先行</strong>
+                            <p>SDD 的核心是把清晰规范文档放在编码之前，减少模糊上下文带来的错误。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ladder-panel visual-canvas">
+                <div class="orbit" aria-hidden="true">
+                    <div class="orbit-ring"></div>
+                    <div class="orbit-ring"></div>
+                    <div class="orbit-ring"></div>
+                    <div class="orbit-core">
+                        <div>
+                            <strong>AI 编程</strong>
+                            <span>不是单一技法，而是一组不同场景下的工作模式</span>
+                        </div>
+                    </div>
+                    <div class="orbit-chip chip-vibe">Vibe</div>
+                    <div class="orbit-chip chip-agent">Agentic</div>
+                    <div class="orbit-chip chip-harness">Harness</div>
+                    <div class="orbit-chip chip-ralph">Ralph Loop</div>
+                    <div class="orbit-chip chip-bmad">BMAD</div>
+                    <div class="orbit-chip chip-sdd">SDD</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section comic-section">
+        <div class="section-head">
+            <div>
+                <h2>AI 编程模式路线图</h2>
+                <p>
+                    把 AI 想象成一匹很强但容易乱跑的马：Vibe 负责试跑，Agentic 负责派工，Harness 负责套缰绳，
+                    Loop 负责循环冲刺，BMAD 负责组队，SDD 负责先画施工图。
+                </p>
+            </div>
+            <div class="section-tag">手绘图解</div>
+        </div>
+
+        <div class="comic-poster" aria-label="AI 编程模式路线图">
+            <svg viewBox="0 0 1120 560" role="img" aria-labelledby="posterTitle posterDesc">
+                <title id="posterTitle">AI 编程模式路线图</title>
+                <desc id="posterDesc">用手绘风格展示 6 种 AI 编程模式如何从快试走向可靠工程。</desc>
+                <defs>
+                    <style>
+                        .sketch-line{fill:none;stroke:#2f261f;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+                        .thin-line{fill:none;stroke:#2f261f;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+                        .label-box{fill:#ffd9df;stroke:#2f261f;stroke-width:3}
+                        .paper{fill:#fff8e8;stroke:#2f261f;stroke-width:3}
+                        .soft{fill:#f4d6b7}
+                        .green{fill:#cde8d5}
+                        .blue{fill:#c8dcff}
+                        .yellow{fill:#ffe69d}
+                        .pink{fill:#ffd9df}
+                        .muted{fill:#806b57}
+                        .ink{fill:#2f261f}
+                        .small{font: 700 18px 'Microsoft YaHei', sans-serif; fill:#2f261f}
+                        .tiny{font: 600 14px 'Microsoft YaHei', sans-serif; fill:#2f261f}
+                        .title{font: 800 44px 'Microsoft YaHei', sans-serif; fill:#d9879a; letter-spacing:2px}
+                        .bubble{fill:#fffaf0;stroke:#2f261f;stroke-width:3}
+                    </style>
+                </defs>
+
+                <rect x="0" y="0" width="1120" height="560" fill="#f6ead4" />
+                <path d="M0 390 C180 330 260 320 420 350 C600 386 720 328 880 270 C990 230 1060 226 1120 220" fill="#e0bd8e" opacity=".72" />
+                <path class="sketch-line" d="M20 420 C180 360 300 346 468 378 C620 406 752 324 908 270 C1005 238 1062 238 1100 230" />
+                <path class="thin-line" d="M44 470 C214 405 330 390 486 414 C656 442 770 356 924 306 C1008 278 1062 276 1092 268" opacity=".6" />
+
+                <text x="115" y="62" class="title">AI Coding Modes 编程路线图</text>
+
+                <g transform="translate(58 110)">
+                    <rect class="label-box" x="20" y="0" width="170" height="50" rx="12" />
+                    <circle class="pink" cx="22" cy="0" r="18" stroke="#2f261f" stroke-width="3" />
+                    <text x="16" y="7" class="small">1</text>
+                    <text x="62" y="33" class="small">Vibe 快试</text>
+                    <path class="paper" d="M10 72 L210 48 L238 210 L38 238 Z" />
+                    <path class="thin-line" d="M42 96 L180 78 M48 126 L196 108 M54 156 L184 140 M60 188 L146 174" />
+                    <path class="sketch-line" d="M96 238 C112 215 146 214 164 236 C178 254 166 284 130 284 C92 284 80 254 96 238 Z" fill="#c8dcff" />
+                    <circle cx="116" cy="252" r="4" class="ink" />
+                    <circle cx="148" cy="252" r="4" class="ink" />
+                    <path class="thin-line" d="M120 270 Q132 278 146 270" />
+                    <rect class="paper" x="0" y="248" width="78" height="42" rx="4" />
+                    <text x="12" y="274" class="tiny">说清需求</text>
+                </g>
+
+                <g transform="translate(342 168)">
+                    <rect class="label-box" x="0" y="190" width="192" height="52" rx="12" />
+                    <circle class="pink" cx="0" cy="190" r="18" stroke="#2f261f" stroke-width="3" />
+                    <text x="-6" y="197" class="small">2</text>
+                    <text x="42" y="224" class="small">Agentic 派工</text>
+
+                    <path class="sketch-line soft" d="M130 86 C122 52 144 24 176 24 C206 24 225 50 218 82 C246 92 254 126 232 150 C210 176 164 174 142 154 C116 132 110 104 130 86 Z" />
+                    <circle cx="160" cy="92" r="5" class="ink" />
+                    <circle cx="196" cy="92" r="5" class="ink" />
+                    <path class="thin-line" d="M164 118 Q178 128 194 116" />
+                    <path class="thin-line" d="M148 28 L132 2 M207 30 L232 6" />
+                    <path class="sketch-line" d="M178 158 L178 198 M150 198 L206 198" fill="none" />
+                    <rect class="paper" x="246" y="70" width="98" height="128" rx="8" />
+                    <text x="264" y="100" class="tiny">任务拆解</text>
+                    <path class="thin-line" d="M266 122 L326 122 M266 148 L326 148 M266 174 L310 174" />
+                    <path class="thin-line" d="M224 110 C242 106 248 106 262 108" />
+                </g>
+
+                <g transform="translate(626 108)">
+                    <rect class="label-box" x="270" y="12" width="170" height="50" rx="12" />
+                    <circle class="pink" cx="270" cy="12" r="18" stroke="#2f261f" stroke-width="3" />
+                    <text x="264" y="19" class="small">3</text>
+                    <text x="312" y="45" class="small">Harness 约束</text>
+
+                    <path class="sketch-line soft" d="M52 176 C36 136 56 90 104 78 C152 66 204 94 220 144 C236 196 196 238 138 238 C94 238 66 216 52 176 Z" />
+                    <path class="sketch-line" d="M80 82 L58 48 M196 98 L232 64" fill="none" />
+                    <circle cx="118" cy="146" r="6" class="ink" />
+                    <circle cx="170" cy="146" r="6" class="ink" />
+                    <path class="thin-line" d="M122 174 Q146 190 172 174" />
+                    <path class="sketch-line" d="M62 154 C14 154 8 230 66 236 M216 158 C284 162 286 234 224 238" fill="none" />
+                    <path class="sketch-line" d="M88 116 C128 88 166 90 208 118" fill="none" />
+                    <path class="sketch-line" d="M104 256 L104 298 M176 256 L176 298" fill="none" />
+                    <path class="sketch-line" d="M46 136 C14 100 8 68 32 48 C60 24 92 38 102 72" fill="none" />
+                    <path class="sketch-line" d="M212 132 C252 94 284 90 306 116 C326 140 308 174 264 180" fill="none" />
+                    <text x="34" y="332" class="tiny">代码规范</text>
+                    <text x="152" y="332" class="tiny">自动测试</text>
+                    <text x="268" y="332" class="tiny">反馈循环</text>
+                    <path class="thin-line" d="M86 306 L64 250 M184 306 L160 250 M302 306 L232 210" />
+
+                    <path class="bubble" d="M50 0 C68 -18 104 -16 118 6 C146 -10 184 -2 190 28 C218 32 230 58 214 82 C194 112 88 108 58 92 C24 74 22 26 50 0 Z" />
+                    <text x="78" y="40" class="tiny">没有约束，</text>
+                    <text x="72" y="62" class="tiny">AI 容易乱跑</text>
+                </g>
+
+                <g transform="translate(90 448)">
+                    <rect class="paper" x="0" y="0" width="880" height="66" rx="14" />
+                    <text x="54" y="28" class="small">模型是马，方法是缰绳：会用 AI 写代码只是起点，能让 AI 稳定参与工程才是关键。</text>
+                    <text x="210" y="52" class="tiny">Vibe 试跑 · Agentic 派工 · Harness 约束 · Loop 冲刺 · BMAD 组队 · SDD 画图</text>
+                </g>
+
+                <g transform="translate(852 284)">
+                    <rect class="paper" x="18" y="42" width="150" height="46" rx="8" />
+                    <text x="44" y="72" class="tiny">熵管理清扫</text>
+                    <path class="sketch-line" d="M82 18 C62 0 34 6 26 30 C16 62 42 84 82 84 C122 84 148 62 138 32 C130 8 104 0 82 18 Z" fill="#fff7f0" />
+                    <circle cx="68" cy="42" r="4" class="ink" />
+                    <circle cx="98" cy="42" r="4" class="ink" />
+                    <path class="thin-line" d="M72 58 Q84 66 98 58" />
+                    <path class="sketch-line" d="M132 86 L182 132 M172 112 L206 104 M176 124 L210 122" fill="none" />
+                    <text x="178" y="52" class="tiny">死代码</text>
+                    <text x="204" y="92" class="tiny">过时文档</text>
+                </g>
+            </svg>
+        </div>
+
+        <div class="comic-note">
+            图里的“马”代表 AI 能力本身，“缰绳和路标”代表工程约束。没有约束时，AI 可能跑得很快，但也容易把项目带偏；约束越清晰，交付越稳定。
+        </div>
+    </section>
+
+    <section class="section comic-section">
+        <div class="section-head">
+            <div>
+                <h2>6 个模式分镜</h2>
+                <p>
+                    每个模式都用一个小场景解释：看图先理解角色关系，再看文字补充适用场景。
+                </p>
+            </div>
+            <div class="section-tag">漫画速读</div>
+        </div>
+
+        <div class="comic-grid">
+            <article class="comic-card">
+                <svg viewBox="0 0 360 210" role="img" aria-labelledby="vibeTitle vibeDesc">
+                    <title id="vibeTitle">Vibe Coding 图解</title>
+                    <desc id="vibeDesc">用对话气泡和代码小屏幕解释快速试做的 AI 编程方式。</desc>
+                    <rect width="360" height="210" fill="#fff0cf" />
+                    <path d="M0 162 C76 130 146 138 214 152 C280 166 318 144 360 130 L360 210 L0 210 Z" fill="#e7c494" />
+                    <rect x="20" y="18" width="122" height="36" rx="10" fill="#ffd9df" stroke="#2f261f" stroke-width="3" />
+                    <text x="46" y="42" font-size="18" font-weight="800" fill="#2f261f">Vibe</text>
+                    <path d="M78 94 C70 66 88 44 118 44 C148 44 166 66 158 94 C182 104 186 138 164 154 C138 174 94 168 74 148 C54 128 56 104 78 94 Z" fill="#c8dcff" stroke="#2f261f" stroke-width="4" stroke-linejoin="round" />
+                    <circle cx="108" cy="104" r="4" fill="#2f261f" />
+                    <circle cx="136" cy="104" r="4" fill="#2f261f" />
+                    <path d="M110 124 Q124 134 138 124" fill="none" stroke="#2f261f" stroke-width="3" stroke-linecap="round" />
+                    <path d="M200 46 C232 18 294 28 306 72 C332 82 328 126 294 134 L212 134 C172 126 170 74 200 46 Z" fill="#fffaf0" stroke="#2f261f" stroke-width="3" />
+                    <text x="206" y="76" font-size="15" font-weight="700" fill="#2f261f">“帮我做个</text>
+                    <text x="208" y="100" font-size="15" font-weight="700" fill="#2f261f">能跑的小工具”</text>
+                    <path d="M174 118 C190 108 196 100 204 86" fill="none" stroke="#2f261f" stroke-width="3" stroke-linecap="round" />
+                    <rect x="208" y="154" width="76" height="38" rx="6" fill="#1f2937" stroke="#2f261f" stroke-width="3" />
+                    <path d="M220 166 L250 166 M220 176 L270 176 M220 186 L242 186" fill="none" stroke="#78e6b7" stroke-width="3" stroke-linecap="round" />
+                </svg>
+                <div class="comic-card-body">
+                    <h3>Vibe Coding</h3>
+                    <p>像“点外卖”：你描述想吃什么，AI 先把菜端上来。适合快速试想法。</p>
+                </div>
+            </article>
+
+            <article class="comic-card">
+                <svg viewBox="0 0 360 210" role="img" aria-labelledby="agenticTitle agenticDesc">
+                    <title id="agenticTitle">Agentic Engineering 图解</title>
+                    <desc id="agenticDesc">用任务清单解释先拆解、再执行、再验收的智能体工程方式。</desc>
+                    <rect width="360" height="210" fill="#fff0cf" />
+                    <path d="M0 160 C94 132 162 150 232 140 C290 132 322 110 360 96 L360 210 L0 210 Z" fill="#e7c494" />
+                    <rect x="18" y="18" width="150" height="36" rx="10" fill="#ffd9df" stroke="#2f261f" stroke-width="3" />
+                    <text x="42" y="42" font-size="18" font-weight="800" fill="#2f261f">Agentic</text>
+                    <path d="M68 102 C50 76 58 48 88 38 C116 28 146 42 152 72 C178 80 180 120 154 138 C128 156 86 150 68 128 Z" fill="#f4d6b7" stroke="#2f261f" stroke-width="4" />
+                    <circle cx="100" cy="92" r="4" fill="#2f261f" />
+                    <circle cx="128" cy="92" r="4" fill="#2f261f" />
+                    <path d="M104 112 Q116 120 130 112" fill="none" stroke="#2f261f" stroke-width="3" stroke-linecap="round" />
+                    <rect x="202" y="50" width="110" height="126" rx="10" fill="#fff8e8" stroke="#2f261f" stroke-width="3" />
+                    <text x="220" y="82" font-size="15" font-weight="800" fill="#2f261f">任务清单</text>
+                    <path d="M222 104 L288 104 M222 126 L298 126 M222 148 L276 148" fill="none" stroke="#2f261f" stroke-width="3" stroke-linecap="round" />
+                    <path d="M160 104 C178 92 188 88 204 86" fill="none" stroke="#2f261f" stroke-width="3" stroke-linecap="round" />
+                    <text x="150" y="190" font-size="14" font-weight="700" fill="#2f261f">先拆解，再执行，再验收</text>
+                </svg>
+                <div class="comic-card-body">
+                    <h3>Agentic Engineering</h3>
+                    <p>像“包工头派活”：人负责计划和验收，AI 负责执行任务。</p>
+                </div>
+            </article>
+
+            <article class="comic-card">
+                <svg viewBox="0 0 360 210" role="img" aria-labelledby="harnessTitle harnessDesc">
+                    <title id="harnessTitle">Harness Engineering 图解</title>
+                    <desc id="harnessDesc">用缰绳、测试和规范解释如何约束 AI 稳定工作。</desc>
+                    <rect width="360" height="210" fill="#fff0cf" />
+                    <path d="M0 158 C92 120 156 142 220 136 C288 130 318 92 360 80 L360 210 L0 210 Z" fill="#e7c494" />
+                    <rect x="18" y="18" width="156" height="36" rx="10" fill="#ffd9df" stroke="#2f261f" stroke-width="3" />
+                    <text x="42" y="42" font-size="18" font-weight="800" fill="#2f261f">Harness</text>
+                    <path d="M116 98 C100 62 126 36 166 38 C202 40 226 66 220 104 C244 110 248 144 222 162 C192 182 140 176 116 154 C94 134 96 110 116 98 Z" fill="#f4d6b7" stroke="#2f261f" stroke-width="4" />
+                    <circle cx="150" cy="108" r="4" fill="#2f261f" />
+                    <circle cx="190" cy="108" r="4" fill="#2f261f" />
+                    <path d="M156 128 Q172 138 190 128" fill="none" stroke="#2f261f" stroke-width="3" stroke-linecap="round" />
+                    <path d="M122 104 C78 100 66 124 82 146 C96 164 128 158 140 136" fill="none" stroke="#2f261f" stroke-width="4" stroke-linecap="round" />
+                    <path d="M218 110 C270 108 280 134 258 154 C238 172 210 154 206 134" fill="none" stroke="#2f261f" stroke-width="4" stroke-linecap="round" />
+                    <rect x="22" y="138" width="92" height="34" rx="6" fill="#cde8d5" stroke="#2f261f" stroke-width="3" />
+                    <text x="40" y="160" font-size="14" font-weight="800" fill="#2f261f">测试</text>
+                    <rect x="238" y="36" width="92" height="34" rx="6" fill="#c8dcff" stroke="#2f261f" stroke-width="3" />
+                    <text x="256" y="58" font-size="14" font-weight="800" fill="#2f261f">规范</text>
+                    <text x="112" y="194" font-size="14" font-weight="700" fill="#2f261f">给 AI 套上工程缰绳</text>
+                </svg>
+                <div class="comic-card-body">
+                    <h3>Harness Engineering</h3>
+                    <p>像“给马套缰绳”：AI 很强，但要靠规范、测试、反馈让它稳定跑。</p>
+                </div>
+            </article>
+
+            <article class="comic-card">
+                <svg viewBox="0 0 360 210" role="img" aria-labelledby="ralphTitle ralphDesc">
+                    <title id="ralphTitle">Ralph Wiggum Loop 图解</title>
+                    <desc id="ralphDesc">用循环箭头和检查项解释未完成就继续执行的循环模式。</desc>
+                    <rect width="360" height="210" fill="#fff0cf" />
+                    <path d="M0 160 C70 138 150 126 230 146 C292 162 330 132 360 116 L360 210 L0 210 Z" fill="#e7c494" />
+                    <rect x="18" y="18" width="160" height="36" rx="10" fill="#ffd9df" stroke="#2f261f" stroke-width="3" />
+                    <text x="36" y="42" font-size="18" font-weight="800" fill="#2f261f">Ralph Loop</text>
+                    <path d="M95 86 C80 62 94 40 122 40 C150 40 168 62 160 88 C184 98 184 130 160 146 C136 164 96 158 80 138 C62 116 72 94 95 86 Z" fill="#fff7f0" stroke="#2f261f" stroke-width="4" />
+                    <circle cx="112" cy="100" r="4" fill="#2f261f" />
+                    <circle cx="142" cy="100" r="4" fill="#2f261f" />
+                    <path d="M114 120 Q128 130 144 120" fill="none" stroke="#2f261f" stroke-width="3" stroke-linecap="round" />
+                    <path d="M224 56 C280 56 304 104 272 140 C244 174 184 154 190 108" fill="none" stroke="#2f261f" stroke-width="5" stroke-linecap="round" />
+                    <path d="M190 108 L174 118 L178 96" fill="#2f261f" />
+                    <rect x="204" y="74" width="86" height="46" rx="7" fill="#fff8e8" stroke="#2f261f" stroke-width="3" />
+                    <text x="222" y="102" font-size="14" font-weight="800" fill="#2f261f">检查项</text>
+                    <text x="78" y="190" font-size="14" font-weight="700" fill="#2f261f">没完成就再跑一轮</text>
+                </svg>
+                <div class="comic-card-body">
+                    <h3>Ralph Wiggum Loop</h3>
+                    <p>像“反复冲刺”：按清单循环执行，直到检查项全部通过。</p>
+                </div>
+            </article>
+
+            <article class="comic-card">
+                <svg viewBox="0 0 360 210" role="img" aria-labelledby="bmadTitle bmadDesc">
+                    <title id="bmadTitle">BMAD 图解</title>
+                    <desc id="bmadDesc">用四个角色头像解释分析、产品、架构、开发的角色化协作。</desc>
+                    <rect width="360" height="210" fill="#fff0cf" />
+                    <path d="M0 162 C74 132 150 140 224 150 C294 158 326 132 360 116 L360 210 L0 210 Z" fill="#e7c494" />
+                    <rect x="18" y="18" width="130" height="36" rx="10" fill="#ffd9df" stroke="#2f261f" stroke-width="3" />
+                    <text x="56" y="42" font-size="18" font-weight="800" fill="#2f261f">BMAD</text>
+                    <g fill="#fff7f0" stroke="#2f261f" stroke-width="3">
+                        <circle cx="82" cy="96" r="28" />
+                        <circle cx="172" cy="78" r="28" />
+                        <circle cx="258" cy="100" r="28" />
+                        <circle cx="172" cy="146" r="28" />
+                    </g>
+                    <g fill="#2f261f">
+                        <circle cx="72" cy="94" r="3" /><circle cx="92" cy="94" r="3" />
+                        <circle cx="162" cy="76" r="3" /><circle cx="182" cy="76" r="3" />
+                        <circle cx="248" cy="98" r="3" /><circle cx="268" cy="98" r="3" />
+                        <circle cx="162" cy="144" r="3" /><circle cx="182" cy="144" r="3" />
+                    </g>
+                    <path d="M110 94 L144 84 M200 84 L232 94 M246 124 L196 140 M148 140 L104 112" fill="none" stroke="#2f261f" stroke-width="3" stroke-linecap="round" />
+                    <text x="56" y="150" font-size="13" font-weight="800" fill="#2f261f">分析</text>
+                    <text x="150" y="42" font-size="13" font-weight="800" fill="#2f261f">产品</text>
+                    <text x="246" y="154" font-size="13" font-weight="800" fill="#2f261f">架构</text>
+                    <text x="152" y="190" font-size="13" font-weight="800" fill="#2f261f">开发</text>
+                </svg>
+                <div class="comic-card-body">
+                    <h3>BMAD</h3>
+                    <p>像“组建 AI 小队”：分析、产品、架构、开发分别扮演不同角色。</p>
+                </div>
+            </article>
+
+            <article class="comic-card">
+                <svg viewBox="0 0 360 210" role="img" aria-labelledby="sddTitle sddDesc">
+                    <title id="sddTitle">SDD 图解</title>
+                    <desc id="sddDesc">用规范文档和代码屏幕解释先写规范再生成代码。</desc>
+                    <rect width="360" height="210" fill="#fff0cf" />
+                    <path d="M0 164 C86 132 150 138 226 148 C288 156 326 132 360 114 L360 210 L0 210 Z" fill="#e7c494" />
+                    <rect x="18" y="18" width="118" height="36" rx="10" fill="#ffd9df" stroke="#2f261f" stroke-width="3" />
+                    <text x="56" y="42" font-size="18" font-weight="800" fill="#2f261f">SDD</text>
+                    <rect x="62" y="56" width="120" height="136" rx="10" fill="#fff8e8" stroke="#2f261f" stroke-width="4" />
+                    <text x="88" y="84" font-size="15" font-weight="800" fill="#2f261f">SPEC</text>
+                    <path d="M84 108 L160 108 M84 130 L150 130 M84 152 L164 152" fill="none" stroke="#2f261f" stroke-width="3" stroke-linecap="round" />
+                    <path d="M202 96 L260 96 L260 156 L202 156 Z" fill="#1f2937" stroke="#2f261f" stroke-width="3" />
+                    <path d="M214 112 L244 112 M214 126 L250 126 M214 140 L236 140" fill="none" stroke="#78e6b7" stroke-width="3" stroke-linecap="round" />
+                    <path d="M184 122 C194 116 198 112 204 108" fill="none" stroke="#2f261f" stroke-width="3" stroke-linecap="round" />
+                    <text x="190" y="188" font-size="14" font-weight="700" fill="#2f261f">先画图纸，再施工</text>
+                </svg>
+                <div class="comic-card-body">
+                    <h3>SDD</h3>
+                    <p>像“先画施工图”：规范文档是唯一真相，AI 按图施工。</p>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-head">
+            <div>
+                <h2>三类典型工作流</h2>
+                <p>
+                    6 种模式落到实际使用时，可以先归纳成三种工作流心智模型：快试、稳做、严控。
+                </p>
+            </div>
+            <div class="section-tag">流程图解</div>
+        </div>
+
+        <div class="flow-grid">
+            <article class="flow-card">
+                <div class="mini-tag">快试型</div>
+                <h3>Vibe 路线</h3>
+                <div class="flow-line">
+                    <div class="flow-step"><span class="flow-badge">1</span>说需求</div>
+                    <div class="flow-step"><span class="flow-badge">2</span>AI 产出代码</div>
+                    <div class="flow-step"><span class="flow-badge">3</span>看到报错再回贴</div>
+                    <div class="flow-step"><span class="flow-badge">4</span>先跑起来</div>
+                </div>
+                <div class="flow-note">优点是启动极快，缺点是项目变大后容易失控。</div>
+            </article>
+
+            <article class="flow-card">
+                <div class="mini-tag">稳做型</div>
+                <h3>Agent / BMAD 路线</h3>
+                <div class="flow-line">
+                    <div class="flow-step"><span class="flow-badge">1</span>明确目标与方案</div>
+                    <div class="flow-step"><span class="flow-badge">2</span>拆解任务或角色</div>
+                    <div class="flow-step"><span class="flow-badge">3</span>AI 分工执行</div>
+                    <div class="flow-step"><span class="flow-badge">4</span>人工验收回路</div>
+                </div>
+                <div class="flow-note">更像团队协作，适合正式产品和需要维护的系统。</div>
+            </article>
+
+            <article class="flow-card">
+                <div class="mini-tag">严控型</div>
+                <h3>Harness / SDD / Loop 路线</h3>
+                <div class="flow-line">
+                    <div class="flow-step"><span class="flow-badge">1</span>先建规则与规范</div>
+                    <div class="flow-step"><span class="flow-badge">2</span>让 AI 按清单执行</div>
+                    <div class="flow-step"><span class="flow-badge">3</span>循环校验与回退</div>
+                    <div class="flow-step"><span class="flow-badge">4</span>收敛到稳定交付</div>
+                </div>
+                <div class="flow-note">适合高质量交付、标准化团队流程和复杂项目环境。</div>
+            </article>
+        </div>
+    </section>
+
+    <section class="section" id="matrix">
+        <div class="section-head">
+            <div>
+                <h2>选型矩阵</h2>
+                <p>
+                    不需要死记概念，只要根据项目目标、复杂度和质量要求选择合适路线。
+                </p>
+            </div>
+            <div class="section-tag">多模式对照</div>
+        </div>
+
+        <div class="matrix-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>模式</th>
+                        <th>一句话理解</th>
+                        <th>控制强度</th>
+                        <th>最适合什么</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Vibe Coding</strong></td>
+                        <td>跟 AI 聊需求，快速把想法变成能跑的东西。</td>
+                        <td><span class="level">低约束</span></td>
+                        <td>小工具、Demo、个人原型。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Agentic Engineering</strong></td>
+                        <td>先规划、拆任务、再执行与验收。</td>
+                        <td><span class="level">中高约束</span></td>
+                        <td>正式产品、中大型项目、团队协作。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Harness Engineering</strong></td>
+                        <td>给 AI 搭可靠工作系统，而不是只改 Prompt。</td>
+                        <td><span class="level">高约束</span></td>
+                        <td>高可靠项目、复杂交付流程。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ralph Wiggum Loop</strong></td>
+                        <td>把 AI 放进循环里，按检查项反复执行到完成。</td>
+                        <td><span class="level">中等</span></td>
+                        <td>功能明确、可拆解、支持无人值守的任务。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>BMAD</strong></td>
+                        <td>角色扮演式开发，分析、产品、架构协同推进。</td>
+                        <td><span class="level">中等</span></td>
+                        <td>从零开始的完整产品、流程标准化团队。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SDD</strong></td>
+                        <td>先写规范文档，再让 AI 严格按规范实现。</td>
+                        <td><span class="level">高约束</span></td>
+                        <td>需求明确、质量敏感、接口边界严格的项目。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer-note">
+            这些模式不是互斥关系。一个更成熟的实践方式，往往是
+            <code>SDD</code> 提供规范，<code>BMAD</code> 提供角色化执行，底层再用
+            <code>Harness Engineering</code> 去保证 AI 行为稳定。
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-head">
+            <div>
+                <h2>模式卡片</h2>
+                <p>
+                    每张卡片都压缩成一个明确判断，适合快速浏览而不是逐段阅读。
+                </p>
+            </div>
+            <div class="section-tag">摘要卡片</div>
+        </div>
+
+        <div class="mode-card-grid">
+            <article class="mode-card">
+                <div class="mini-tag">01</div>
+                <h3>Vibe Coding</h3>
+                <div class="mode-sub">重点不是写代码，而是把需求讲清楚</div>
+                <p>
+                    这是最随性的 AI 编程方式。你通过自然语言告诉 AI 需求、报错和方向，
+                    AI 负责把想法变成代码。优势是极快，问题是项目一大容易翻车。
+                </p>
+                <div class="pill-row">
+                    <span class="pill">快</span>
+                    <span class="pill">轻量</span>
+                    <span class="pill">适合原型</span>
+                </div>
+            </article>
+
+            <article class="mode-card">
+                <div class="mini-tag">02</div>
+                <h3>Agentic Engineering</h3>
+                <div class="mode-sub">可以理解为 Vibe Coding 的规范版</div>
+                <p>
+                    你要先想清楚目标、写方案、拆任务，再把活交给 AI 做。AI 不是替代负责人，
+                    而是执行者；你依然需要验收和回路管理。
+                </p>
+                <div class="pill-row">
+                    <span class="pill">流程化</span>
+                    <span class="pill">可维护</span>
+                    <span class="pill">适合团队</span>
+                </div>
+            </article>
+
+            <article class="mode-card">
+                <div class="mini-tag">03</div>
+                <h3>Harness Engineering</h3>
+                <div class="mode-sub">人类掌舵，智能体执行</div>
+                <p>
+                    文章把它比作给马套缰绳。关键不在模型本身，而在你是否为智能体设计了约束、反馈和稳定工作流。
+                    真正的竞争力，来自围绕模型构建的工程系统。
+                </p>
+                <div class="pill-row">
+                    <span class="pill">高可靠</span>
+                    <span class="pill">系统设计</span>
+                    <span class="pill">工程中台思维</span>
+                </div>
+            </article>
+
+            <article class="mode-card">
+                <div class="mini-tag">04</div>
+                <h3>Ralph Wiggum Loop</h3>
+                <div class="mode-sub">把 AI 放进循环，直到清单完成</div>
+                <p>
+                    核心技巧是每轮在干净上下文中执行，靠 Git 和文件持续保存进度。它适合把 AI 当成可以无人值守的循环工人，但要控制循环次数和成本。
+                </p>
+                <div class="pill-row">
+                    <span class="pill">自动循环</span>
+                    <span class="pill">无人值守</span>
+                    <span class="pill">适合清单任务</span>
+                </div>
+            </article>
+
+            <article class="mode-card">
+                <div class="mini-tag">05</div>
+                <h3>BMAD</h3>
+                <div class="mode-sub">把 AI 开发流程变成结构化角色协作</div>
+                <p>
+                    BMAD 用角色化智能体组织开发过程，让分析、产品、架构、执行分离。
+                    它更接近团队工作方式，目标是把混乱的 AI 编程过程变成可复用的框架。
+                </p>
+                <div class="pill-row">
+                    <span class="pill">角色分工</span>
+                    <span class="pill">从零到一</span>
+                    <span class="pill">流程标准化</span>
+                </div>
+            </article>
+
+            <article class="mode-card">
+                <div class="mini-tag">06</div>
+                <h3>SDD</h3>
+                <div class="mode-sub">先写规范，再写实现</div>
+                <p>
+                    SDD 强调规范文档是唯一标准。比起提示词技巧，清晰的上下文和文档约束更能稳定提高 AI 生成代码的质量。
+                </p>
+                <div class="pill-row">
+                    <span class="pill">规范优先</span>
+                    <span class="pill">质量导向</span>
+                    <span class="pill">边界清晰</span>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-head">
+            <div>
+                <h2>一句结论</h2>
+                <p>
+                    如果你只会 Vibe Coding，你会的是“与 AI 对话”；如果你理解并能组合这 6 种模式，你会的是“设计 AI 如何参与工程”。
+                </p>
+            </div>
+            <div class="section-tag">最终判断</div>
+        </div>
+
+        <div class="quote">
+            <p>
+                “更成熟的 AI 编程能力，不是会不会让模型生成代码，而是知道在什么项目里该用哪种模式，
+                以及如何把这些模式组合成可持续交付的工程体系。”
+            </p>
+            <small>
+                真正的差距不在于是否使用 AI，而在于能否把 AI 纳入可规划、可验证、可维护的工程流程。
+            </small>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-head">
+            <div>
+                <h2>可以继续加的辅助开发功能</h2>
+                <p>
+                    如果这个页面要长期用于教学、分享或项目初始化，可以继续做成一个可操作的小工具，而不只是静态文章。
+                </p>
+            </div>
+            <div class="section-tag">功能提议</div>
+        </div>
+
+        <div class="feature-grid">
+            <article class="feature-card">
+                <div class="feature-icon">1</div>
+                <strong>模式选择器</strong>
+                <p>输入项目规模、团队人数、质量要求，自动推荐 Vibe、Agentic、Harness、BMAD 或 SDD 的组合路线。</p>
+            </article>
+
+            <article class="feature-card">
+                <div class="feature-icon">2</div>
+                <strong>项目初始化清单</strong>
+                <p>根据选择的模式生成 README、AGENTS、规范文档、测试命令、任务模板等初始化 checklist。</p>
+            </article>
+
+            <article class="feature-card">
+                <div class="feature-icon">3</div>
+                <strong>Prompt 模板生成器</strong>
+                <p>把需求转成标准任务输入：背景、目标、约束、验收标准、交付物，减少 AI 猜测空间。</p>
+            </article>
+
+            <article class="feature-card">
+                <div class="feature-icon">4</div>
+                <strong>SDD 规范模板</strong>
+                <p>一键生成 spec 文档骨架，包括用户故事、接口、数据结构、边界条件和验收测试。</p>
+            </article>
+
+            <article class="feature-card">
+                <div class="feature-icon">5</div>
+                <strong>Harness 约束面板</strong>
+                <p>把 lint、test、build、依赖边界、代码风格、禁止项做成可勾选规则，生成 AGENTS.md。</p>
+            </article>
+
+            <article class="feature-card">
+                <div class="feature-icon">6</div>
+                <strong>复制图文卡片</strong>
+                <p>把每个模式导出成单张分享卡，适合发布到公众号、飞书、Notion 或知识库。</p>
+            </article>
+
+            <article class="feature-card">
+                <div class="feature-icon">7</div>
+                <strong>对比筛选</strong>
+                <p>点击两个模式，自动展示它们在速度、稳定性、成本、适用项目上的差异。</p>
+            </article>
+
+            <article class="feature-card">
+                <div class="feature-icon">8</div>
+                <strong>团队落地包</strong>
+                <p>生成一套团队 AI 编程规范：分工、提交规范、评审标准、自动化检查和复盘模板。</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="section" id="markdown">
+        <div class="section-head">
+            <div>
+                <h2>核心摘要</h2>
+                <p>
+                    用一段结构化摘要快速复盘 6 种 AI 编程模式。
+                </p>
+            </div>
+            <div class="section-tag">速览</div>
+        </div>
+
+        <pre id="markdownContent"># AI 编程不等于 Vibe Coding
+
+核心观点：
+
+> AI 编程已经不只是“跟模型聊天写代码”这一种玩法，而是至少存在 6 种主流工作模式。
+
+## 6 种 AI 编程模式
+
+1. Vibe Coding
+- 通过自然语言和 AI 对话，让 AI 帮你写代码
+- 核心是把需求表达清楚
+- 适合小工具、原型验证、个人项目
+
+2. Agentic Engineering
+- 可以理解为 Vibe Coding 的规范版
+- 强调先规划、拆任务、执行、验收
+- 适合中大型项目、团队协作、正式产品
+
+3. Harness Engineering
+- 核心是“人类掌舵 + 智能体执行”
+- 不只是写 Prompt，而是为 AI 搭建约束、反馈和工作流系统
+- 适合高可靠、复杂项目环境
+
+4. Ralph Wiggum Loop
+- 把 AI 放入循环，不断执行直到清单项全部完成
+- 适合功能明确、可拆解、支持无人值守的任务
+
+5. BMAD
+- 通过角色化智能体组织开发流程
+- 更像分析、产品、架构、执行协同的开发方法
+- 适合从零开始的完整产品和流程标准化团队
+
+6. SDD
+- Spec-Driven Development，规范驱动开发
+- 先写清规范文档，再让 AI 严格按规范实现
+- 适合需求明确、质量要求高的项目
+
+## 怎么理解这 6 种模式
+
+- Vibe Coding 代表“快速试出来”
+- Agentic Engineering 代表“按流程稳做”
+- Harness Engineering 代表“把 AI 纳入可靠工程系统”
+- Ralph Wiggum Loop 代表“循环执行直到完成”
+- BMAD 代表“角色化协作”
+- SDD 代表“规范先于实现”
+
+## 最重要的结论
+
+- AI 编程 != Vibe Coding
+- 这些模式不是互斥的，实际开发中可以组合使用
+- 更成熟的能力不是“会不会让 AI 写代码”，而是“知道在什么场景用什么模式”
+
+## 一个典型组合
+
+- 用 SDD 写规范
+- 用 BMAD 组织角色协作
+- 用 Harness Engineering 提供系统级约束
+- 必要时用 Ralph Wiggum Loop 做自动循环执行
+
+</pre>
+    </section>
+</main>
+
+<script>
+const copyButton = document.getElementById("copyButton");
+const copyStatus = document.getElementById("copyStatus");
+const markdownContent = document.getElementById("markdownContent");
+
+function setStatus(message, isError) {
+    copyStatus.textContent = message;
+    copyStatus.style.color = isError ? "#be185d" : "#726758";
+}
+
+function fallbackCopyText(text) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.top = "-9999px";
+    textarea.style.left = "-9999px";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+
+    let copied = false;
+
+    try {
+        copied = document.execCommand("copy");
+    } finally {
+        document.body.removeChild(textarea);
+    }
+
+    return copied;
+}
+
+async function copyMarkdown() {
+    const text = markdownContent.innerText;
+    copyButton.disabled = true;
+    setStatus("正在复制摘要内容...", false);
+
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            setStatus("复制成功，核心摘要已写入剪贴板。", false);
+            return;
+        }
+
+        if (fallbackCopyText(text)) {
+            setStatus("复制成功，已使用兼容模式写入剪贴板。", false);
+            return;
+        }
+
+        setStatus("复制失败：当前环境不支持自动复制，请手动选择下方摘要。", true);
+    } catch (error) {
+        if (fallbackCopyText(text)) {
+            setStatus("Clipboard API 不可用，已改用兼容模式复制成功。", false);
+        } else {
+            setStatus("复制失败：浏览器阻止了剪贴板访问，请手动复制摘要内容。", true);
+        }
+    } finally {
+        copyButton.disabled = false;
+    }
+}
+
+copyButton.addEventListener("click", copyMarkdown);
+</script>
+</body>
+</html>
