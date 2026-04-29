@@ -1,0 +1,970 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EUI-NEO 文档中心</title>
+  <meta name="description" content="EUI-NEO 文档中心：快速了解、开始使用、组件、主题、自定义、性能与技术说明。">
+  <link rel="icon" href="EUI-NEO-main/assets/icon.png">
+  <style>
+    :root {
+      color-scheme: light;
+      --blue: #4867da;
+      --blue-2: #6f89ff;
+      --blue-3: #dfe6ff;
+      --navy: #00113f;
+      --ink: #091333;
+      --muted: #596781;
+      --line: rgba(0, 17, 63, 0.12);
+      --soft: #f4f7ff;
+      --panel: rgba(255, 255, 255, 0.88);
+      --white: #ffffff;
+      --radius: 8px;
+      --shadow: 0 20px 58px rgba(0, 17, 63, 0.12);
+      --content: 1180px;
+      --nav-h: 70px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--soft);
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, #ffffff 0%, #f4f7ff 46%, #eef3ff 100%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      letter-spacing: 0;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(72, 103, 218, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(72, 103, 218, 0.07) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.65), transparent 70%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    code,
+    pre {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    .site-header {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 50;
+      height: var(--nav-h);
+      display: flex;
+      justify-content: center;
+      border-bottom: 1px solid rgba(0, 17, 63, 0.08);
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav-inner {
+      width: min(var(--content), calc(100% - 32px));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      color: var(--navy);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .brand img {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 18px rgba(72, 103, 218, 0.24));
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .nav-links a {
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      transition: color 180ms ease, background 180ms ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+      color: var(--blue);
+      background: rgba(72, 103, 218, 0.1);
+      outline: none;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 46px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 16px;
+      border: 1px solid rgba(72, 103, 218, 0.28);
+      border-radius: var(--radius);
+      color: var(--blue);
+      background: rgba(72, 103, 218, 0.08);
+      font: inherit;
+      font-weight: 850;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: transform 180ms ease, background 180ms ease, border-color 180ms ease, color 180ms ease;
+    }
+
+    .button.primary {
+      color: #fff;
+      border-color: var(--blue);
+      background: var(--blue);
+      box-shadow: 0 16px 38px rgba(72, 103, 218, 0.22);
+    }
+
+    .button:hover,
+    .button:focus-visible {
+      transform: translateY(-2px);
+      color: #fff;
+      border-color: var(--navy);
+      background: var(--navy);
+      outline: none;
+    }
+
+    .hero {
+      padding: calc(var(--nav-h) + 64px) 0 52px;
+      border-bottom: 1px solid rgba(0, 17, 63, 0.08);
+      background:
+        radial-gradient(circle at 76% 20%, rgba(72, 103, 218, 0.18), transparent 28rem),
+        linear-gradient(135deg, #ffffff 0%, #edf2ff 58%, #dfe6ff 100%);
+    }
+
+    .hero-inner,
+    .docs-shell,
+    .footer-inner {
+      width: min(var(--content), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.72fr) minmax(280px, 0.28fr);
+      gap: 28px;
+      align-items: end;
+    }
+
+    .kicker {
+      margin: 0 0 14px;
+      color: var(--blue);
+      font-weight: 900;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: var(--navy);
+      font-size: clamp(3rem, 7vw, 5.8rem);
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 780px;
+      margin-bottom: 0;
+      color: #26375f;
+      font-size: 1.14rem;
+      line-height: 1.82;
+    }
+
+    .hero-card {
+      padding: 18px;
+      border: 1px solid rgba(72, 103, 218, 0.16);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.76);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card img {
+      width: 72px;
+      height: 72px;
+      margin-bottom: 16px;
+    }
+
+    .hero-card strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--navy);
+      font-size: 1.08rem;
+    }
+
+    .hero-card span {
+      display: block;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .docs-area {
+      padding: 34px 0 88px;
+    }
+
+    .docs-shell {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: calc(var(--nav-h) + 18px);
+      padding: 16px;
+      border: 1px solid rgba(72, 103, 218, 0.14);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.84);
+      box-shadow: 0 14px 38px rgba(0, 17, 63, 0.08);
+    }
+
+    .sidebar strong {
+      display: block;
+      margin-bottom: 12px;
+      color: var(--navy);
+      font-size: 0.96rem;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 9px 10px;
+      border-radius: var(--radius);
+      color: var(--muted);
+      font-size: 0.92rem;
+      transition: color 160ms ease, background 160ms ease;
+    }
+
+    .sidebar a:hover,
+    .sidebar a:focus-visible {
+      color: var(--blue);
+      background: rgba(72, 103, 218, 0.09);
+      outline: none;
+    }
+
+    .content {
+      display: grid;
+      gap: 18px;
+    }
+
+    .doc-section {
+      padding: 28px;
+      border: 1px solid rgba(72, 103, 218, 0.14);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      scroll-margin-top: calc(var(--nav-h) + 24px);
+    }
+
+    .doc-section h2 {
+      margin-bottom: 14px;
+      color: var(--navy);
+      font-size: clamp(1.65rem, 3vw, 2.35rem);
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .doc-section h3 {
+      margin: 28px 0 10px;
+      color: var(--navy);
+      font-size: 1.18rem;
+      letter-spacing: 0;
+    }
+
+    .doc-section p {
+      color: var(--muted);
+      line-height: 1.84;
+    }
+
+    .doc-section p:last-child {
+      margin-bottom: 0;
+    }
+
+    .lead {
+      max-width: 840px;
+      color: #32466f !important;
+      font-size: 1.04rem;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 0 12px;
+      border: 1px solid rgba(72, 103, 218, 0.18);
+      border-radius: 999px;
+      color: var(--blue);
+      background: rgba(72, 103, 218, 0.08);
+      font-weight: 800;
+      font-size: 0.88rem;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .info-card {
+      min-height: 150px;
+      padding: 18px;
+      border: 1px solid rgba(72, 103, 218, 0.12);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    a.info-card {
+      display: block;
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    a.info-card:hover,
+    a.info-card:focus-visible {
+      transform: translateY(-4px);
+      border-color: rgba(72, 103, 218, 0.38);
+      box-shadow: var(--shadow);
+      outline: none;
+    }
+
+    .info-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--navy);
+      font-size: 1rem;
+    }
+
+    .info-card span,
+    .info-card li {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .info-card ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .steps {
+      display: grid;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 14px;
+      padding: 16px;
+      border: 1px solid rgba(72, 103, 218, 0.12);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .step-number {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--blue);
+      font-weight: 950;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--navy);
+    }
+
+    .step span {
+      color: var(--muted);
+      line-height: 1.72;
+    }
+
+    .table {
+      width: 100%;
+      margin-top: 18px;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid rgba(72, 103, 218, 0.14);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.74);
+    }
+
+    .table th,
+    .table td {
+      padding: 14px 15px;
+      border-bottom: 1px solid rgba(72, 103, 218, 0.12);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .table th {
+      color: var(--navy);
+      background: rgba(72, 103, 218, 0.08);
+      font-size: 0.92rem;
+    }
+
+    .table td {
+      color: var(--muted);
+      line-height: 1.68;
+    }
+
+    .table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .code-block {
+      margin: 18px 0 0;
+      padding: 18px;
+      overflow-x: auto;
+      border-radius: var(--radius);
+      color: #eef3ff;
+      background: var(--navy);
+      line-height: 1.75;
+      font-size: 0.9rem;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .preview-grid figure {
+      margin: 0;
+      overflow: hidden;
+      border: 8px solid #fff;
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: 0 16px 40px rgba(0, 17, 63, 0.12);
+    }
+
+    .preview-grid img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+    }
+
+    .preview-grid figcaption {
+      padding: 10px 12px 4px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .cta-box {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: center;
+      padding: 24px;
+      border-radius: var(--radius);
+      color: #fff;
+      background: var(--navy);
+    }
+
+    .cta-box h2,
+    .cta-box p {
+      color: #fff;
+    }
+
+    .cta-box p {
+      opacity: 0.78;
+    }
+
+    .cta-box .button {
+      color: var(--navy);
+      border-color: #fff;
+      background: #fff;
+    }
+
+    .site-footer {
+      padding: 34px 0;
+      color: var(--muted);
+      background: #fff;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-inner a {
+      color: var(--blue);
+      font-weight: 760;
+    }
+
+    @media (max-width: 1040px) {
+      .docs-shell,
+      .hero-grid,
+      .cta-box {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .sidebar nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 4px;
+      }
+
+      .card-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      :root {
+        --nav-h: 64px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero-inner,
+      .docs-shell,
+      .footer-inner,
+      .nav-inner {
+        width: min(var(--content), calc(100% - 24px));
+      }
+
+      h1 {
+        font-size: 3rem;
+      }
+
+      .doc-section {
+        padding: 22px;
+      }
+
+      .card-grid,
+      .preview-grid,
+      .sidebar nav {
+        grid-template-columns: 1fr;
+      }
+
+      .step {
+        grid-template-columns: 1fr;
+      }
+
+      .table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-inner">
+      <a class="brand" href="eui-neo.html">
+        <img src="EUI-NEO-main/assets/icon.png" alt="">
+        <span>EUI-NEO</span>
+      </a>
+      <nav class="nav-links" aria-label="顶部导航">
+        <a href="#overview">概览</a>
+        <a href="#start">开始</a>
+        <a href="#components">组件</a>
+        <a href="#custom">自定义</a>
+        <a href="#tech">技术</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="button" href="eui-neo.html">官网</a>
+        <a class="button primary" href="https://github.com/sudoevolve/EUI-NEO">GitHub</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner hero-grid">
+      <div>
+        <p class="kicker">EUI-NEO Documentation</p>
+        <h1>文档中心</h1>
+        <p>EUI-NEO 是一套面向桌面应用的高性能 UI 方案，强调高性能、低占用、强自定义和开箱即用。这里集中整理项目定位、使用方式、组件能力、主题方式、界面示例与技术基础。</p>
+      </div>
+      <div class="hero-card">
+        <img src="EUI-NEO-main/assets/icon.png" alt="">
+        <strong>仓库地址</strong>
+        <span>https://github.com/sudoevolve/EUI-NEO</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="docs-area">
+    <div class="docs-shell">
+      <aside class="sidebar" aria-label="文档目录">
+        <strong>目录</strong>
+        <nav>
+          <a href="#overview">1. 项目概览</a>
+          <a href="#start">2. 开始使用</a>
+          <a href="#advantages">3. 核心优势</a>
+          <a href="#components">4. 组件能力</a>
+          <a href="#custom">5. 自定义方式</a>
+          <a href="#performance">6. 性能与占用</a>
+          <a href="#gallery">7. 界面示例</a>
+          <a href="#tech">8. 技术基础</a>
+          <a href="#full-docs">9. 完整文档</a>
+        </nav>
+      </aside>
+
+      <div class="content">
+        <section class="doc-section" id="overview">
+          <h2>1. 项目概览</h2>
+          <p class="lead">EUI-NEO 用于构建桌面应用界面。它把常用控件、布局方式、主题风格、动效反馈和数据展示整理成一套统一的 UI 能力，适合工具软件、数据面板、控制台、图形工作台和定制化客户端。</p>
+          <div class="pill-row">
+            <span class="pill">高性能</span>
+            <span class="pill">低占用</span>
+            <span class="pill">强定制</span>
+            <span class="pill">开箱即用</span>
+            <span class="pill">桌面应用</span>
+          </div>
+
+          <div class="card-grid">
+            <div class="info-card">
+              <strong>适合场景</strong>
+              <span>桌面工具、后台面板、设备控制台、数据仪表盘、图形工作台和需要统一视觉的客户端应用。</span>
+            </div>
+            <div class="info-card">
+              <strong>主要价值</strong>
+              <span>减少界面搭建成本，保持视觉一致，降低长期维护压力，让定制化界面更容易落地。</span>
+            </div>
+            <div class="info-card">
+              <strong>视觉方向</strong>
+              <span>官网主题使用图标的蓝、白、深蓝色系，整体更清爽，也更贴合项目标识。</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="doc-section" id="start">
+          <h2>2. 开始使用</h2>
+          <p class="lead">如果你想快速了解项目，可以从官网、界面示例和本文档开始。需要进一步查看项目动态与仓库内容时，可以进入 GitHub。</p>
+
+          <div class="steps">
+            <div class="step">
+              <span class="step-number">1</span>
+              <div>
+                <strong>浏览官网</strong>
+                <span>先看首页的优势、能力和界面截图，快速判断 EUI-NEO 的风格和应用场景。</span>
+              </div>
+            </div>
+            <div class="step">
+              <span class="step-number">2</span>
+              <div>
+                <strong>阅读本文档</strong>
+                <span>按目录了解组件、自定义、性能和界面示例，形成完整印象。</span>
+              </div>
+            </div>
+            <div class="step">
+              <span class="step-number">3</span>
+              <div>
+                <strong>查看 GitHub</strong>
+                <span>项目仓库地址：<a href="https://github.com/sudoevolve/EUI-NEO">github.com/sudoevolve/EUI-NEO</a>。</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="doc-section" id="advantages">
+          <h2>3. 核心优势</h2>
+          <p class="lead">EUI-NEO 的宣传重点不是复杂概念，而是桌面应用真正关心的体验：快、轻、好改、能直接用。</p>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>优势</th>
+                <th>说明</th>
+                <th>适用场景</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>高性能</td>
+                <td>适合持续刷新、频繁交互和复杂页面，界面反馈更利落。</td>
+                <td>控制台、仪表盘、图形工具</td>
+              </tr>
+              <tr>
+                <td>低占用</td>
+                <td>结构轻量，资源边界清晰，适合长期运行。</td>
+                <td>常驻工具、后台面板、客户端</td>
+              </tr>
+              <tr>
+                <td>强定制</td>
+                <td>主题、布局、组件、图片、文字和图形元素都能组合调整。</td>
+                <td>品牌化界面、定制工具、专业软件</td>
+              </tr>
+              <tr>
+                <td>开箱即用</td>
+                <td>常用控件、弹层、选择器、数据表和图表都有现成能力。</td>
+                <td>快速原型、管理页面、功能面板</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="doc-section" id="components">
+          <h2>4. 组件能力</h2>
+          <p class="lead">组件覆盖桌面应用常见需求，既能做基础操作区，也能做设置页面、数据面板和弹窗交互。</p>
+
+          <div class="card-grid">
+            <div class="info-card">
+              <strong>基础表达</strong>
+              <ul>
+                <li>panel 面板</li>
+                <li>text / label 文本</li>
+                <li>image 图片</li>
+                <li>主题化背景、边框、圆角和阴影</li>
+              </ul>
+            </div>
+            <div class="info-card">
+              <strong>交互控件</strong>
+              <ul>
+                <li>button 按钮</li>
+                <li>input 输入框</li>
+                <li>checkbox / radio 选择</li>
+                <li>switch、slider、progress、tabs</li>
+              </ul>
+            </div>
+            <div class="info-card">
+              <strong>弹层反馈</strong>
+              <ul>
+                <li>dialog 对话框</li>
+                <li>toast 提示消息</li>
+                <li>contextMenu 右键菜单</li>
+                <li>dropdown 下拉菜单</li>
+              </ul>
+            </div>
+            <div class="info-card">
+              <strong>选择器</strong>
+              <ul>
+                <li>datepicker 日期选择</li>
+                <li>timepicker 时间选择</li>
+                <li>colorpicker 颜色选择</li>
+              </ul>
+            </div>
+            <div class="info-card">
+              <strong>数据展示</strong>
+              <ul>
+                <li>dataTable 数据表</li>
+                <li>linechart 折线图</li>
+                <li>barchart 柱状图</li>
+                <li>piechart 饼图</li>
+              </ul>
+            </div>
+            <div class="info-card">
+              <strong>组合页面</strong>
+              <ul>
+                <li>侧栏导航</li>
+                <li>卡片内容区</li>
+                <li>工具栏</li>
+                <li>设置页和数据页</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="doc-section" id="custom">
+          <h2>5. 自定义方式</h2>
+          <p class="lead">EUI-NEO 的自定义不止是换颜色。它允许从主题、布局、组件状态和图形元素多个层面塑造界面风格。</p>
+
+          <h3>主题</h3>
+          <p>主题用于统一颜色、边框、阴影、圆角、字段样式和按钮状态。官网使用蓝、白、深蓝三种核心色，贴合项目图标，也让页面看起来更干净。</p>
+
+          <h3>布局</h3>
+          <p>页面可以组织成侧栏、顶部栏、内容区、卡片区、弹窗区和数据区。不同密度的信息界面可以用不同布局表达，避免所有页面长得一样。</p>
+
+          <h3>组件状态</h3>
+          <p>按钮、开关、滑块、标签页和菜单都需要 hover、pressed、selected、disabled 等状态。统一状态规则能让界面更稳定，也更容易维护。</p>
+
+          <h3>视觉资产</h3>
+          <p>图片、图标、文字和基础图形可以混合使用。对于定制工具或品牌化应用，视觉资产是拉开辨识度的重要部分。</p>
+        </section>
+
+        <section class="doc-section" id="performance">
+          <h2>6. 性能与占用</h2>
+          <p class="lead">桌面界面的性能不只看首屏加载，还要看长时间运行、频繁输入、快速切换和持续刷新时是否稳定。</p>
+
+          <div class="card-grid">
+            <div class="info-card">
+              <strong>响应快</strong>
+              <span>鼠标移动、点击、拖拽、输入和状态变化都需要及时反馈，工具类软件尤其依赖这种手感。</span>
+            </div>
+            <div class="info-card">
+              <strong>刷新省</strong>
+              <span>界面变化时只刷新必要区域，可以减少不必要的绘制压力，让复杂页面保持顺滑。</span>
+            </div>
+            <div class="info-card">
+              <strong>运行轻</strong>
+              <span>轻量结构和清晰资源边界，适合常驻、后台、控制台和需要长期打开的客户端。</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="doc-section" id="gallery">
+          <h2>7. 界面示例</h2>
+          <p class="lead">以下截图展示了 EUI-NEO 的控件、主题、动画和组合页面效果。</p>
+
+          <div class="preview-grid">
+            <figure>
+              <img src="EUI-NEO-main/docs/pic/1.jpg" alt="控件面板截图">
+              <figcaption>控件面板：按钮、输入、开关、滑块、标签页等基础组件。</figcaption>
+            </figure>
+            <figure>
+              <img src="EUI-NEO-main/docs/pic/2.jpg" alt="主题风格截图">
+              <figcaption>主题风格：颜色、边框、圆角、阴影和字段状态。</figcaption>
+            </figure>
+            <figure>
+              <img src="EUI-NEO-main/docs/pic/3.jpg" alt="动画页面截图">
+              <figcaption>动画页面：状态变化、移动、透明度和交互反馈。</figcaption>
+            </figure>
+            <figure>
+              <img src="EUI-NEO-main/docs/pic/4.jpg" alt="组合页面截图">
+              <figcaption>组合页面：图片、文本、卡片和数据内容的页面组合。</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="doc-section" id="tech">
+          <h2>8. 技术基础</h2>
+          <p class="lead">EUI-NEO 基于 C++17、OpenGL 和 GLFW。页面使用声明式方式描述，运行层统一处理布局、动画、事件、局部刷新和缓存。</p>
+          <p>这套结构的重点是分清职责：上层负责描述界面目标，运行层负责让界面在每一帧正确呈现。这样既能保持代码组织清楚，也能集中优化渲染和交互反馈。</p>
+
+          <pre class="code-block">性能基础：OpenGL 图形加速 + 局部刷新
+资源控制：轻量结构 + 清晰资源边界
+界面组织：声明式描述 + 统一运行层
+扩展方向：主题、组件、布局、图形资产可组合</pre>
+        </section>
+
+        <section class="doc-section" id="full-docs">
+          <h2>9. 完整文档</h2>
+          <p class="lead">下面是完整技术文档，可直接阅读。</p>
+
+          <div class="card-grid">
+            <a class="info-card" href="eui-neo-doc-pages/dsl.html">
+              <strong>DSL 设计</strong>
+              <span>页面结构、目标状态、布局和运行层关系。</span>
+            </a>
+            <a class="info-card" href="eui-neo-doc-pages/components.html">
+              <strong>组件</strong>
+              <span>控件、弹层、选择器、表格、图表和主题 API。</span>
+            </a>
+            <a class="info-card" href="eui-neo-doc-pages/primitives-text.html">
+              <strong>图元与文本</strong>
+              <span>基础图元、文字绘制、图片图元和底层对象。</span>
+            </a>
+            <a class="info-card" href="eui-neo-doc-pages/layout.html">
+              <strong>布局</strong>
+              <span>Row、Column、Stack、尺寸、对齐和裁剪。</span>
+            </a>
+            <a class="info-card" href="eui-neo-doc-pages/events.html">
+              <strong>事件</strong>
+              <span>点击、拖拽、滚动、焦点、键盘和输入事件。</span>
+            </a>
+            <a class="info-card" href="eui-neo-doc-pages/animation.html">
+              <strong>动画</strong>
+              <span>Transition、缓动、动画属性和脏区更新。</span>
+            </a>
+            <a class="info-card" href="eui-neo-doc-pages/rendering.html">
+              <strong>渲染流程</strong>
+              <span>primitive 同步、framebuffer cache 和局部刷新。</span>
+            </a>
+            <a class="info-card" href="eui-neo-doc-pages/images.html">
+              <strong>图片</strong>
+              <span>本地图片、网络图片、SVG 和图片适配策略。</span>
+            </a>
+            <a class="info-card" href="eui-neo-doc-pages/network.html">
+              <strong>网络</strong>
+              <span>远程资源请求和网络能力说明。</span>
+            </a>
+            <a class="info-card" href="eui-neo-doc-pages/window-pages.html">
+              <strong>窗口页面</strong>
+              <span>窗口、页面配置和应用入口说明。</span>
+            </a>
+          </div>
+        </section>
+
+        <section class="doc-section">
+          <div class="cta-box">
+            <div>
+              <h2>在 GitHub 查看 EUI-NEO</h2>
+              <p>仓库主页提供项目更新、版本内容和更多信息。</p>
+            </div>
+            <a class="button" href="https://github.com/sudoevolve/EUI-NEO">打开 GitHub</a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>EUI-NEO documentation center</span>
+      <a href="eui-neo.html">返回官网</a>
+    </div>
+  </footer>
+</body>
+</html>

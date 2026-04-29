@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>渲染流程 - EUI-NEO 文档</title>
+  <link rel="icon" href="../EUI-NEO-main/assets/icon.png">
+  <style>
+    :root{color-scheme:light;--blue:#4867da;--navy:#00113f;--ink:#091333;--muted:#596781;--soft:#f4f7ff;--panel:rgba(255,255,255,.9);--radius:8px;--shadow:0 20px 58px rgba(0,17,63,.12);--nav-h:70px}*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--soft)}body{margin:0;color:var(--ink);background:linear-gradient(180deg,#fff 0%,#f4f7ff 58%,#eef3ff 100%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;letter-spacing:0}a{color:inherit;text-decoration:none}.topbar{position:fixed;inset:0 0 auto;z-index:20;height:var(--nav-h);display:flex;justify-content:center;border-bottom:1px solid rgba(0,17,63,.08);background:rgba(255,255,255,.86);backdrop-filter:blur(18px)}.topbar-inner{width:min(1180px,calc(100% - 32px));display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:inline-flex;align-items:center;gap:10px;color:var(--navy);font-weight:900}.brand img{width:34px;height:34px;filter:drop-shadow(0 8px 18px rgba(72,103,218,.24))}.actions{display:flex;gap:10px;flex-wrap:wrap}.button{display:inline-flex;min-height:42px;align-items:center;justify-content:center;padding:0 14px;border:1px solid rgba(72,103,218,.28);border-radius:var(--radius);color:var(--blue);background:rgba(72,103,218,.08);font-weight:850}.button.primary{color:#fff;border-color:var(--blue);background:var(--blue)}.hero{padding:calc(var(--nav-h) + 52px) 0 34px;border-bottom:1px solid rgba(0,17,63,.08);background:linear-gradient(135deg,#fff 0%,#edf2ff 58%,#dfe6ff 100%)}.hero-inner,.layout{width:min(1180px,calc(100% - 32px));margin:0 auto}h1{margin:0 0 12px;color:var(--navy);font-size:clamp(2.5rem,6vw,4.8rem);line-height:.98;letter-spacing:0}.hero p{max-width:760px;margin:0;color:#26375f;line-height:1.78}.layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px;align-items:start;padding:30px 0 82px}.toc{position:sticky;top:calc(var(--nav-h) + 18px);padding:16px;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius);background:rgba(255,255,255,.86);box-shadow:0 14px 38px rgba(0,17,63,.08)}.toc strong{display:block;margin-bottom:10px;color:var(--navy)}.toc a{display:block;padding:8px 10px;border-radius:var(--radius);color:var(--muted);font-size:.92rem;line-height:1.35}.toc a.level-3{padding-left:22px;font-size:.86rem}.toc a:hover{color:var(--blue);background:rgba(72,103,218,.09)}article{padding:30px;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow)}article h1{font-size:2.4rem}article h2{margin:34px 0 12px;color:var(--navy);font-size:1.75rem;line-height:1.2;scroll-margin-top:calc(var(--nav-h) + 24px)}article h3{margin:26px 0 10px;color:var(--navy);font-size:1.24rem;scroll-margin-top:calc(var(--nav-h) + 24px)}article h4{margin:20px 0 8px;color:var(--navy);font-size:1.05rem}article p,article li,article td{color:var(--muted);line-height:1.8}article a{color:var(--blue);font-weight:760}article code{padding:.12em .34em;border-radius:5px;color:var(--navy);background:rgba(72,103,218,.1);font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}article pre{margin:16px 0;padding:18px;overflow:auto;border-radius:var(--radius);color:#eef3ff;background:var(--navy);line-height:1.72}article pre code{padding:0;color:inherit;background:transparent}.table-wrap{overflow:auto;margin:16px 0;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius)}table{width:100%;border-collapse:collapse;background:#fff}th,td{padding:13px 14px;border-bottom:1px solid rgba(72,103,218,.12);text-align:left;vertical-align:top}th{color:var(--navy);background:rgba(72,103,218,.08)}tr:last-child td{border-bottom:0}article img{max-width:100%;border-radius:var(--radius)}footer{padding:30px 0;color:var(--muted);background:#fff}footer div{width:min(1180px,calc(100% - 32px));margin:0 auto;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}footer a{color:var(--blue);font-weight:760}@media(max-width:960px){.layout{grid-template-columns:1fr}.toc{position:static}.toc nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}}@media(max-width:620px){.topbar-inner,.hero-inner,.layout,footer div{width:calc(100% - 24px)}.actions{display:none}article{padding:22px}.toc nav{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="topbar-inner"><a class="brand" href="../eui-neo.html"><img src="../EUI-NEO-main/assets/icon.png" alt=""><span>EUI-NEO</span></a><div class="actions"><a class="button" href="../eui-neo-docs.html">文档中心</a><a class="button primary" href="https://github.com/sudoevolve/EUI-NEO">GitHub</a></div></div></header>
+  <section class="hero"><div class="hero-inner"><h1>渲染流程</h1><p>EUI-NEO 技术文档，可直接在官网中阅读。</p></div></section>
+  <main class="layout"><aside class="toc"><strong>目录</strong><nav><a class="level-1" href="#渲染流程">渲染流程</a>
+<a class="level-2" href="#文件职责">文件职责</a>
+<a class="level-2" href="#主循环">主循环</a>
+<a class="level-2" href="#app-生命周期">App 生命周期</a>
+<a class="level-2" href="#dsl-app-更新流程">DSL App 更新流程</a>
+<a class="level-2" href="#脏区渲染">脏区渲染</a>
+<a class="level-2" href="#blur-与脏区">Blur 与脏区</a>
+<a class="level-2" href="#full-redraw-触发">Full Redraw 触发</a>
+<a class="level-2" href="#当前限制">当前限制</a></nav></aside><article><h1 id="渲染流程">渲染流程</h1>
+<p>本文说明当前 <code>main.cpp</code>、<code>app/dsl_app.h</code> 和 <code>core::dsl::Runtime</code> 的真实行为：主动帧率节流、按需渲染、脏区缓存、blur 的特殊处理。</p>
+<h2 id="文件职责">文件职责</h2>
+<ul>
+<li><code>main.cpp</code>：窗口创建、GLFW/GLAD 初始化、DPI 和鼠标比例计算、主循环、主动帧率节流。</li>
+<li><code>app/app.h</code>：应用生命周期接口。</li>
+<li><code>app/dsl_app.h</code>：把 DSL compose 接到 Runtime，管理是否需要重新 compose。</li>
+<li><code>core/dsl_runtime.h</code>：布局后的状态同步、交互、动画推进、dirty rect、framebuffer cache、实际渲染。</li>
+<li><code>core/primitive.h</code> / <code>core/text.cpp</code>：底层 OpenGL 图元绘制。</li>
+</ul>
+<h2 id="主循环">主循环</h2>
+<p>当前主循环不是无脑满帧刷新。</p>
+<p>静止时：</p>
+<pre><code>glfwWaitEvents()</code></pre>
+<p>有动画时：</p>
+<pre><code>按窗口所在显示器 refreshRate 计算下一帧时间
+等待到下一帧时间点
+update
+如果有 dirty/full redraw:
+    render
+    glfwSwapBuffers
+glfwPollEvents</code></pre>
+<p>当前使用主动节流：</p>
+<ul>
+<li><code>glfwSwapInterval(0)</code>，不再依赖 <code>SwapBuffers</code> 的 vsync 阻塞。</li>
+<li>通过窗口和显示器重叠面积判断窗口当前主要在哪个显示器上。</li>
+<li>使用该显示器 <code>GLFWvidmode::refreshRate</code> 作为默认动画帧率。</li>
+<li>如果 <code>DslAppConfig::fps</code> 为正数，则使用 <code>min(refreshRate, fps)</code>。</li>
+<li>Windows 下使用 <code>timeBeginPeriod(1)</code> 提高等待精度，避免 240Hz 被普通计时器拖到约 60/64 FPS。</li>
+</ul>
+<p><code>gallery</code> 和 <code>calculator</code> 当前默认 <code>fps = 90.0</code>。<code>gallery</code> 的 Settings 中打开 <code>Unlock 90 FPS limit</code> 后会把 <code>fps</code> 同步为 <code>0.0</code>，动画节流回到屏幕刷新率。</p>
+<h2 id="app-生命周期">App 生命周期</h2>
+<p>底层入口在 <code>app/app.h</code>：</p>
+<pre><code>namespace app {
+
+const char* windowTitle();
+bool showFrameCountInTitle();
+double frameRateLimit();
+int initialWindowWidth();
+int initialWindowHeight();
+bool initialize(GLFWwindow* window);
+bool update(GLFWwindow* window,
+            float deltaSeconds,
+            int windowWidth,
+            int windowHeight,
+            float dpiScale,
+            float pointerScale);
+bool isAnimating();
+void render(int windowWidth, int windowHeight, float dpiScale);
+void shutdown();
+
+}</code></pre>
+<p>DSL app 一般不直接实现这些函数，而是包含 <code>app/dsl_app.h</code>，然后实现：</p>
+<pre><code>const DslAppConfig&amp; dslAppConfig();
+void compose(core::dsl::Ui&amp; ui, const core::dsl::Screen&amp; screen);</code></pre>
+<h2 id="dsl-app-更新流程">DSL App 更新流程</h2>
+<p><code>app/dsl_app.h</code> 当前不会每轮循环都重新 compose。</p>
+<p>它只在这些情况 compose：</p>
+<ul>
+<li>首次运行。</li>
+<li>逻辑窗口尺寸变化。</li>
+<li>Runtime 检测到点击回调导致业务状态变化，并设置 <code>needsCompose()</code>。</li>
+</ul>
+<p>流程大致是：</p>
+<pre><code>如果首次或逻辑尺寸变化:
+    composeFrame()
+
+changed = runtime.update(...)
+
+如果 runtime.needsCompose():
+    composeFrame()
+    runtime.update(..., deltaSeconds = 0)
+    runtime.markFullRedraw()
+    changed = true
+
+return changed</code></pre>
+<p>点击后多做一次 <code>deltaSeconds = 0</code> 的 Runtime update，是为了让新 DSL 树和 Runtime 缓存实例马上同步。否则可能出现“新声明 + 旧实例坐标”混在同一帧里，导致文本或控件短暂错位。</p>
+<h2 id="脏区渲染">脏区渲染</h2>
+<p>当前 Runtime 使用一个离屏 framebuffer cache 做保守脏区渲染。</p>
+<p>核心策略：</p>
+<p>1. Runtime 按 id 缓存每个 <code>Rect</code> / <code>Text</code> 的动画值和 primitive。 2. 元素视觉值变化时，计算变化前后的 visual rect。 3. 对旧 rect 和新 rect 取 union，加入 dirty rect 列表。 4. render 时先渲染到离屏 cache。 5. full redraw 时重画整棵 UI。 6. 局部变化时：</p>
+<ul>
+<li>绑定 cache framebuffer。</li>
+<li>对 dirty rect 开 <code>glScissor</code>。</li>
+<li>清理 dirty rect 内背景。</li>
+<li>只重画与 dirty rect 相交的元素。</li>
+<li>把 cache blit 到默认 framebuffer。</li>
+</ul>
+<p>当前 dirty rect 已考虑：</p>
+<ul>
+<li>frame 变化。</li>
+<li>color / opacity / radius / border / shadow / blur 变化。</li>
+<li>transform 的 scale / rotate / translate 外接矩形。</li>
+<li>Text 的 frame / color / opacity 变化。</li>
+<li>visualStateFrom 带来的按下缩放。</li>
+</ul>
+<h2 id="blur-与脏区">Blur 与脏区</h2>
+<p><code>blur</code> 是特殊图元，不等同于普通半透明 rect。</p>
+<p>当前 blur 的实现方式是 backdrop blur：</p>
+<p>1. 从当前 framebuffer/cache 中取 blur rect 附近的 backdrop。 2. 用 framebuffer blit 复制到 1/2 尺寸的 backdrop texture。 3. fragment shader 多次采样这块降采样 texture。 4. 把采样结果和自身颜色混合。</p>
+<p>这意味着 blur 依赖“它背后的已绘制内容”。如果只做局部 dirty patch，某些情况下 cache 里可能是半旧半新的：</p>
+<ul>
+<li>dirty rect 被 scissor 清掉了一部分。</li>
+<li>周围卡片 hover/press/rotate 后只重画了局部。</li>
+<li>blur 自己或附近元素上一帧的内容还残留在 cache 的其他区域。</li>
+</ul>
+<p>这时 blur 会把“半旧半新的 cache”采进去，就可能出现竖条、污染、错位的模糊背景。</p>
+<p>为保证正确性，Runtime 当前做了保守处理：</p>
+<ul>
+<li>如果 dirty rect 触碰到任意 blur 元素的保护范围；</li>
+<li>本帧会自动升级为 full redraw；</li>
+<li>让 blur 采样完整、按顺序重画后的 cache。</li>
+</ul>
+<p>保护范围目前按 blur rect 中心放大 1.2 倍计算。它不是完整 blur 半径的精确范围，而是性能和正确性之间的折中：减少 blur 周围普通交互触发 full redraw 的次数，同时避免最明显的半旧 cache 采样污染。</p>
+<p>代价是：blur 附近交互会比普通 rect 更贵。<code>gallery</code> 默认关闭 Glass/blur，也是为了默认功耗更稳。</p>
+<h2 id="full-redraw-触发">Full Redraw 触发</h2>
+<p>这些情况会触发或升级为 full redraw：</p>
+<ul>
+<li>首帧。</li>
+<li>framebuffer 尺寸变化。</li>
+<li>Runtime cache 创建或重建。</li>
+<li>点击回调导致业务状态变化并重新 compose。</li>
+<li>dirty rect 触碰到 blur 元素 1.2 倍保护范围。</li>
+<li>调用 <code>Runtime::markFullRedraw()</code>。</li>
+</ul>
+<h2 id="当前限制">当前限制</h2>
+<ul>
+<li>脏区是保守矩形，不是像素级 diff。</li>
+<li>所有内容共用一个 framebuffer cache，还没有独立 layer tree。</li>
+<li>blur 依赖 framebuffer 内容，正确性优先时会扩大到 full redraw。</li>
+<li>最终仍会把 cache blit 到默认 framebuffer。</li>
+<li>已有基础矩形 clip 和 z-index；clip 通过 scissor 合成，z-index 影响同级绘制和 topmost hit-test。</li>
+<li>当前不是 QML 那种 retained scene graph + batch renderer，复杂图元在高刷新率下成本会更明显。</li>
+</ul></article></main>
+  <footer><div><span>EUI-NEO 文档</span><a href="../eui-neo-docs.html">返回文档中心</a></div></footer>
+</body>
+</html>

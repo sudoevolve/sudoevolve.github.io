@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>基础图元与文本图元 - EUI-NEO 文档</title>
+  <link rel="icon" href="../EUI-NEO-main/assets/icon.png">
+  <style>
+    :root{color-scheme:light;--blue:#4867da;--navy:#00113f;--ink:#091333;--muted:#596781;--soft:#f4f7ff;--panel:rgba(255,255,255,.9);--radius:8px;--shadow:0 20px 58px rgba(0,17,63,.12);--nav-h:70px}*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--soft)}body{margin:0;color:var(--ink);background:linear-gradient(180deg,#fff 0%,#f4f7ff 58%,#eef3ff 100%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;letter-spacing:0}a{color:inherit;text-decoration:none}.topbar{position:fixed;inset:0 0 auto;z-index:20;height:var(--nav-h);display:flex;justify-content:center;border-bottom:1px solid rgba(0,17,63,.08);background:rgba(255,255,255,.86);backdrop-filter:blur(18px)}.topbar-inner{width:min(1180px,calc(100% - 32px));display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:inline-flex;align-items:center;gap:10px;color:var(--navy);font-weight:900}.brand img{width:34px;height:34px;filter:drop-shadow(0 8px 18px rgba(72,103,218,.24))}.actions{display:flex;gap:10px;flex-wrap:wrap}.button{display:inline-flex;min-height:42px;align-items:center;justify-content:center;padding:0 14px;border:1px solid rgba(72,103,218,.28);border-radius:var(--radius);color:var(--blue);background:rgba(72,103,218,.08);font-weight:850}.button.primary{color:#fff;border-color:var(--blue);background:var(--blue)}.hero{padding:calc(var(--nav-h) + 52px) 0 34px;border-bottom:1px solid rgba(0,17,63,.08);background:linear-gradient(135deg,#fff 0%,#edf2ff 58%,#dfe6ff 100%)}.hero-inner,.layout{width:min(1180px,calc(100% - 32px));margin:0 auto}h1{margin:0 0 12px;color:var(--navy);font-size:clamp(2.5rem,6vw,4.8rem);line-height:.98;letter-spacing:0}.hero p{max-width:760px;margin:0;color:#26375f;line-height:1.78}.layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px;align-items:start;padding:30px 0 82px}.toc{position:sticky;top:calc(var(--nav-h) + 18px);padding:16px;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius);background:rgba(255,255,255,.86);box-shadow:0 14px 38px rgba(0,17,63,.08)}.toc strong{display:block;margin-bottom:10px;color:var(--navy)}.toc a{display:block;padding:8px 10px;border-radius:var(--radius);color:var(--muted);font-size:.92rem;line-height:1.35}.toc a.level-3{padding-left:22px;font-size:.86rem}.toc a:hover{color:var(--blue);background:rgba(72,103,218,.09)}article{padding:30px;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow)}article h1{font-size:2.4rem}article h2{margin:34px 0 12px;color:var(--navy);font-size:1.75rem;line-height:1.2;scroll-margin-top:calc(var(--nav-h) + 24px)}article h3{margin:26px 0 10px;color:var(--navy);font-size:1.24rem;scroll-margin-top:calc(var(--nav-h) + 24px)}article h4{margin:20px 0 8px;color:var(--navy);font-size:1.05rem}article p,article li,article td{color:var(--muted);line-height:1.8}article a{color:var(--blue);font-weight:760}article code{padding:.12em .34em;border-radius:5px;color:var(--navy);background:rgba(72,103,218,.1);font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}article pre{margin:16px 0;padding:18px;overflow:auto;border-radius:var(--radius);color:#eef3ff;background:var(--navy);line-height:1.72}article pre code{padding:0;color:inherit;background:transparent}.table-wrap{overflow:auto;margin:16px 0;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius)}table{width:100%;border-collapse:collapse;background:#fff}th,td{padding:13px 14px;border-bottom:1px solid rgba(72,103,218,.12);text-align:left;vertical-align:top}th{color:var(--navy);background:rgba(72,103,218,.08)}tr:last-child td{border-bottom:0}article img{max-width:100%;border-radius:var(--radius)}footer{padding:30px 0;color:var(--muted);background:#fff}footer div{width:min(1180px,calc(100% - 32px));margin:0 auto;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}footer a{color:var(--blue);font-weight:760}@media(max-width:960px){.layout{grid-template-columns:1fr}.toc{position:static}.toc nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}}@media(max-width:620px){.topbar-inner,.hero-inner,.layout,footer div{width:calc(100% - 24px)}.actions{display:none}article{padding:22px}.toc nav{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="topbar-inner"><a class="brand" href="../eui-neo.html"><img src="../EUI-NEO-main/assets/icon.png" alt=""><span>EUI-NEO</span></a><div class="actions"><a class="button" href="../eui-neo-docs.html">文档中心</a><a class="button primary" href="https://github.com/sudoevolve/EUI-NEO">GitHub</a></div></div></header>
+  <section class="hero"><div class="hero-inner"><h1>基础图元与文本图元</h1><p>EUI-NEO 技术文档，可直接在官网中阅读。</p></div></section>
+  <main class="layout"><aside class="toc"><strong>目录</strong><nav><a class="level-1" href="#基础图元与文本图元">基础图元与文本图元</a>
+<a class="level-2" href="#dsl-到-primitive">DSL 到 Primitive</a>
+<a class="level-2" href="#基础类型">基础类型</a>
+<a class="level-2" href="#视觉结构">视觉结构</a>
+<a class="level-2" href="#rect-图元">Rect 图元</a>
+<a class="level-2" href="#polygon-图元">Polygon 图元</a>
+<a class="level-2" href="#textprimitive">TextPrimitive</a>
+<a class="level-2" href="#imageprimitive">ImagePrimitive</a>
+<a class="level-2" href="#shadow-与-blur">Shadow 与 Blur</a>
+<a class="level-2" href="#transform">Transform</a>
+<a class="level-2" href="#dirty-rect-关系">Dirty Rect 关系</a>
+<a class="level-2" href="#当前限制">当前限制</a></nav></aside><article><h1 id="基础图元与文本图元">基础图元与文本图元</h1>
+<p>底层 OpenGL 绘制能力主要在：</p>
+<ul>
+<li><code>core/primitive.h</code></li>
+<li><code>core/text.h</code></li>
+<li><code>core/text.cpp</code></li>
+<li><code>core/image.h</code></li>
+<li><code>core/image.cpp</code></li>
+<li><code>core/dsl.h</code></li>
+<li><code>core/dsl_runtime.h</code></li>
+</ul>
+<p>页面和组件推荐使用 DSL，不要直接创建 primitive。<code>core::dsl::Runtime</code> 会把 DSL 元素同步到底层绘制对象，并统一处理 layout、事件、动画、dirty rect、framebuffer cache 和 DPI scale。</p>
+<h2 id="dsl-到-primitive">DSL 到 Primitive</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>DSL 元素</th><th>底层对象</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><code>ui.row</code> / <code>ui.column</code> / <code>ui.stack</code></td><td>无绘制 primitive</td><td>只参与布局、裁剪、z-index、事件命中和渲染遍历</td></tr>
+<tr><td><code>ui.rect</code></td><td><code>RoundedRectPrimitive</code></td><td>圆角矩形、颜色、渐变、边框、阴影、blur、transform</td></tr>
+<tr><td><code>ui.polygon</code></td><td><code>PolygonPrimitive</code></td><td>多边形填充，当前 piechart 扇区和 tooltip 指针使用它</td></tr>
+<tr><td><code>ui.text</code> / <code>ui.label</code></td><td><code>TextPrimitive</code></td><td>SDF 文本，支持字体、字号、换行、对齐</td></tr>
+<tr><td><code>ui.image</code></td><td><code>ImagePrimitive</code></td><td>本地图片、网络图片、SVG、Bing daily 图片</td></tr>
+</tbody></table></div>
+<p>组件层只组合这些 DSL 元素。例如 <code>components::button(ui, id)</code> 内部仍然是 <code>Stack + Rect + Row + Text</code>，不是新的渲染对象。</p>
+<h2 id="基础类型">基础类型</h2>
+<pre><code>struct Vec2 {
+    float x = 0.0f;
+    float y = 0.0f;
+};
+
+struct Color {
+    float r = 1.0f;
+    float g = 1.0f;
+    float b = 1.0f;
+    float a = 1.0f;
+};
+
+struct Rect {
+    float x = 0.0f;
+    float y = 0.0f;
+    float width = 0.0f;
+    float height = 0.0f;
+};</code></pre>
+<p>坐标默认是逻辑坐标，左上角为原点，<code>x</code> 向右，<code>y</code> 向下。Runtime 渲染时会乘以 <code>dpiScale</code> 转成 framebuffer 像素坐标。</p>
+<p><code>Rect::contains(...)</code> 用于基础矩形命中测试。当前 transform 后的 hit-test 仍按布局矩形计算，不跟随旋转和缩放后的真实形状。</p>
+<h2 id="视觉结构">视觉结构</h2>
+<pre><code>enum class GradientDirection {
+    Horizontal,
+    Vertical
+};
+
+struct Gradient {
+    bool enabled = false;
+    Color start;
+    Color end;
+    GradientDirection direction = GradientDirection::Vertical;
+};
+
+struct Border {
+    float width = 0.0f;
+    Color color;
+};
+
+struct Shadow {
+    bool enabled = false;
+    Vec2 offset = {0.0f, 4.0f};
+    float blur = 8.0f;
+    float spread = 0.0f;
+    Color color = {0.0f, 0.0f, 0.0f, 0.28f};
+};
+
+struct Transform {
+    Vec2 translate = {0.0f, 0.0f};
+    Vec2 scale = {1.0f, 1.0f};
+    float rotate = 0.0f;
+    Vec2 origin = {0.5f, 0.5f};
+};</code></pre>
+<p>这些结构由 DSL builder 写入目标状态，再由 Runtime 按 id 推进动画并同步到底层 primitive。</p>
+<h2 id="rect-图元">Rect 图元</h2>
+<p><code>RoundedRectPrimitive</code> 是最常用的基础图元。</p>
+<pre><code>ui.rect(&quot;card&quot;)
+    .size(360.0f, 260.0f)
+    .color({0.10f, 0.12f, 0.16f, 1.0f})
+    .radius(18.0f)
+    .border(1.0f, {0.23f, 0.29f, 0.38f, 1.0f})
+    .shadow(24.0f, 0.0f, 10.0f, {0.0f, 0.0f, 0.0f, 0.28f})
+    .transition(0.18f)
+    .build();</code></pre>
+<p>支持能力：</p>
+<ul>
+<li><code>bounds</code></li>
+<li><code>color</code></li>
+<li><code>gradient</code></li>
+<li><code>border</code></li>
+<li><code>shadow</code></li>
+<li><code>blur</code></li>
+<li><code>opacity</code></li>
+<li><code>radius</code></li>
+<li><code>transform</code></li>
+<li><code>states(normal, hover, pressed)</code></li>
+</ul>
+<p><code>.states(...)</code> 是 Runtime 维护的交互状态，不是 primitive 自己监听鼠标。它会开启 interactive，并根据 hover / pressed 插值颜色。</p>
+<h2 id="polygon-图元">Polygon 图元</h2>
+<p><code>PolygonPrimitive</code> 使用 <code>GL_TRIANGLE_FAN</code> 绘制点集。点坐标是元素局部坐标，实际渲染时会叠加元素 bounds 和 transform。</p>
+<pre><code>ui.polygon(&quot;tooltip.pointer&quot;)
+    .size(24.0f, 10.0f)
+    .points({
+        {12.0f, 0.0f},
+        {24.0f, 10.0f},
+        {0.0f, 10.0f},
+    })
+    .color({0.12f, 0.14f, 0.18f, 1.0f})
+    .build();</code></pre>
+<p>当前支持：</p>
+<ul>
+<li><code>points(...)</code></li>
+<li><code>point(x, y)</code></li>
+<li><code>clearPoints()</code></li>
+<li><code>color</code></li>
+<li><code>opacity</code></li>
+<li><code>transform</code></li>
+<li><code>states(normal, hover, pressed)</code></li>
+</ul>
+<p>当前不支持 polygon 的渐变、边框、圆角、阴影和 blur。饼图扇区由组件把圆弧拆成多个点后交给 <code>ui.polygon(...)</code> 绘制。</p>
+<h2 id="textprimitive">TextPrimitive</h2>
+<p>文本图元在 <code>core/text.h</code> 和 <code>core/text.cpp</code>。它使用 <code>3rd/stb_truetype.h</code> 生成 glyph，并用 SDF 方式渲染。</p>
+<pre><code>ui.text(&quot;title&quot;)
+    .size(420.0f, 48.0f)
+    .text(&quot;Hello&quot;)
+    .customFont(&quot;YouSheBiaoTiHei&quot;)
+    .fontSize(24.0f)
+    .lineHeight(30.0f)
+    .color({1.0f, 1.0f, 1.0f, 1.0f})
+    .horizontalAlign(core::HorizontalAlign::Center)
+    .verticalAlign(core::VerticalAlign::Center)
+    .build();</code></pre>
+<p><code>TextStyle</code> 当前包含：</p>
+<ul>
+<li><code>text</code></li>
+<li><code>fontFamily</code></li>
+<li><code>fontSize</code></li>
+<li><code>fontWeight</code></li>
+<li><code>color</code></li>
+<li><code>maxWidth</code></li>
+<li><code>wrap</code></li>
+<li><code>horizontalAlign</code></li>
+<li><code>verticalAlign</code></li>
+<li><code>lineHeight</code></li>
+</ul>
+<p>文本实现会缓存字体文件数据、glyph、layout 结果和顶点数据。只有文本内容、位置、字号、换行、对齐、visual scale 等影响排版或顶点的数据变化时才会重建顶点；单纯颜色和透明度变化不需要重新排版。</p>
+<h2 id="imageprimitive">ImagePrimitive</h2>
+<p>图片图元在 <code>core/image.h</code> 和 <code>core/image.cpp</code>。</p>
+<pre><code>ui.image(&quot;logo&quot;)
+    .size(120.0f, 120.0f)
+    .source(&quot;assets/icon.svg&quot;)
+    .contain()
+    .radius(18.0f)
+    .build();</code></pre>
+<p>支持来源：</p>
+<ul>
+<li>本地图片路径。</li>
+<li><code>assets/</code> 下的资源文件。</li>
+<li><code>http://</code> / <code>https://</code> 网络图片。</li>
+<li>SVG 图片。</li>
+<li><code>bingDaily(idx, mkt)</code> 内置 Bing 每日图。</li>
+</ul>
+<p>支持 fit：</p>
+<ul>
+<li><code>cover()</code> / <code>ImageFit::Cover</code></li>
+<li><code>contain()</code> / <code>ImageFit::Contain</code></li>
+<li><code>stretch()</code> / <code>ImageFit::Stretch</code></li>
+</ul>
+<p>网络图片和 Bing daily 可能存在 pending load。<code>ImagePrimitive::consumeRemoteImageReady()</code> 用于 Runtime 感知远程图片已准备好并触发刷新。</p>
+<h2 id="shadow-与-blur">Shadow 与 Blur</h2>
+<p>阴影会扩大 dirty rect。Runtime 会把阴影区域纳入脏区，避免局部重绘时留下旧阴影。</p>
+<pre><code>ui.rect(&quot;card&quot;)
+    .shadow(24.0f, 0.0f, 10.0f, {0.0f, 0.0f, 0.0f, 0.28f})
+    .build();</code></pre>
+<p><code>blur(...)</code> 当前是 backdrop blur，不是独立 layer blur。它依赖背后的 framebuffer cache 内容：</p>
+<pre><code>ui.rect(&quot;glass&quot;)
+    .color({0.90f, 0.96f, 1.0f, 0.24f})
+    .blur(18.0f)
+    .build();</code></pre>
+<p>为了避免 blur 采样到半旧半新的 cache，Runtime 会检查 dirty rect 是否触碰 blur 的保护区域；触碰时本帧会升级为 full redraw，优先保证正确性。代价是 blur 附近交互更贵，所以业务页面应谨慎使用大面积 blur。</p>
+<h2 id="transform">Transform</h2>
+<pre><code>ui.rect(&quot;actor&quot;)
+    .translate(20.0f, 0.0f)
+    .scale(1.1f)
+    .rotate(0.2f)
+    .transformOrigin(0.5f, 0.5f)
+    .transition(0.24f)
+    .animate(core::AnimProperty::Transform)
+    .build();</code></pre>
+<p>Runtime 的 dirty rect 会考虑 transform 后的外接矩形，避免旋转或缩放后残留旧区域。当前 hit-test 仍按未 transform 的布局矩形计算。</p>
+<h2 id="dirty-rect-关系">Dirty Rect 关系</h2>
+<p>Runtime 会按 id 缓存 <code>RectInstance</code>、<code>PolygonInstance</code>、<code>TextInstance</code>、<code>ImageInstance</code>。每帧更新时：</p>
+<ul>
+<li>hover / pressed 状态变化会产生 dirty rect。</li>
+<li>transition 动画推进会产生 dirty rect。</li>
+<li>frame、color、opacity、radius、border、shadow、blur、transform 等变化会产生 dirty rect。</li>
+<li>text frame、text color、opacity 变化会产生 dirty rect。</li>
+<li>image frame、tint、opacity、radius、transform 变化会产生 dirty rect。</li>
+<li>polygon frame、color、opacity、transform 变化会产生 dirty rect。</li>
+</ul>
+<p>渲染时优先使用离屏 framebuffer cache + scissor 局部重绘。需要完整正确性的场景，例如窗口尺寸变化、页面重组、blur 保护区被触碰，会走 full redraw。</p>
+<h2 id="当前限制">当前限制</h2>
+<ul>
+<li>页面和组件不应直接 <code>new / initialize / render / destroy</code> primitive。</li>
+<li>复杂文本排版、IME 组合态和撤销栈不属于 <code>TextPrimitive</code>，由上层 input 能力继续扩展。</li>
+<li><code>PolygonPrimitive</code> 适合凸多边形或按 triangle fan 可正确表达的形状；复杂凹多边形需要后续三角剖分。</li>
+<li>圆角 clip 和复杂 overflow 规则还没有完整实现。</li>
+<li>transform 后的 hit-test 不跟随旋转和缩放。</li>
+<li>大 blur、大阴影和大量动态图元都会扩大重绘成本，需要在组件层控制动画范围和脏区范围。</li>
+</ul></article></main>
+  <footer><div><span>EUI-NEO 文档</span><a href="../eui-neo-docs.html">返回文档中心</a></div></footer>
+</body>
+</html>

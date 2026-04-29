@@ -1,0 +1,1297 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EUI-NEO - 高性能桌面 UI</title>
+  <meta name="description" content="EUI-NEO 是一套高性能、低占用、强自定义、开箱即用的桌面 UI 方案。">
+  <link rel="icon" href="EUI-NEO-main/assets/icon.png">
+  <style>
+    :root {
+      color-scheme: light;
+      --blue: #4867da;
+      --blue-2: #6f89ff;
+      --blue-3: #dfe6ff;
+      --navy: #00113f;
+      --navy-2: #06194f;
+      --ink: #091333;
+      --muted: #596781;
+      --line: rgba(0, 17, 63, 0.12);
+      --panel: rgba(255, 255, 255, 0.82);
+      --white: #ffffff;
+      --soft: #f4f7ff;
+      --radius: 8px;
+      --shadow: 0 24px 70px rgba(0, 17, 63, 0.14);
+      --content: 1180px;
+      --nav-h: 72px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--soft);
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, #ffffff 0%, #f4f7ff 38%, #eef3ff 100%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      letter-spacing: 0;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(72, 103, 218, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(72, 103, 218, 0.08) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent 72%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .site-header {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 50;
+      height: var(--nav-h);
+      display: flex;
+      justify-content: center;
+      border-bottom: 1px solid rgba(0, 17, 63, 0.08);
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav-inner {
+      width: min(var(--content), calc(100% - 32px));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+      color: var(--navy);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .brand img {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 18px rgba(72, 103, 218, 0.26));
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .nav-links a {
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      transition: color 180ms ease, background 180ms ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+      color: var(--blue);
+      background: rgba(72, 103, 218, 0.1);
+      outline: none;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .button,
+    .icon-button,
+    .tab-button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 18px;
+      border: 1px solid rgba(72, 103, 218, 0.28);
+      border-radius: var(--radius);
+      color: var(--blue);
+      background: rgba(72, 103, 218, 0.08);
+      font-weight: 850;
+      white-space: nowrap;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, color 180ms ease;
+    }
+
+    .button.primary {
+      color: #fff;
+      border-color: var(--blue);
+      background: var(--blue);
+      box-shadow: 0 16px 38px rgba(72, 103, 218, 0.28);
+    }
+
+    .button:hover,
+    .button:focus-visible,
+    .icon-button:hover,
+    .icon-button:focus-visible,
+    .tab-button:hover,
+    .tab-button:focus-visible {
+      transform: translateY(-2px);
+      border-color: var(--blue);
+      outline: none;
+    }
+
+    .button.primary:hover,
+    .button.primary:focus-visible {
+      background: var(--navy);
+      border-color: var(--navy);
+    }
+
+    .hero {
+      position: relative;
+      min-height: 94svh;
+      padding: calc(var(--nav-h) + 76px) 0 58px;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, #ffffff 0%, #eef3ff 56%, #dfe6ff 100%);
+      border-bottom: 1px solid rgba(0, 17, 63, 0.08);
+    }
+
+    #hero-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.62) 46%, rgba(255, 255, 255, 0.26) 100%);
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      width: min(var(--content), calc(100% - 32px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(380px, 1.1fr);
+      gap: 46px;
+      align-items: center;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 18px;
+      color: var(--blue);
+      font-size: 0.9rem;
+      font-weight: 900;
+    }
+
+    .kicker::before {
+      content: "";
+      width: 36px;
+      height: 2px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    .hero h1 {
+      margin-bottom: 24px;
+      max-width: 740px;
+      color: var(--navy);
+      font-size: clamp(3.2rem, 8vw, 7.8rem);
+      line-height: 0.9;
+      letter-spacing: 0;
+      font-weight: 950;
+    }
+
+    .hero h1 span {
+      color: var(--blue);
+    }
+
+    .hero-lead {
+      max-width: 640px;
+      margin-bottom: 0;
+      color: #26375f;
+      font-size: 1.18rem;
+      line-height: 1.85;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .hero-points {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 34px;
+      max-width: 760px;
+    }
+
+    .point {
+      min-height: 92px;
+      padding: 15px;
+      border: 1px solid rgba(72, 103, 218, 0.18);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: 0 10px 28px rgba(0, 17, 63, 0.07);
+    }
+
+    .point strong {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--blue);
+      font-size: 1.02rem;
+    }
+
+    .point span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 610px;
+      perspective: 1200px;
+    }
+
+    .device {
+      position: relative;
+      width: min(100%, 720px);
+      margin-left: auto;
+      transform: rotateX(7deg) rotateY(-10deg) rotateZ(1deg);
+      transform-style: preserve-3d;
+      filter: drop-shadow(0 32px 72px rgba(0, 17, 63, 0.24));
+      animation: floatDevice 7s ease-in-out infinite;
+    }
+
+    .device-screen {
+      position: relative;
+      overflow: hidden;
+      border: 10px solid #fff;
+      border-radius: 22px;
+      background: #fff;
+      box-shadow: 0 0 0 1px rgba(72, 103, 218, 0.18), var(--shadow);
+    }
+
+    .device-screen img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .badge {
+      position: absolute;
+      display: grid;
+      gap: 6px;
+      min-width: 184px;
+      padding: 16px;
+      border: 1px solid rgba(72, 103, 218, 0.2);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .badge strong {
+      color: var(--navy);
+      font-size: 0.98rem;
+    }
+
+    .badge span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+
+    .badge.fast {
+      top: 34px;
+      left: -18px;
+      transform: translateZ(92px);
+    }
+
+    .badge.ready {
+      right: -12px;
+      bottom: 40px;
+      transform: translateZ(76px);
+    }
+
+    .section {
+      padding: 104px 0;
+      border-bottom: 1px solid rgba(0, 17, 63, 0.08);
+    }
+
+    .section.alt {
+      background: rgba(255, 255, 255, 0.56);
+    }
+
+    .section-inner {
+      width: min(var(--content), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 0.88fr) minmax(280px, 0.5fr);
+      gap: 34px;
+      align-items: end;
+      margin-bottom: 44px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      margin-bottom: 14px;
+      color: var(--blue);
+      font-size: 0.86rem;
+      font-weight: 900;
+    }
+
+    .section h2 {
+      max-width: 840px;
+      margin-bottom: 0;
+      color: var(--navy);
+      font-size: clamp(2.15rem, 4.8vw, 3.5rem);
+      line-height: 1.06;
+      letter-spacing: 0;
+      font-weight: 930;
+    }
+
+    .section-head p,
+    .body-copy {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.86;
+    }
+
+    .advantage-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .advantage-card,
+    .feature-card,
+    .doc-card,
+    .preview-panel,
+    .tech-box {
+      border: 1px solid rgba(72, 103, 218, 0.14);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.75) inset, 0 18px 48px rgba(0, 17, 63, 0.08);
+    }
+
+    .advantage-card {
+      min-height: 258px;
+      padding: 24px;
+      transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+    }
+
+    .advantage-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(72, 103, 218, 0.42);
+      box-shadow: var(--shadow);
+    }
+
+    .advantage-icon {
+      display: inline-grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      margin-bottom: 24px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--blue);
+      font-weight: 950;
+    }
+
+    .advantage-card h3 {
+      margin-bottom: 12px;
+      color: var(--navy);
+      font-size: 1.25rem;
+      letter-spacing: 0;
+    }
+
+    .advantage-card p {
+      margin-bottom: 0;
+      color: var(--muted);
+      line-height: 1.78;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .feature-card {
+      min-height: 220px;
+      padding: 24px;
+      transition: transform 200ms ease, border-color 200ms ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(72, 103, 218, 0.38);
+    }
+
+    .feature-card h3 {
+      margin-bottom: 12px;
+      color: var(--navy);
+      font-size: 1.2rem;
+    }
+
+    .feature-card p {
+      color: var(--muted);
+      line-height: 1.78;
+      margin-bottom: 0;
+    }
+
+    .tech-box {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+      padding: 26px;
+      background: var(--navy);
+      color: #fff;
+    }
+
+    .tech-box h2,
+    .tech-box p {
+      color: #fff;
+    }
+
+    .tech-box p {
+      margin-bottom: 0;
+      max-width: 780px;
+      line-height: 1.86;
+      opacity: 0.84;
+    }
+
+    .preview-layout {
+      display: grid;
+      grid-template-columns: minmax(340px, 0.58fr) minmax(0, 0.42fr);
+      gap: 28px;
+      align-items: center;
+    }
+
+    .preview-panel {
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .preview-panel::before {
+      content: "";
+      display: block;
+      height: 42px;
+      border-bottom: 1px solid rgba(72, 103, 218, 0.14);
+      background:
+        radial-gradient(circle at 24px 21px, #4867da 0 5px, transparent 6px),
+        radial-gradient(circle at 46px 21px, #6f89ff 0 5px, transparent 6px),
+        radial-gradient(circle at 68px 21px, #00113f 0 5px, transparent 6px),
+        #f7f9ff;
+    }
+
+    .preview-panel img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      opacity: 0;
+      transform: scale(1.018);
+      transition: opacity 360ms ease, transform 520ms ease;
+    }
+
+    .preview-panel img.is-ready {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .preview-copy h3 {
+      margin-bottom: 16px;
+      color: var(--navy);
+      font-size: 1.9rem;
+    }
+
+    .preview-copy p {
+      color: var(--muted);
+      line-height: 1.86;
+    }
+
+    .preview-controls {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .icon-button,
+    .preview-dot {
+      border: 1px solid rgba(72, 103, 218, 0.2);
+      border-radius: var(--radius);
+      color: var(--blue);
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(0, 17, 63, 0.06);
+    }
+
+    .icon-button {
+      width: 44px;
+      height: 44px;
+      display: inline-grid;
+      place-items: center;
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .preview-dots {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .preview-dot {
+      width: 42px;
+      height: 42px;
+      font: inherit;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+    }
+
+    .preview-dot.is-active,
+    .preview-dot:hover,
+    .preview-dot:focus-visible {
+      color: #fff;
+      background: var(--blue);
+      outline: none;
+    }
+
+    .doc-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .doc-card {
+      min-height: 170px;
+      padding: 22px;
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .doc-card:hover,
+    .doc-card:focus-visible {
+      transform: translateY(-5px);
+      border-color: rgba(72, 103, 218, 0.4);
+      box-shadow: var(--shadow);
+      outline: none;
+    }
+
+    .doc-card span {
+      display: block;
+      margin-bottom: 28px;
+      color: var(--blue);
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .doc-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--navy);
+      font-size: 1.15rem;
+    }
+
+    .doc-card p {
+      margin-bottom: 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .cta {
+      padding: 92px 0 104px;
+      color: #fff;
+      background: var(--navy);
+    }
+
+    .cta-inner {
+      width: min(var(--content), calc(100% - 32px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 0.72fr) auto;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .cta h2 {
+      margin-bottom: 16px;
+      color: #fff;
+      font-size: clamp(2.15rem, 4.8vw, 3.45rem);
+      line-height: 1.06;
+    }
+
+    .cta p {
+      max-width: 760px;
+      margin-bottom: 0;
+      color: rgba(255, 255, 255, 0.76);
+      line-height: 1.82;
+    }
+
+    .cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .cta .button.primary {
+      color: var(--navy);
+      background: #fff;
+      border-color: #fff;
+      box-shadow: none;
+    }
+
+    .cta .button:not(.primary) {
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.52);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .site-footer {
+      padding: 34px 0;
+      color: var(--muted);
+      background: #fff;
+    }
+
+    .footer-inner {
+      width: min(var(--content), calc(100% - 32px));
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-inner a {
+      color: var(--blue);
+      font-weight: 760;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity 620ms ease, transform 620ms ease;
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes floatDevice {
+      0%,
+      100% {
+        transform: rotateX(7deg) rotateY(-10deg) rotateZ(1deg) translateY(0);
+      }
+      50% {
+        transform: rotateX(9deg) rotateY(-7deg) rotateZ(0deg) translateY(-16px);
+      }
+    }
+
+    @media (max-width: 1080px) {
+      .hero-inner,
+      .preview-layout,
+      .cta-inner,
+      .tech-box {
+        grid-template-columns: 1fr;
+      }
+
+      .stage {
+        min-height: 500px;
+      }
+
+      .device {
+        margin: 0 auto;
+      }
+
+      .hero-points,
+      .advantage-grid,
+      .feature-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 820px) {
+      :root {
+        --nav-h: 64px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        padding-top: calc(var(--nav-h) + 46px);
+      }
+
+      .section {
+        padding: 78px 0;
+      }
+
+      .section-head,
+      .doc-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stage {
+        min-height: 420px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .brand span {
+        display: none;
+      }
+
+      .nav-inner,
+      .hero-inner,
+      .section-inner,
+      .cta-inner,
+      .footer-inner {
+        width: min(var(--content), calc(100% - 24px));
+      }
+
+      .hero h1 {
+        font-size: 3.28rem;
+      }
+
+      .hero-actions .button {
+        width: 100%;
+      }
+
+      .hero-points,
+      .advantage-grid,
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stage {
+        min-height: 330px;
+      }
+
+      .device {
+        transform: none;
+        animation: none;
+      }
+
+      .badge {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-inner">
+      <a class="brand" href="#top" aria-label="EUI-NEO 首页">
+        <img src="EUI-NEO-main/assets/icon.png" alt="">
+        <span>EUI-NEO</span>
+      </a>
+      <nav class="nav-links" aria-label="页面导航">
+        <a href="#advantages">优势</a>
+        <a href="#features">能力</a>
+        <a href="#gallery">界面</a>
+        <a href="#docs">文档</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="button" href="https://github.com/sudoevolve/EUI-NEO">GitHub</a>
+        <a class="button primary" href="eui-neo-docs.html">查看文档</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero" id="top">
+    <canvas id="hero-canvas" aria-hidden="true"></canvas>
+    <div class="hero-inner">
+      <div class="hero-copy reveal is-visible">
+        <p class="kicker">轻量、快速、好定制</p>
+        <h1>EUI-<span>NEO</span></h1>
+        <p class="hero-lead">一套面向桌面应用的高性能 UI 方案。它把常用控件、界面布局、主题风格和动效反馈准备好，让应用界面更快落地，也更容易做出自己的风格。</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#gallery">查看界面效果</a>
+          <a class="button" href="eui-neo-docs.html">打开文档</a>
+          <a class="button" href="https://github.com/sudoevolve/EUI-NEO">GitHub 仓库</a>
+        </div>
+        <div class="hero-points" aria-label="核心优势">
+          <div class="point"><strong>高性能</strong><span>图形加速与局部刷新，界面响应更利落。</span></div>
+          <div class="point"><strong>低占用</strong><span>结构轻、依赖少，适合长期运行。</span></div>
+          <div class="point"><strong>强定制</strong><span>颜色、布局、组件和图形都可调整。</span></div>
+          <div class="point"><strong>开箱即用</strong><span>控件、弹窗、表格、图表一套齐备。</span></div>
+        </div>
+      </div>
+
+      <div class="stage" aria-hidden="true">
+        <div class="device">
+          <div class="device-screen">
+            <img src="EUI-NEO-main/docs/pic/1.jpg" alt="">
+          </div>
+          <div class="badge fast">
+            <strong>快速响应</strong>
+            <span>适合工具、仪表盘和桌面控制台。</span>
+          </div>
+          <div class="badge ready">
+            <strong>组件齐全</strong>
+            <span>常用界面模块可以直接组合。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section class="section" id="advantages">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div>
+            <span class="eyebrow">核心优势</span>
+            <h2>让桌面界面更快、更轻，也更容易做出差异化。</h2>
+          </div>
+          <p>普通界面库常常不是性能不够，就是改起来费劲。EUI-NEO 的目标很直接：把基础能力做稳，把常用组件备齐，把视觉风格留给你发挥。</p>
+        </div>
+
+        <div class="advantage-grid">
+          <article class="advantage-card reveal">
+            <span class="advantage-icon">快</span>
+            <h3>高性能显示</h3>
+            <p>适合需要持续刷新、频繁交互和复杂页面的桌面应用，操作反馈干净，不拖泥带水。</p>
+          </article>
+          <article class="advantage-card reveal">
+            <span class="advantage-icon">轻</span>
+            <h3>低资源占用</h3>
+            <p>整体结构轻量，依赖边界清晰，适合工具型软件、后台面板和长期运行的客户端。</p>
+          </article>
+          <article class="advantage-card reveal">
+            <span class="advantage-icon">改</span>
+            <h3>自定义性强</h3>
+            <p>主题颜色、组件状态、布局方式、图片文字和图形元素都能组合，容易形成自己的产品气质。</p>
+          </article>
+          <article class="advantage-card reveal">
+            <span class="advantage-icon">用</span>
+            <h3>开箱即用</h3>
+            <p>按钮、输入框、开关、弹窗、选择器、表格、折线图、柱状图、饼图等常用模块已经准备好。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="features">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div>
+            <span class="eyebrow">能做什么</span>
+            <h2>从简单面板到完整工具界面，都能用同一套方式组织。</h2>
+          </div>
+          <p>它不是只给你几个按钮，而是把主题、布局、动效、输入、弹层和数据展示放到同一套界面体系里。</p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card reveal">
+            <h3>统一视觉风格</h3>
+            <p>蓝白深蓝的主视觉与图标保持一致，页面、控件、卡片和反馈状态都能共享同一套主题。</p>
+          </article>
+          <article class="feature-card reveal">
+            <h3>丰富控件组合</h3>
+            <p>按钮、输入框、复选、单选、开关、滑块、标签页、下拉菜单和滚动条都能直接用于界面搭建。</p>
+          </article>
+          <article class="feature-card reveal">
+            <h3>弹窗与反馈</h3>
+            <p>对话框、提示消息、右键菜单、日期选择、时间选择和颜色选择，覆盖常见桌面交互。</p>
+          </article>
+          <article class="feature-card reveal">
+            <h3>数据展示</h3>
+            <p>表格、折线图、柱状图和饼图可以快速搭建数据面板，适合仪表盘和管理工具。</p>
+          </article>
+          <article class="feature-card reveal">
+            <h3>动效更自然</h3>
+            <p>页面切换、悬停、按压、进度变化和状态更新都有顺滑反馈，界面显得更精致。</p>
+          </article>
+          <article class="feature-card reveal">
+            <h3>适合长期扩展</h3>
+            <p>界面模块边界清楚，后续要加主题、加组件、换布局，都不会牵一发动全身。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-inner">
+        <div class="tech-box reveal">
+          <div>
+            <span class="eyebrow">性能基础</span>
+            <h2>以 C++17、OpenGL 和 GLFW 驱动桌面界面。</h2>
+            <p>EUI-NEO 将界面结构、动画、事件、局部刷新和缓存统一调度，在保持高响应速度的同时控制资源占用，适合长期运行的桌面应用。</p>
+          </div>
+          <a class="button primary" href="eui-neo-docs.html#tech">看技术说明</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="gallery">
+      <div class="section-inner preview-layout">
+        <div class="preview-panel reveal">
+          <img id="preview-image" class="is-ready" src="EUI-NEO-main/docs/pic/1.jpg" alt="EUI-NEO 界面截图">
+        </div>
+        <div class="preview-copy reveal">
+          <span class="eyebrow">界面展示</span>
+          <h2>真实截图，展示实际界面效果。</h2>
+          <h3 id="preview-title">控件面板</h3>
+          <p id="preview-text">按钮、输入框、开关、滑块、分段控制和标签页组合在同一页面中，适合快速搭建工具界面。</p>
+          <div class="preview-controls">
+            <button class="icon-button" type="button" id="prev-preview" aria-label="上一张">‹</button>
+            <button class="icon-button" type="button" id="next-preview" aria-label="下一张">›</button>
+            <div class="preview-dots" id="preview-dots" aria-label="截图选择"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="docs">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div>
+            <span class="eyebrow">文档中心</span>
+            <h2>把优势、组件、自定义和性能说明集中整理。</h2>
+          </div>
+          <p>文档按实际使用场景组织，适合了解能力、展示项目、说明方案，也方便后续维护时快速查阅。</p>
+        </div>
+
+        <div class="doc-grid">
+          <a class="doc-card reveal" href="eui-neo-docs.html#overview">
+            <span>01</span>
+            <strong>快速了解</strong>
+            <p>用产品语言介绍 EUI-NEO 的定位、优势和适用场景。</p>
+          </a>
+          <a class="doc-card reveal" href="eui-neo-docs.html#components">
+            <span>02</span>
+            <strong>组件能力</strong>
+            <p>查看控件、弹层、选择器、表格和图表的能力说明。</p>
+          </a>
+          <a class="doc-card reveal" href="eui-neo-docs.html#custom">
+            <span>03</span>
+            <strong>自定义方式</strong>
+            <p>了解如何统一主题、调整布局并组合自己的界面风格。</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="cta-inner reveal">
+        <div>
+          <h2>更快搭界面，更少占资源，更容易做出自己的风格。</h2>
+          <p>EUI-NEO 适合桌面工具、数据面板、控制台、图形工作台和需要高度定制的客户端界面。</p>
+        </div>
+        <div class="cta-actions">
+          <a class="button primary" href="eui-neo-docs.html">进入文档页</a>
+          <a class="button" href="https://github.com/sudoevolve/EUI-NEO">打开 GitHub</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>EUI-NEO official page</span>
+      <div class="footer-links">
+        <a href="#top">返回顶部</a>
+        <a href="eui-neo-docs.html">文档中心</a>
+        <a href="https://github.com/sudoevolve/EUI-NEO">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.16 });
+
+    document.querySelectorAll(".reveal:not(.is-visible)").forEach((node) => revealObserver.observe(node));
+
+    const previews = [
+      {
+        src: "EUI-NEO-main/docs/pic/1.jpg",
+        title: "控件面板",
+        text: "按钮、输入框、开关、滑块、分段控制和标签页组合在同一页面中，适合快速搭建工具界面。"
+      },
+      {
+        src: "EUI-NEO-main/docs/pic/2.jpg",
+        title: "主题风格",
+        text: "颜色、边框、圆角、阴影和字段样式保持统一，界面看起来更完整。"
+      },
+      {
+        src: "EUI-NEO-main/docs/pic/3.jpg",
+        title: "动效展示",
+        text: "状态变化、位置移动、透明度和交互反馈都有顺滑过渡，提升整体质感。"
+      },
+      {
+        src: "EUI-NEO-main/docs/pic/4.jpg",
+        title: "组合页面",
+        text: "图片、文本、卡片和页面状态可以组合成完整界面，适合实际应用场景。"
+      },
+      {
+        src: "EUI-NEO-main/docs/pic/示例1.jpg",
+        title: "应用示例",
+        text: "组件和业务内容能放在同一套界面体系中，快速形成完整工具页面。"
+      },
+      {
+        src: "EUI-NEO-main/docs/pic/示例2.jpg",
+        title: "界面细节",
+        text: "文字、图片、图形和布局细节都能统一控制，方便做精细化定制。"
+      }
+    ];
+
+    const previewImage = document.querySelector("#preview-image");
+    const previewTitle = document.querySelector("#preview-title");
+    const previewText = document.querySelector("#preview-text");
+    const previewDots = document.querySelector("#preview-dots");
+    let previewIndex = 0;
+    let previewTimer = 0;
+
+    previews.forEach((_, index) => {
+      const dot = document.createElement("button");
+      dot.className = "preview-dot";
+      dot.type = "button";
+      dot.textContent = String(index + 1);
+      dot.setAttribute("aria-label", `显示第 ${index + 1} 张截图`);
+      dot.addEventListener("click", () => setPreview(index, true));
+      previewDots.appendChild(dot);
+    });
+
+    function setPreview(index, manual = false) {
+      previewIndex = (index + previews.length) % previews.length;
+      const item = previews[previewIndex];
+      previewImage.classList.remove("is-ready");
+      window.setTimeout(() => {
+        previewImage.src = item.src;
+        previewImage.alt = `${item.title} 截图`;
+        previewTitle.textContent = item.title;
+        previewText.textContent = item.text;
+        previewImage.onload = () => previewImage.classList.add("is-ready");
+        if (previewImage.complete) previewImage.classList.add("is-ready");
+      }, 120);
+      previewDots.querySelectorAll(".preview-dot").forEach((dot, dotIndex) => {
+        dot.classList.toggle("is-active", dotIndex === previewIndex);
+      });
+      if (manual) restartPreviewTimer();
+    }
+
+    function restartPreviewTimer() {
+      window.clearInterval(previewTimer);
+      if (!prefersReducedMotion) {
+        previewTimer = window.setInterval(() => setPreview(previewIndex + 1), 5200);
+      }
+    }
+
+    document.querySelector("#prev-preview").addEventListener("click", () => setPreview(previewIndex - 1, true));
+    document.querySelector("#next-preview").addEventListener("click", () => setPreview(previewIndex + 1, true));
+    setPreview(0);
+    restartPreviewTimer();
+
+    const canvas = document.querySelector("#hero-canvas");
+    const ctx = canvas.getContext("2d");
+    let width = 0;
+    let height = 0;
+    let ratio = 1;
+    let particles = [];
+    const pointer = { x: 0, y: 0, active: false };
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      ratio = Math.min(window.devicePixelRatio || 1, 2);
+      width = Math.max(1, Math.floor(rect.width));
+      height = Math.max(1, Math.floor(rect.height));
+      canvas.width = Math.floor(width * ratio);
+      canvas.height = Math.floor(height * ratio);
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      createParticles();
+    }
+
+    function createParticles() {
+      const count = Math.max(70, Math.floor((width * height) / 17000));
+      particles = Array.from({ length: count }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.22,
+        vy: (Math.random() - 0.5) * 0.22,
+        size: 1 + Math.random() * 2.4
+      }));
+    }
+
+    function draw(time) {
+      ctx.clearRect(0, 0, width, height);
+      ctx.save();
+      ctx.globalAlpha = 0.34;
+      for (let i = 0; i < 5; i += 1) {
+        ctx.beginPath();
+        for (let x = -80; x <= width + 80; x += 18) {
+          const y = height * 0.26 + i * 86 + Math.sin((x + time * 0.03) * 0.01 + i) * (28 + i * 3);
+          if (x === -80) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = i % 2 === 0 ? "rgba(72, 103, 218, 0.22)" : "rgba(0, 17, 63, 0.12)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      particles.forEach((point) => {
+        if (pointer.active) {
+          const dx = point.x - pointer.x;
+          const dy = point.y - pointer.y;
+          const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+          if (distance < 160) {
+            const force = (160 - distance) / 160;
+            point.vx += (dx / distance) * force * 0.026;
+            point.vy += (dy / distance) * force * 0.026;
+          }
+        }
+
+        point.vx *= 0.994;
+        point.vy *= 0.994;
+        point.x += point.vx;
+        point.y += point.vy;
+
+        if (point.x < -24) point.x = width + 24;
+        if (point.x > width + 24) point.x = -24;
+        if (point.y < -24) point.y = height + 24;
+        if (point.y > height + 24) point.y = -24;
+
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(72, 103, 218, 0.56)";
+        ctx.arc(point.x, point.y, point.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      for (let i = 0; i < particles.length; i += 1) {
+        for (let j = i + 1; j < particles.length; j += 1) {
+          const a = particles[i];
+          const b = particles[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < 112) {
+            const alpha = (1 - distance / 112) * 0.16;
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(0, 17, 63, ${alpha})`;
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      if (!prefersReducedMotion) requestAnimationFrame(draw);
+    }
+
+    window.addEventListener("resize", resizeCanvas, { passive: true });
+    window.addEventListener("pointermove", (event) => {
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = event.clientX - rect.left;
+      pointer.y = event.clientY - rect.top;
+      pointer.active = true;
+    }, { passive: true });
+    window.addEventListener("pointerleave", () => {
+      pointer.active = false;
+    });
+
+    resizeCanvas();
+    requestAnimationFrame(draw);
+  </script>
+</body>
+</html>

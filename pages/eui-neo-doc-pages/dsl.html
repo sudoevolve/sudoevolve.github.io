@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DSL 设计与当前实现 - EUI-NEO 文档</title>
+  <link rel="icon" href="../EUI-NEO-main/assets/icon.png">
+  <style>
+    :root{color-scheme:light;--blue:#4867da;--navy:#00113f;--ink:#091333;--muted:#596781;--soft:#f4f7ff;--panel:rgba(255,255,255,.9);--radius:8px;--shadow:0 20px 58px rgba(0,17,63,.12);--nav-h:70px}*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--soft)}body{margin:0;color:var(--ink);background:linear-gradient(180deg,#fff 0%,#f4f7ff 58%,#eef3ff 100%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;letter-spacing:0}a{color:inherit;text-decoration:none}.topbar{position:fixed;inset:0 0 auto;z-index:20;height:var(--nav-h);display:flex;justify-content:center;border-bottom:1px solid rgba(0,17,63,.08);background:rgba(255,255,255,.86);backdrop-filter:blur(18px)}.topbar-inner{width:min(1180px,calc(100% - 32px));display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:inline-flex;align-items:center;gap:10px;color:var(--navy);font-weight:900}.brand img{width:34px;height:34px;filter:drop-shadow(0 8px 18px rgba(72,103,218,.24))}.actions{display:flex;gap:10px;flex-wrap:wrap}.button{display:inline-flex;min-height:42px;align-items:center;justify-content:center;padding:0 14px;border:1px solid rgba(72,103,218,.28);border-radius:var(--radius);color:var(--blue);background:rgba(72,103,218,.08);font-weight:850}.button.primary{color:#fff;border-color:var(--blue);background:var(--blue)}.hero{padding:calc(var(--nav-h) + 52px) 0 34px;border-bottom:1px solid rgba(0,17,63,.08);background:linear-gradient(135deg,#fff 0%,#edf2ff 58%,#dfe6ff 100%)}.hero-inner,.layout{width:min(1180px,calc(100% - 32px));margin:0 auto}h1{margin:0 0 12px;color:var(--navy);font-size:clamp(2.5rem,6vw,4.8rem);line-height:.98;letter-spacing:0}.hero p{max-width:760px;margin:0;color:#26375f;line-height:1.78}.layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px;align-items:start;padding:30px 0 82px}.toc{position:sticky;top:calc(var(--nav-h) + 18px);padding:16px;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius);background:rgba(255,255,255,.86);box-shadow:0 14px 38px rgba(0,17,63,.08)}.toc strong{display:block;margin-bottom:10px;color:var(--navy)}.toc a{display:block;padding:8px 10px;border-radius:var(--radius);color:var(--muted);font-size:.92rem;line-height:1.35}.toc a.level-3{padding-left:22px;font-size:.86rem}.toc a:hover{color:var(--blue);background:rgba(72,103,218,.09)}article{padding:30px;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow)}article h1{font-size:2.4rem}article h2{margin:34px 0 12px;color:var(--navy);font-size:1.75rem;line-height:1.2;scroll-margin-top:calc(var(--nav-h) + 24px)}article h3{margin:26px 0 10px;color:var(--navy);font-size:1.24rem;scroll-margin-top:calc(var(--nav-h) + 24px)}article h4{margin:20px 0 8px;color:var(--navy);font-size:1.05rem}article p,article li,article td{color:var(--muted);line-height:1.8}article a{color:var(--blue);font-weight:760}article code{padding:.12em .34em;border-radius:5px;color:var(--navy);background:rgba(72,103,218,.1);font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}article pre{margin:16px 0;padding:18px;overflow:auto;border-radius:var(--radius);color:#eef3ff;background:var(--navy);line-height:1.72}article pre code{padding:0;color:inherit;background:transparent}.table-wrap{overflow:auto;margin:16px 0;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius)}table{width:100%;border-collapse:collapse;background:#fff}th,td{padding:13px 14px;border-bottom:1px solid rgba(72,103,218,.12);text-align:left;vertical-align:top}th{color:var(--navy);background:rgba(72,103,218,.08)}tr:last-child td{border-bottom:0}article img{max-width:100%;border-radius:var(--radius)}footer{padding:30px 0;color:var(--muted);background:#fff}footer div{width:min(1180px,calc(100% - 32px));margin:0 auto;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}footer a{color:var(--blue);font-weight:760}@media(max-width:960px){.layout{grid-template-columns:1fr}.toc{position:static}.toc nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}}@media(max-width:620px){.topbar-inner,.hero-inner,.layout,footer div{width:calc(100% - 24px)}.actions{display:none}article{padding:22px}.toc nav{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="topbar-inner"><a class="brand" href="../eui-neo.html"><img src="../EUI-NEO-main/assets/icon.png" alt=""><span>EUI-NEO</span></a><div class="actions"><a class="button" href="../eui-neo-docs.html">文档中心</a><a class="button primary" href="https://github.com/sudoevolve/EUI-NEO">GitHub</a></div></div></header>
+  <section class="hero"><div class="hero-inner"><h1>DSL 设计与当前实现</h1><p>EUI-NEO 技术文档，可直接在官网中阅读。</p></div></section>
+  <main class="layout"><aside class="toc"><strong>目录</strong><nav><a class="level-1" href="#dsl-设计与当前实现">DSL 设计与当前实现</a>
+<a class="level-2" href="#核心元素">核心元素</a>
+<a class="level-2" href="#app-入口">App 入口</a>
+<a class="level-2" href="#布局-dsl">布局 DSL</a>
+<a class="level-2" href="#通用交互-dsl">通用交互 DSL</a>
+<a class="level-2" href="#rect-dsl">Rect DSL</a>
+<a class="level-2" href="#text-dsl">Text DSL</a>
+<a class="level-2" href="#image-dsl">Image DSL</a>
+<a class="level-2" href="#polygon-dsl">Polygon DSL</a>
+<a class="level-2" href="#动画-dsl">动画 DSL</a>
+<a class="level-2" href="#组件写法">组件写法</a>
+<a class="level-2" href="#runtime-行为">Runtime 行为</a>
+<a class="level-2" href="#当前限制">当前限制</a></nav></aside><article><h1 id="dsl-设计与当前实现">DSL 设计与当前实现</h1>
+<p>当前推荐写法是声明式 DSL：应用只描述页面结构、样式、交互回调和目标状态，<code>core::dsl::Runtime</code> 负责布局、状态缓存、事件、动画、脏区渲染和 OpenGL primitive 同步。</p>
+<h2 id="核心元素">核心元素</h2>
+<pre><code>enum class ElementKind {
+    Row,
+    Column,
+    Stack,
+    Rect,
+    Text,
+    Image,
+    Polygon
+};</code></pre>
+<ul>
+<li><code>Row</code>：横向布局容器。</li>
+<li><code>Column</code>：纵向布局容器。</li>
+<li><code>Stack</code>：叠放布局容器。</li>
+<li><code>Rect</code>：基础视觉图元，支持颜色、渐变、圆角、边框、阴影、透明度、blur、transform、hover/pressed 状态。</li>
+<li><code>Text</code>：文本图元，支持字体、字号、颜色、换行、行高和对齐。</li>
+<li><code>Image</code>：图片图元，支持本地图片、网络图片、SVG、Bing daily、cover/contain/stretch。</li>
+<li><code>Polygon</code>：多边形图元，支持点集、颜色、透明度、transform 和 hover/pressed 状态；当前图表 tooltip 指针和 piechart 扇区都基于它。</li>
+</ul>
+<p>组件不进入 core 枚举。组件层只是组合 DSL 图元，例如 <code>components::button(ui, id)</code> 内部使用 <code>Stack + Rect + Row + Text</code>。</p>
+<h2 id="app-入口">App 入口</h2>
+<p>DSL app 推荐只实现：</p>
+<pre><code>#include &quot;app/dsl_app.h&quot;
+
+namespace app {
+
+const DslAppConfig&amp; dslAppConfig();
+void compose(core::dsl::Ui&amp; ui, const core::dsl::Screen&amp; screen);
+
+} // namespace app</code></pre>
+<p><code>app/dsl_app.h</code> 已封装：</p>
+<ul>
+<li>initialize</li>
+<li>update</li>
+<li>isAnimating</li>
+<li>render</li>
+<li>shutdown</li>
+<li>按屏幕刷新率主动节流</li>
+<li>无动画时等待事件休眠</li>
+</ul>
+<h2 id="布局-dsl">布局 DSL</h2>
+<p>容器：</p>
+<pre><code>ui.row(&quot;toolbar&quot;)
+ui.column(&quot;content&quot;)
+ui.stack(&quot;root&quot;)</code></pre>
+<p>通用布局属性：</p>
+<pre><code>.x(value)
+.y(value)
+.position(x, y)
+.width(value)
+.height(value)
+.size(width, height)
+.fill()
+.wrapContent()
+.margin(value)
+.margin(horizontal, vertical)
+.margin(left, top, right, bottom)
+.gap(value)
+.spacing(value)
+.justifyContent(core::Align::CENTER)
+.alignItems(core::Align::CENTER)
+.align(core::Align::CENTER, core::Align::CENTER)
+.zIndex(value)
+.clip()
+.overflowHidden()</code></pre>
+<p><code>.zIndex(...)</code> 只影响同级元素的绘制顺序和 topmost hit-test，不参与布局计算；值越大越靠上。<code>.clip()</code> 会按该元素布局矩形裁剪自己和子树，并且命中测试也不会穿出裁剪区域。</p>
+<h2 id="通用交互-dsl">通用交互 DSL</h2>
+<p><code>Row / Column / Stack / Rect / Text / Image / Polygon</code> 都支持通用交互方法：</p>
+<pre><code>.interactive(true)
+.disabled(false)
+.enabled(true)
+.cursor(core::CursorShape::Hand)
+.onClick(callback)
+.focusable()
+.onFocusChanged(callback)
+.onTextInput(callback)
+.onScroll(callback)
+.onDrag(callback)</code></pre>
+<p><code>.onClick(...)</code> 会自动开启 interactive，并把 cursor 设置为手型。Runtime 会做 topmost hit-test、按下捕获、点击判定和回调派发。</p>
+<p>示例：</p>
+<pre><code>ui.text(&quot;github.link&quot;)
+    .size(260.0f, 34.0f)
+    .text(&quot;GitHub&quot;)
+    .color(accent)
+    .onClick([] {
+        core::platform::openUrl(&quot;https://github.com/sudoevolve/EUI-NEO&quot;);
+    })
+    .build();</code></pre>
+<h2 id="rect-dsl">Rect DSL</h2>
+<pre><code>ui.rect(&quot;card&quot;)
+    .size(360.0f, 260.0f)
+    .color({0.10f, 0.12f, 0.16f, 1.0f})
+    .radius(18.0f)
+    .border(1.0f, {0.23f, 0.29f, 0.38f, 1.0f})
+    .shadow(26.0f, 0.0f, 8.0f, {0.0f, 0.0f, 0.0f, 0.26f})
+    .transition(0.2f, core::Ease::OutCubic)
+    .build();</code></pre>
+<p>Rect 支持：</p>
+<pre><code>.color(...)
+.background(...)
+.gradient(...)
+.radius(...)
+.rounding(...)
+.border(...)
+.shadow(...)
+.blur(...)
+.opacity(...)
+.translate(...)
+.translateX(...)
+.translateY(...)
+.scale(...)
+.rotate(...)
+.rotation(...)
+.transformOrigin(...)
+.states(normal, hover, pressed)</code></pre>
+<p><code>.states(normal, hover, pressed)</code> 是 Rect 专用的 hover / pressed 视觉状态，会开启交互并由 Runtime 维护 blend。</p>
+<h2 id="text-dsl">Text DSL</h2>
+<pre><code>ui.text(&quot;title&quot;)
+    .size(420.0f, 48.0f)
+    .text(&quot;EUI Gallery&quot;)
+    .customFont(&quot;YouSheBiaoTiHei&quot;)
+    .fontSize(38.0f)
+    .lineHeight(44.0f)
+    .color({0.94f, 0.97f, 1.0f, 1.0f})
+    .horizontalAlign(core::HorizontalAlign::Center)
+    .verticalAlign(core::VerticalAlign::Center)
+    .build();</code></pre>
+<p>Text 支持：</p>
+<pre><code>.text(...)
+.icon(codepoint)
+.fontFamily(...)
+.font(...)
+.customFont(...)
+.fontSize(...)
+.fontWeight(...)
+.color(...)
+.opacity(...)
+.maxWidth(...)
+.wrap(...)
+.horizontalAlign(...)
+.verticalAlign(...)
+.lineHeight(...)</code></pre>
+<p><code>ui.label(id)</code> 是 <code>ui.text(id)</code> 的别名。</p>
+<h2 id="image-dsl">Image DSL</h2>
+<pre><code>ui.image(&quot;cover&quot;)
+    .size(320.0f, 180.0f)
+    .source(&quot;assets/icon.png&quot;)
+    .cover()
+    .radius(16.0f)
+    .build();
+
+ui.image(&quot;bing&quot;)
+    .size(420.0f, 220.0f)
+    .bingDaily(0, &quot;zh-CN&quot;)
+    .cover()
+    .build();</code></pre>
+<p>Image 支持：</p>
+<pre><code>.source(pathOrUrl)
+.path(path)
+.url(url)
+.bingDaily(idx, mkt)
+.fit(core::ImageFit::Cover)
+.cover()
+.contain()
+.stretch()
+.radius(...)
+.opacity(...)
+.tint(...)
+.color(...)
+.translate(...)
+.scale(...)
+.rotate(...)</code></pre>
+<p>默认 fit 是 <code>Cover</code>，图片会适应裁剪，不会强行压缩变形。</p>
+<h2 id="polygon-dsl">Polygon DSL</h2>
+<pre><code>ui.polygon(&quot;slice&quot;)
+    .size(120.0f, 120.0f)
+    .points({
+        {60.0f, 60.0f},
+        {120.0f, 0.0f},
+        {120.0f, 120.0f},
+    })
+    .color({0.22f, 0.50f, 0.88f, 1.0f})
+    .build();</code></pre>
+<p>Polygon 支持：</p>
+<pre><code>.points(...)
+.point(x, y)
+.clearPoints()
+.color(...)
+.opacity(...)
+.translate(...)
+.scale(...)
+.rotate(...)
+.transformOrigin(...)
+.states(normal, hover, pressed)</code></pre>
+<h2 id="动画-dsl">动画 DSL</h2>
+<p>动画目标写在元素属性上，Runtime 负责从当前值插值到目标值：</p>
+<pre><code>ui.rect(&quot;actor&quot;)
+    .x(active ? 420.0f : 40.0f)
+    .opacity(active ? 0.4f : 1.0f)
+    .rotate(active ? 0.4f : 0.0f)
+    .transition(0.42f, core::Ease::OutBack)
+    .animate(core::AnimProperty::Frame |
+             core::AnimProperty::Opacity |
+             core::AnimProperty::Transform)
+    .build();</code></pre>
+<p>Frame 动画需要显式 <code>.animate(core::AnimProperty::Frame)</code>。窗口大小变化、页面切换导致的普通布局尺寸变化不会默认产生长宽动画。</p>
+<p>当前可动画属性：</p>
+<ul>
+<li>Rect：frame、color、opacity、radius、border、shadow、blur、transform。</li>
+<li>Text：frame、text color、opacity。</li>
+<li>Image：frame、tint/color、opacity、radius、transform。</li>
+<li>Polygon：frame、color、opacity、transform。</li>
+</ul>
+<h2 id="组件写法">组件写法</h2>
+<p>组件层在 <code>components/</code>，不要直接持有 primitive，也不要绕过 Runtime。</p>
+<p>当前组件：</p>
+<ul>
+<li><code>components::panel(ui, id)</code>：返回套用 theme token 的 <code>RectBuilder</code>。</li>
+<li><code>components::text(ui, id)</code>：返回套用 theme token 文本色的 <code>TextBuilder</code>。</li>
+<li><code>components::label(ui, id)</code>：返回套用 theme token 文本色的 label builder。</li>
+<li><code>components::image(ui, id)</code>：返回套用 theme token 的 <code>ImageBuilder</code>。</li>
+<li><code>components::button(ui, id)</code>：薄 builder，内部组合 <code>Stack + Rect + Row + Text</code>。</li>
+<li><code>components::checkbox(ui, id)</code>：无状态 checkbox，点击回调 next checked。</li>
+<li><code>components::radio(ui, id)</code>：无状态 radio，点击回调 select / next checked。</li>
+<li><code>components::toggleSwitch(ui, id)</code>：无状态 switch，点击回调 next checked。</li>
+<li><code>components::progress(ui, id)</code>：进度条，value 范围 <code>0.0f - 1.0f</code>。</li>
+<li><code>components::slider(ui, id)</code>：滑块，点击或拖拽回调 next value。</li>
+<li><code>components::input(ui, id)</code>：基础文本输入，页面传 value，组件回调 next value。</li>
+<li><code>components::segmented(ui, id)</code>：分段选择，点击回调 next index。</li>
+<li><code>components::tabs(ui, id)</code>：标签页切换，点击回调 next index。</li>
+<li><code>components::scroll(ui, id)</code>：滚动条/offset 控制器，页面传 viewport/content/offset，组件回调 next offset。</li>
+<li><code>components::dropdown(ui, id)</code>：下拉选择，页面传 selected/open，组件回调 next index 和 open 状态。</li>
+<li><code>components::datepicker(ui, id)</code>：dialog 式日期选择器，页面传 date/open，面板内调整是 draft，点击 <code>Done</code> 后才回调 next date。</li>
+<li><code>components::timepicker(ui, id)</code>：dialog 式时间选择器，页面传 time/open，面板内调整是 draft，点击 <code>Done</code> 后才回调 next time。</li>
+<li><code>components::colorpicker(ui, id)</code>：dialog 式颜色选择器，页面传 color/open，RGB slider 和色块只改 draft，点击 <code>Done</code> 后才回调 next color。</li>
+<li><code>components::dataTable(ui, id)</code> / <code>components::datatable(ui, id)</code>：简单数据表。</li>
+<li><code>components::dialog(ui, id)</code>：模态对话框，页面传 open 状态。</li>
+<li><code>components::toast(ui, id)</code>：toast 提示，支持 duration / autoDismiss。</li>
+<li><code>components::contextMenu(ui, id)</code>：右键菜单，支持 position、screen、items、dismiss。</li>
+<li><code>components::linechart(ui, id)</code> / <code>components::lineChart(ui, id)</code>：折线图，hover 数据点显示 tooltip。</li>
+<li><code>components::barchart(ui, id)</code> / <code>components::barChart(ui, id)</code>：柱状图，hover 柱子显示 tooltip。</li>
+<li><code>components::piechart(ui, id)</code> / <code>components::pieChart(ui, id)</code>：饼图，用 <code>Polygon</code> 绘制扇区，hover 扇区显示 tooltip。</li>
+</ul>
+<p>按钮示例：</p>
+<pre><code>components::button(ui, &quot;save&quot;)
+    .size(180.0f, 54.0f)
+    .icon(0xF0C7)
+    .text(&quot;Save&quot;)
+    .colors(normal, hover, pressed)
+    .transition(0.18f)
+    .onClick([] {
+        // state change
+    })
+    .build();</code></pre>
+<h2 id="runtime-行为">Runtime 行为</h2>
+<p><code>core::dsl::Runtime</code> 负责：</p>
+<ul>
+<li>持有 <code>Ui</code>。</li>
+<li>调用 <code>ui.layout()</code> 计算逻辑坐标。</li>
+<li>按 id 缓存 Rect / Text / Image / Polygon primitive 实例。</li>
+<li>统一处理 pointer event、hit-test、press capture、click。</li>
+<li>维护 hover / press 动画状态。</li>
+<li>推进 transition 动画。</li>
+<li>维护 dirty rect。</li>
+<li>使用离屏 framebuffer cache + scissor 做脏区渲染。</li>
+<li>处理 DPI scale。</li>
+<li>render / shutdown。</li>
+</ul>
+<p>纯 hover / press / transition 视觉变化不会重新 compose 页面。click 回调通常会修改 app 状态，因此 Runtime 会设置 <code>needsCompose()</code>，<code>app/dsl_app.h</code> 再重新 compose 并保守触发 full redraw。</p>
+<h2 id="当前限制">当前限制</h2>
+<ul>
+<li>已有基础 z-index 和矩形 clip；复杂圆角 clip、嵌套滚动区域的事件冒泡还没做。</li>
+<li><code>components::scroll</code> 现在负责滚动条和 offset，内容区可以用 <code>.clip()</code> + <code>y(-offset)</code> 组合实现裁剪滚动。</li>
+<li>已有基础键盘 focus / text input / 选择 / 剪贴板；IME 组合态和撤销栈还没做。</li>
+<li>还没有事件冒泡。</li>
+<li>已有 click / text input / scroll / drag 回调，还没有公开 hover 回调。</li>
+<li>transform 后的 hit-test 仍按布局矩形计算。</li>
+<li>id 移除后的实例缓存目前不会主动回收，只是不再绘制。</li>
+<li>脏区渲染是保守矩形，复杂重叠场景可能扩大重绘区域。</li>
+</ul></article></main>
+  <footer><div><span>EUI-NEO 文档</span><a href="../eui-neo-docs.html">返回文档中心</a></div></footer>
+</body>
+</html>

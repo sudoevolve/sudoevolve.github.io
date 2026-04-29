@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>窗口与页面 - EUI-NEO 文档</title>
+  <link rel="icon" href="../EUI-NEO-main/assets/icon.png">
+  <style>
+    :root{color-scheme:light;--blue:#4867da;--navy:#00113f;--ink:#091333;--muted:#596781;--soft:#f4f7ff;--panel:rgba(255,255,255,.9);--radius:8px;--shadow:0 20px 58px rgba(0,17,63,.12);--nav-h:70px}*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--soft)}body{margin:0;color:var(--ink);background:linear-gradient(180deg,#fff 0%,#f4f7ff 58%,#eef3ff 100%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;letter-spacing:0}a{color:inherit;text-decoration:none}.topbar{position:fixed;inset:0 0 auto;z-index:20;height:var(--nav-h);display:flex;justify-content:center;border-bottom:1px solid rgba(0,17,63,.08);background:rgba(255,255,255,.86);backdrop-filter:blur(18px)}.topbar-inner{width:min(1180px,calc(100% - 32px));display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:inline-flex;align-items:center;gap:10px;color:var(--navy);font-weight:900}.brand img{width:34px;height:34px;filter:drop-shadow(0 8px 18px rgba(72,103,218,.24))}.actions{display:flex;gap:10px;flex-wrap:wrap}.button{display:inline-flex;min-height:42px;align-items:center;justify-content:center;padding:0 14px;border:1px solid rgba(72,103,218,.28);border-radius:var(--radius);color:var(--blue);background:rgba(72,103,218,.08);font-weight:850}.button.primary{color:#fff;border-color:var(--blue);background:var(--blue)}.hero{padding:calc(var(--nav-h) + 52px) 0 34px;border-bottom:1px solid rgba(0,17,63,.08);background:linear-gradient(135deg,#fff 0%,#edf2ff 58%,#dfe6ff 100%)}.hero-inner,.layout{width:min(1180px,calc(100% - 32px));margin:0 auto}h1{margin:0 0 12px;color:var(--navy);font-size:clamp(2.5rem,6vw,4.8rem);line-height:.98;letter-spacing:0}.hero p{max-width:760px;margin:0;color:#26375f;line-height:1.78}.layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px;align-items:start;padding:30px 0 82px}.toc{position:sticky;top:calc(var(--nav-h) + 18px);padding:16px;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius);background:rgba(255,255,255,.86);box-shadow:0 14px 38px rgba(0,17,63,.08)}.toc strong{display:block;margin-bottom:10px;color:var(--navy)}.toc a{display:block;padding:8px 10px;border-radius:var(--radius);color:var(--muted);font-size:.92rem;line-height:1.35}.toc a.level-3{padding-left:22px;font-size:.86rem}.toc a:hover{color:var(--blue);background:rgba(72,103,218,.09)}article{padding:30px;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow)}article h1{font-size:2.4rem}article h2{margin:34px 0 12px;color:var(--navy);font-size:1.75rem;line-height:1.2;scroll-margin-top:calc(var(--nav-h) + 24px)}article h3{margin:26px 0 10px;color:var(--navy);font-size:1.24rem;scroll-margin-top:calc(var(--nav-h) + 24px)}article h4{margin:20px 0 8px;color:var(--navy);font-size:1.05rem}article p,article li,article td{color:var(--muted);line-height:1.8}article a{color:var(--blue);font-weight:760}article code{padding:.12em .34em;border-radius:5px;color:var(--navy);background:rgba(72,103,218,.1);font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}article pre{margin:16px 0;padding:18px;overflow:auto;border-radius:var(--radius);color:#eef3ff;background:var(--navy);line-height:1.72}article pre code{padding:0;color:inherit;background:transparent}.table-wrap{overflow:auto;margin:16px 0;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius)}table{width:100%;border-collapse:collapse;background:#fff}th,td{padding:13px 14px;border-bottom:1px solid rgba(72,103,218,.12);text-align:left;vertical-align:top}th{color:var(--navy);background:rgba(72,103,218,.08)}tr:last-child td{border-bottom:0}article img{max-width:100%;border-radius:var(--radius)}footer{padding:30px 0;color:var(--muted);background:#fff}footer div{width:min(1180px,calc(100% - 32px));margin:0 auto;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}footer a{color:var(--blue);font-weight:760}@media(max-width:960px){.layout{grid-template-columns:1fr}.toc{position:static}.toc nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}}@media(max-width:620px){.topbar-inner,.hero-inner,.layout,footer div{width:calc(100% - 24px)}.actions{display:none}article{padding:22px}.toc nav{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="topbar-inner"><a class="brand" href="../eui-neo.html"><img src="../EUI-NEO-main/assets/icon.png" alt=""><span>EUI-NEO</span></a><div class="actions"><a class="button" href="../eui-neo-docs.html">文档中心</a><a class="button primary" href="https://github.com/sudoevolve/EUI-NEO">GitHub</a></div></div></header>
+  <section class="hero"><div class="hero-inner"><h1>窗口与页面</h1><p>EUI-NEO 技术文档，可直接在官网中阅读。</p></div></section>
+  <main class="layout"><aside class="toc"><strong>目录</strong><nav><a class="level-1" href="#窗口与页面">窗口与页面</a>
+<a class="level-2" href="#dsl-app-入口">DSL App 入口</a>
+<a class="level-2" href="#dslappconfig">DslAppConfig</a>
+<a class="level-2" href="#compose">compose</a>
+<a class="level-2" href="#主循环行为">主循环行为</a>
+<a class="level-2" href="#dsl-app-h-行为">dsl_app.h 行为</a>
+<a class="level-2" href="#demo-程序">Demo 程序</a>
+<a class="level-2" href="#脏区与整屏重绘">脏区与整屏重绘</a>
+<a class="level-2" href="#当前限制">当前限制</a></nav></aside><article><h1 id="窗口与页面">窗口与页面</h1>
+<p>当前项目把窗口主循环和页面声明分开：</p>
+<ul>
+<li><code>main.cpp</code>：创建 GLFW 窗口、OpenGL 上下文、主动帧率节流、事件等待。</li>
+<li><code>app/app.h</code>：定义应用入口函数。</li>
+<li><code>app/dsl_app.h</code>：把 DSL Runtime 接到应用生命周期。</li>
+<li><code>app/*.cpp</code>：每个 cpp 是一个独立 demo / 页面程序。</li>
+<li><code>CMakeLists.txt</code>：为每个 <code>app/*.cpp</code> 生成一个可执行程序。</li>
+</ul>
+<p>页面开发通常只需要写 <code>app/*.cpp</code>。</p>
+<h2 id="dsl-app-入口">DSL App 入口</h2>
+<p>使用 DSL 的 app 文件包含：</p>
+<pre><code>#include &quot;app/dsl_app.h&quot;</code></pre>
+<p>然后实现：</p>
+<pre><code>namespace app {
+
+const DslAppConfig&amp; dslAppConfig();
+void compose(core::dsl::Ui&amp; ui, const core::dsl::Screen&amp; screen);
+
+} // namespace app</code></pre>
+<h2 id="dslappconfig">DslAppConfig</h2>
+<p>当前字段：</p>
+<pre><code>struct DslAppConfig {
+    const char* title = &quot;App&quot;;
+    const char* pageId = &quot;app&quot;;
+    core::Color clearColor = {0.16f, 0.18f, 0.20f, 1.0f};
+    int windowWidth = 800;
+    int windowHeight = 600;
+    bool showFrameCountInTitle = false;
+    double fps = 0.0;
+    const char* iconPath = &quot;assets/icon.png&quot;;
+};</code></pre>
+<ul>
+<li><code>title</code>：窗口标题。</li>
+<li><code>pageId</code>：Runtime compose 页面时使用的页面 id，必须稳定。</li>
+<li><code>clearColor</code>：Runtime cache 重建/full redraw 时使用的背景色。</li>
+<li><code>windowWidth</code> / <code>windowHeight</code>：初始窗口大小。</li>
+<li><code>showFrameCountInTitle</code>：是否在窗口标题里显示实际 render/swap FPS。</li>
+<li><code>fps</code>：动画时的主动帧率上限。<code>0.0</code> 表示不额外限制，正数表示最多多少 FPS，例如 <code>90.0</code>。</li>
+<li><code>iconPath</code>：窗口图标 PNG 路径，默认使用 <code>assets/icon.png</code>。Windows exe 图标由 CMake 挂载 <code>assets/icon.ico</code>。</li>
+</ul>
+<p>示例：</p>
+<pre><code>const DslAppConfig&amp; dslAppConfig() {
+    static const DslAppConfig config = {
+        &quot;Calculator&quot;,
+        &quot;calculator&quot;,
+        {0.07f, 0.075f, 0.085f, 1.0f},
+        430,
+        760,
+        false,
+        90.0
+    };
+    return config;
+}</code></pre>
+<p><code>calculator</code> 当前把 <code>fps</code> 写成 <code>90.0</code>。<code>gallery</code> 默认 <code>fps = 90.0</code>；Settings 中打开 <code>Unlock 90 FPS limit</code> 后会把 <code>fps</code> 同步为 <code>0.0</code>，回到显示器刷新率。默认关闭 Glass/blur。</p>
+<h2 id="compose">compose</h2>
+<p><code>compose(core::dsl::Ui&amp; ui, const core::dsl::Screen&amp; screen)</code> 是页面声明入口。</p>
+<p><code>screen.width</code> 和 <code>screen.height</code> 是逻辑尺寸，已经由 <code>app/dsl_app.h</code> 根据 DPI scale 换算。页面布局应使用这个逻辑尺寸，不要直接取 framebuffer 像素尺寸。</p>
+<p>推荐根节点写法：</p>
+<pre><code>void compose(core::dsl::Ui&amp; ui, const core::dsl::Screen&amp; screen) {
+    ui.row(&quot;root&quot;)
+        .size(screen.width, screen.height)
+        .content([&amp;] {
+            // sidebar
+            // content
+        })
+        .build();
+}</code></pre>
+<p>页面状态可以放在 <code>app/*.cpp</code> 的匿名 namespace 中：</p>
+<pre><code>namespace {
+
+int selectedPage = 0;
+bool optionMotion = true;
+
+} // namespace</code></pre>
+<p>点击事件修改状态后，<code>app/dsl_app.h</code> 会在 Runtime 需要重新 compose 时重新声明页面，并标记 full redraw。</p>
+<h2 id="主循环行为">主循环行为</h2>
+<p><code>main.cpp</code> 当前负责：</p>
+<ul>
+<li>初始化 GLFW。</li>
+<li>创建 OpenGL 3.3 core profile 窗口。</li>
+<li>加载 glad。</li>
+<li>调用 <code>app::initialize(window)</code>。</li>
+<li>每轮计算 <code>deltaSeconds</code>。</li>
+<li>读取 framebuffer 尺寸、DPI scale、pointer scale。</li>
+<li>调用 <code>app::update(...)</code>。</li>
+<li>只有 Runtime 请求渲染时才调用 <code>app::render(...)</code> 和 <code>glfwSwapBuffers(...)</code>。</li>
+<li>没有动画时用 <code>glfwWaitEvents()</code> 休眠。</li>
+<li>有动画时按窗口所在显示器 refresh rate 主动节流。</li>
+<li>如果 <code>DslAppConfig::fps</code> 为正数，则动画帧率上限为 <code>min(refreshRate, fps)</code>。</li>
+</ul>
+<p>当前主动节流使用 <code>glfwSwapInterval(0)</code>，避免和 <code>SwapBuffers</code> 的 vsync 阻塞叠加。</p>
+<p>Windows 下会调用 <code>timeBeginPeriod(1)</code>，并在 CMake 中链接 <code>winmm</code>，用于改善高刷新率等待精度。</p>
+<h2 id="dsl-app-h-行为">dsl_app.h 行为</h2>
+<p><code>app/dsl_app.h</code> 内部持有一个静态 <code>core::dsl::Runtime</code>。</p>
+<p>它不会每轮都 compose。当前只在这些情况 compose：</p>
+<ul>
+<li>首次运行。</li>
+<li>逻辑尺寸变化。</li>
+<li>点击回调修改业务状态，Runtime 返回 <code>needsCompose()</code>。</li>
+</ul>
+<p>点击导致重新 compose 后，会立即用 <code>deltaSeconds = 0</code> 调一次 Runtime update，让新 DSL 树和 Runtime 缓存实例同步，然后标记 full redraw。</p>
+<h2 id="demo-程序">Demo 程序</h2>
+<p>当前 <code>app/</code> 下主要有：</p>
+<ul>
+<li><code>demo.cpp</code>：简单 DSL 示例。</li>
+<li><code>gallery.cpp</code>：完整 Gallery，包含 Controls / Text / Animation / Settings / Bing / About。</li>
+<li><code>calculator.cpp</code>：计算器 demo，示例中直接通过 <code>DslAppConfig::fps = 90.0</code> 限制动画帧率。</li>
+</ul>
+<p><code>CMakeLists.txt</code> 会扫描 <code>app/*.cpp</code>：</p>
+<pre><code>file(GLOB APP_SOURCES CONFIGURE_DEPENDS &quot;${CMAKE_CURRENT_SOURCE_DIR}/app/*.cpp&quot;)
+foreach(app_source ${APP_SOURCES})
+    get_filename_component(app_name &quot;${app_source}&quot; NAME_WE)
+    add_executable(${app_name} main.cpp &quot;${app_source}&quot; ${CORE_SOURCES})
+    configure_opengl_app(${app_name})
+endforeach()</code></pre>
+<p>所以新增 <code>app/example.cpp</code> 后，会生成 <code>example.exe</code>。</p>
+<h2 id="脏区与整屏重绘">脏区与整屏重绘</h2>
+<p>当前 DSL Runtime 支持 framebuffer cache + scissor 的脏区渲染。</p>
+<p>常见局部重绘：</p>
+<ul>
+<li>hover / pressed 颜色变化。</li>
+<li>按钮按下缩放。</li>
+<li>transition 中的位置、透明度、颜色、旋转等变化。</li>
+<li>文本颜色或透明度变化。</li>
+</ul>
+<p>常见 full redraw：</p>
+<ul>
+<li>首帧。</li>
+<li>窗口/framebuffer 尺寸变化。</li>
+<li>页面状态变化后重新 compose。</li>
+<li>dirty rect 触碰到 blur 元素 1.2 倍保护范围。</li>
+<li>Runtime cache 创建或重建。</li>
+</ul>
+<p>页面和组件不用自己实现脏区，但要做到：</p>
+<ul>
+<li>id 稳定。</li>
+<li>结构尽量稳定。</li>
+<li>动画写成 DSL 属性目标值。</li>
+<li>hover / pressed 用 <code>.states()</code>。</li>
+<li>点击只改业务状态，不直接碰 primitive。</li>
+</ul>
+<h2 id="当前限制">当前限制</h2>
+<ul>
+<li>还没有独立 Router。</li>
+<li>已有矩形 clip 和滚动条/offset 控制；圆角 clip、复杂 overflow 规则还没下沉。</li>
+<li>已有基础键盘 focus / text input / 选择 / 剪贴板；IME 组合态和撤销栈还没下沉。</li>
+<li>已有基础 z-index；它只影响同级绘制和 topmost hit-test，不参与布局。</li>
+<li>blur 依赖 framebuffer cache，触碰其 1.2 倍保护范围的变化会保守升级 full redraw。</li>
+<li>当前不是 QML 那样的 scene graph/batch renderer。</li>
+</ul></article></main>
+  <footer><div><span>EUI-NEO 文档</span><a href="../eui-neo-docs.html">返回文档中心</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>网络请求 - EUI-NEO 文档</title>
+  <link rel="icon" href="../EUI-NEO-main/assets/icon.png">
+  <style>
+    :root{color-scheme:light;--blue:#4867da;--navy:#00113f;--ink:#091333;--muted:#596781;--soft:#f4f7ff;--panel:rgba(255,255,255,.9);--radius:8px;--shadow:0 20px 58px rgba(0,17,63,.12);--nav-h:70px}*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--soft)}body{margin:0;color:var(--ink);background:linear-gradient(180deg,#fff 0%,#f4f7ff 58%,#eef3ff 100%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;letter-spacing:0}a{color:inherit;text-decoration:none}.topbar{position:fixed;inset:0 0 auto;z-index:20;height:var(--nav-h);display:flex;justify-content:center;border-bottom:1px solid rgba(0,17,63,.08);background:rgba(255,255,255,.86);backdrop-filter:blur(18px)}.topbar-inner{width:min(1180px,calc(100% - 32px));display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:inline-flex;align-items:center;gap:10px;color:var(--navy);font-weight:900}.brand img{width:34px;height:34px;filter:drop-shadow(0 8px 18px rgba(72,103,218,.24))}.actions{display:flex;gap:10px;flex-wrap:wrap}.button{display:inline-flex;min-height:42px;align-items:center;justify-content:center;padding:0 14px;border:1px solid rgba(72,103,218,.28);border-radius:var(--radius);color:var(--blue);background:rgba(72,103,218,.08);font-weight:850}.button.primary{color:#fff;border-color:var(--blue);background:var(--blue)}.hero{padding:calc(var(--nav-h) + 52px) 0 34px;border-bottom:1px solid rgba(0,17,63,.08);background:linear-gradient(135deg,#fff 0%,#edf2ff 58%,#dfe6ff 100%)}.hero-inner,.layout{width:min(1180px,calc(100% - 32px));margin:0 auto}h1{margin:0 0 12px;color:var(--navy);font-size:clamp(2.5rem,6vw,4.8rem);line-height:.98;letter-spacing:0}.hero p{max-width:760px;margin:0;color:#26375f;line-height:1.78}.layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px;align-items:start;padding:30px 0 82px}.toc{position:sticky;top:calc(var(--nav-h) + 18px);padding:16px;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius);background:rgba(255,255,255,.86);box-shadow:0 14px 38px rgba(0,17,63,.08)}.toc strong{display:block;margin-bottom:10px;color:var(--navy)}.toc a{display:block;padding:8px 10px;border-radius:var(--radius);color:var(--muted);font-size:.92rem;line-height:1.35}.toc a.level-3{padding-left:22px;font-size:.86rem}.toc a:hover{color:var(--blue);background:rgba(72,103,218,.09)}article{padding:30px;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow)}article h1{font-size:2.4rem}article h2{margin:34px 0 12px;color:var(--navy);font-size:1.75rem;line-height:1.2;scroll-margin-top:calc(var(--nav-h) + 24px)}article h3{margin:26px 0 10px;color:var(--navy);font-size:1.24rem;scroll-margin-top:calc(var(--nav-h) + 24px)}article h4{margin:20px 0 8px;color:var(--navy);font-size:1.05rem}article p,article li,article td{color:var(--muted);line-height:1.8}article a{color:var(--blue);font-weight:760}article code{padding:.12em .34em;border-radius:5px;color:var(--navy);background:rgba(72,103,218,.1);font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}article pre{margin:16px 0;padding:18px;overflow:auto;border-radius:var(--radius);color:#eef3ff;background:var(--navy);line-height:1.72}article pre code{padding:0;color:inherit;background:transparent}.table-wrap{overflow:auto;margin:16px 0;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius)}table{width:100%;border-collapse:collapse;background:#fff}th,td{padding:13px 14px;border-bottom:1px solid rgba(72,103,218,.12);text-align:left;vertical-align:top}th{color:var(--navy);background:rgba(72,103,218,.08)}tr:last-child td{border-bottom:0}article img{max-width:100%;border-radius:var(--radius)}footer{padding:30px 0;color:var(--muted);background:#fff}footer div{width:min(1180px,calc(100% - 32px));margin:0 auto;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}footer a{color:var(--blue);font-weight:760}@media(max-width:960px){.layout{grid-template-columns:1fr}.toc{position:static}.toc nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}}@media(max-width:620px){.topbar-inner,.hero-inner,.layout,footer div{width:calc(100% - 24px)}.actions{display:none}article{padding:22px}.toc nav{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="topbar-inner"><a class="brand" href="../eui-neo.html"><img src="../EUI-NEO-main/assets/icon.png" alt=""><span>EUI-NEO</span></a><div class="actions"><a class="button" href="../eui-neo-docs.html">文档中心</a><a class="button primary" href="https://github.com/sudoevolve/EUI-NEO">GitHub</a></div></div></header>
+  <section class="hero"><div class="hero-inner"><h1>网络请求</h1><p>EUI-NEO 技术文档，可直接在官网中阅读。</p></div></section>
+  <main class="layout"><aside class="toc"><strong>目录</strong><nav><a class="level-1" href="#网络请求">网络请求</a>
+<a class="level-2" href="#平台支持">平台支持</a>
+<a class="level-2" href="#文本-api">文本 API</a>
+<a class="level-2" href="#图片网络请求">图片网络请求</a>
+<a class="level-2" href="#bing-每日图">Bing 每日图</a>
+<a class="level-2" href="#当前限制">当前限制</a></nav></aside><article><h1 id="网络请求">网络请求</h1>
+<p>当前网络层位于 <code>core/network.h</code> / <code>core/network.cpp</code>，主要服务两类能力：</p>
+<ul>
+<li>图片节点加载 <code>http/https</code> 图片和 Bing 每日图。</li>
+<li>页面示例请求文本 API，再把结果写入 <code>ui.text(...)</code>。</li>
+</ul>
+<h2 id="平台支持">平台支持</h2>
+<ul>
+<li>Windows：优先使用 libcurl；如果 CMake 没找到 curl，则使用系统 <code>URLDownloadToFileA</code>。</li>
+<li>Linux / 其他非 Windows：使用 libcurl。CMake 在非 Windows 平台要求 <code>CURL::libcurl</code>。</li>
+</ul>
+<h2 id="文本-api">文本 API</h2>
+<pre><code>core::network::requestText(
+    &quot;bing.meta&quot;,
+    &quot;https://www.bing.com/HPImageArchive.aspx?format=js&amp;n=1&amp;idx=0&amp;mkt=zh-CN&quot;);
+
+const core::network::TextResult result = core::network::textResult(&quot;bing.meta&quot;);
+if (result.ready &amp;&amp; result.ok) {
+    ui.text(&quot;api.text&quot;)
+        .size(520.0f, 72.0f)
+        .text(result.body)
+        .wrap(true)
+        .build();
+}</code></pre>
+<p><code>requestText</code> 只会为同一个 key 启动一次后台请求。请求完成后会唤醒 GLFW 事件循环，<code>app/dsl_app.h</code> 检测到网络文本完成后会重新 compose 页面。</p>
+<p><code>gallery</code> 的 About 页展示了 Bing API 文本结果。</p>
+<h2 id="图片网络请求">图片网络请求</h2>
+<pre><code>ui.image(&quot;remote&quot;)
+    .size(260.0f, 150.0f)
+    .url(&quot;https://example.com/picture.png&quot;)
+    .radius(16.0f)
+    .build();</code></pre>
+<p>网络图片会下载到系统临时缓存目录，再按本地图片解码并上传纹理。下载完成后 Runtime 会重绘图片区域。</p>
+<h2 id="bing-每日图">Bing 每日图</h2>
+<pre><code>ui.image(&quot;bing&quot;)
+    .size(260.0f, 150.0f)
+    .bingDaily(0, &quot;zh-CN&quot;)
+    .radius(16.0f)
+    .build();</code></pre>
+<p><code>bingDaily(idx, mkt)</code> 会请求 Bing <code>HPImageArchive</code> API，解析返回 JSON 中的图片 URL，然后下载图片。</p>
+<h2 id="当前限制">当前限制</h2>
+<ul>
+<li>现在只有 GET 请求。</li>
+<li>还没有暴露 header、body、取消、进度、重试策略。</li>
+<li>文本 API 结果是原始字符串；JSON 解析目前由页面示例自己做轻量提取。</li>
+</ul></article></main>
+  <footer><div><span>EUI-NEO 文档</span><a href="../eui-neo-docs.html">返回文档中心</a></div></footer>
+</body>
+</html>

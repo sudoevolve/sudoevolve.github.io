@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>组件 - EUI-NEO 文档</title>
+  <link rel="icon" href="../EUI-NEO-main/assets/icon.png">
+  <style>
+    :root{color-scheme:light;--blue:#4867da;--navy:#00113f;--ink:#091333;--muted:#596781;--soft:#f4f7ff;--panel:rgba(255,255,255,.9);--radius:8px;--shadow:0 20px 58px rgba(0,17,63,.12);--nav-h:70px}*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--soft)}body{margin:0;color:var(--ink);background:linear-gradient(180deg,#fff 0%,#f4f7ff 58%,#eef3ff 100%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;letter-spacing:0}a{color:inherit;text-decoration:none}.topbar{position:fixed;inset:0 0 auto;z-index:20;height:var(--nav-h);display:flex;justify-content:center;border-bottom:1px solid rgba(0,17,63,.08);background:rgba(255,255,255,.86);backdrop-filter:blur(18px)}.topbar-inner{width:min(1180px,calc(100% - 32px));display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:inline-flex;align-items:center;gap:10px;color:var(--navy);font-weight:900}.brand img{width:34px;height:34px;filter:drop-shadow(0 8px 18px rgba(72,103,218,.24))}.actions{display:flex;gap:10px;flex-wrap:wrap}.button{display:inline-flex;min-height:42px;align-items:center;justify-content:center;padding:0 14px;border:1px solid rgba(72,103,218,.28);border-radius:var(--radius);color:var(--blue);background:rgba(72,103,218,.08);font-weight:850}.button.primary{color:#fff;border-color:var(--blue);background:var(--blue)}.hero{padding:calc(var(--nav-h) + 52px) 0 34px;border-bottom:1px solid rgba(0,17,63,.08);background:linear-gradient(135deg,#fff 0%,#edf2ff 58%,#dfe6ff 100%)}.hero-inner,.layout{width:min(1180px,calc(100% - 32px));margin:0 auto}h1{margin:0 0 12px;color:var(--navy);font-size:clamp(2.5rem,6vw,4.8rem);line-height:.98;letter-spacing:0}.hero p{max-width:760px;margin:0;color:#26375f;line-height:1.78}.layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px;align-items:start;padding:30px 0 82px}.toc{position:sticky;top:calc(var(--nav-h) + 18px);padding:16px;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius);background:rgba(255,255,255,.86);box-shadow:0 14px 38px rgba(0,17,63,.08)}.toc strong{display:block;margin-bottom:10px;color:var(--navy)}.toc a{display:block;padding:8px 10px;border-radius:var(--radius);color:var(--muted);font-size:.92rem;line-height:1.35}.toc a.level-3{padding-left:22px;font-size:.86rem}.toc a:hover{color:var(--blue);background:rgba(72,103,218,.09)}article{padding:30px;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow)}article h1{font-size:2.4rem}article h2{margin:34px 0 12px;color:var(--navy);font-size:1.75rem;line-height:1.2;scroll-margin-top:calc(var(--nav-h) + 24px)}article h3{margin:26px 0 10px;color:var(--navy);font-size:1.24rem;scroll-margin-top:calc(var(--nav-h) + 24px)}article h4{margin:20px 0 8px;color:var(--navy);font-size:1.05rem}article p,article li,article td{color:var(--muted);line-height:1.8}article a{color:var(--blue);font-weight:760}article code{padding:.12em .34em;border-radius:5px;color:var(--navy);background:rgba(72,103,218,.1);font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}article pre{margin:16px 0;padding:18px;overflow:auto;border-radius:var(--radius);color:#eef3ff;background:var(--navy);line-height:1.72}article pre code{padding:0;color:inherit;background:transparent}.table-wrap{overflow:auto;margin:16px 0;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius)}table{width:100%;border-collapse:collapse;background:#fff}th,td{padding:13px 14px;border-bottom:1px solid rgba(72,103,218,.12);text-align:left;vertical-align:top}th{color:var(--navy);background:rgba(72,103,218,.08)}tr:last-child td{border-bottom:0}article img{max-width:100%;border-radius:var(--radius)}footer{padding:30px 0;color:var(--muted);background:#fff}footer div{width:min(1180px,calc(100% - 32px));margin:0 auto;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}footer a{color:var(--blue);font-weight:760}@media(max-width:960px){.layout{grid-template-columns:1fr}.toc{position:static}.toc nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}}@media(max-width:620px){.topbar-inner,.hero-inner,.layout,footer div{width:calc(100% - 24px)}.actions{display:none}article{padding:22px}.toc nav{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="topbar-inner"><a class="brand" href="../eui-neo.html"><img src="../EUI-NEO-main/assets/icon.png" alt=""><span>EUI-NEO</span></a><div class="actions"><a class="button" href="../eui-neo-docs.html">文档中心</a><a class="button primary" href="https://github.com/sudoevolve/EUI-NEO">GitHub</a></div></div></header>
+  <section class="hero"><div class="hero-inner"><h1>组件</h1><p>EUI-NEO 技术文档，可直接在官网中阅读。</p></div></section>
+  <main class="layout"><aside class="toc"><strong>目录</strong><nav><a class="level-1" href="#组件">组件</a>
+<a class="level-2" href="#引入">引入</a>
+<a class="level-2" href="#基本约定">基本约定</a>
+<a class="level-2" href="#theme">Theme</a>
+<a class="level-2" href="#基础包装">基础包装</a>
+<a class="level-2" href="#控件">控件</a>
+<a class="level-3" href="#button">button</a>
+<a class="level-3" href="#checkbox-radio-toggleswitch">checkbox / radio / toggleSwitch</a>
+<a class="level-3" href="#progress-slider">progress / slider</a>
+<a class="level-3" href="#input">input</a>
+<a class="level-3" href="#segmented-tabs">segmented / tabs</a>
+<a class="level-3" href="#scroll">scroll</a>
+<a class="level-2" href="#弹层和反馈">弹层和反馈</a>
+<a class="level-3" href="#dialog">dialog</a>
+<a class="level-3" href="#toast">toast</a>
+<a class="level-3" href="#contextmenu">contextMenu</a>
+<a class="level-3" href="#dropdown">dropdown</a>
+<a class="level-3" href="#datepicker-timepicker-colorpicker">datepicker / timepicker / colorpicker</a>
+<a class="level-2" href="#数据展示">数据展示</a>
+<a class="level-3" href="#datatable">dataTable</a>
+<a class="level-2" href="#图表">图表</a>
+<a class="level-3" href="#linechart">linechart</a>
+<a class="level-3" href="#barchart">barchart</a>
+<a class="level-3" href="#piechart">piechart</a>
+<a class="level-2" href="#当前限制">当前限制</a>
+<a class="level-2" href="#写新组件时的底线">写新组件时的底线</a></nav></aside><article><h1 id="组件">组件</h1>
+<p>组件层位于 <code>components/</code>。它不是另一套渲染系统，也不直接持有 OpenGL primitive；组件只负责把常用 DSL 结构封装成更短、更稳定的 builder 调用。</p>
+<p>页面仍然由 <code>core::dsl::Ui</code> 里的 <code>row</code>、<code>column</code>、<code>stack</code>、<code>rect</code>、<code>text</code>、<code>image</code>、<code>polygon</code> 等图元组成。组件内部也只声明 DSL 树，事件、hover、pressed、transition、dirty rect 和 framebuffer cache 都继续交给 <code>core::dsl::Runtime</code>。</p>
+<h2 id="引入">引入</h2>
+<p>通常只需要包含聚合头：</p>
+<pre><code>#include &quot;components/components.h&quot;</code></pre>
+<p>这个头当前导出：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>组件</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td><code>button</code></td><td>按钮，支持文字、图标、主题、禁用、右键回调</td></tr>
+<tr><td><code>checkbox</code></td><td>受控复选框</td></tr>
+<tr><td><code>radio</code></td><td>受控单选项</td></tr>
+<tr><td><code>toggleSwitch</code></td><td>受控开关</td></tr>
+<tr><td><code>progress</code></td><td>进度条，<code>value</code> 范围是 <code>0.0f - 1.0f</code></td></tr>
+<tr><td><code>slider</code></td><td>滑块，<code>value</code> 范围是 <code>0.0f - 1.0f</code></td></tr>
+<tr><td><code>input</code></td><td>文本输入框，支持单行/多行、选择、剪贴板快捷键</td></tr>
+<tr><td><code>segmented</code></td><td>分段选择</td></tr>
+<tr><td><code>tabs</code></td><td>标签页切换</td></tr>
+<tr><td><code>scroll</code></td><td>滚动条/offset 控制器</td></tr>
+<tr><td><code>dropdown</code></td><td>下拉选择</td></tr>
+<tr><td><code>datepicker</code></td><td>dialog 式日期选择器，受控 <code>open/date</code></td></tr>
+<tr><td><code>timepicker</code></td><td>dialog 式时间选择器，受控 <code>open/time</code></td></tr>
+<tr><td><code>colorpicker</code></td><td>dialog 式颜色选择器，受控 <code>open/value</code></td></tr>
+<tr><td><code>dataTable</code> / <code>datatable</code></td><td>简单数据表格</td></tr>
+<tr><td><code>dialog</code></td><td>模态对话框</td></tr>
+<tr><td><code>toast</code></td><td>右上角 toast，支持自动消失</td></tr>
+<tr><td><code>contextMenu</code></td><td>右键菜单</td></tr>
+<tr><td><code>linechart</code> / <code>lineChart</code></td><td>折线图</td></tr>
+<tr><td><code>barchart</code> / <code>barChart</code></td><td>柱状图</td></tr>
+<tr><td><code>piechart</code> / <code>pieChart</code></td><td>饼图</td></tr>
+<tr><td><code>panel</code></td><td>套用主题的 <code>RectBuilder</code></td></tr>
+<tr><td><code>text</code> / <code>label</code></td><td>套用主题文本色的 <code>TextBuilder</code></td></tr>
+<tr><td><code>image</code></td><td>套用主题图片样式的 <code>ImageBuilder</code></td></tr>
+<tr><td><code>theme</code></td><td>颜色和视觉 token 辅助函数</td></tr>
+</tbody></table></div>
+<h2 id="基本约定">基本约定</h2>
+<ul>
+<li>组件 id 必须稳定，内部子节点使用 <code>id + &quot;.name&quot;</code>。</li>
+<li>组件 API 使用无下划线命名，例如 <code>datepicker</code>、<code>timepicker</code>、<code>colorpicker</code>。</li>
+<li>大多数组件是受控组件：页面传入当前值，组件通过回调返回 next value。</li>
+<li>组件不保存业务状态，不提供生命周期钩子。</li>
+<li>需要动画时优先使用组件的 <code>.transition(...)</code>，或者组件内部固定的 DSL transition。</li>
+<li>弹层类组件一般提供 <code>.zIndex(...)</code> / <code>.z(...)</code>，页面需要保证它们排在普通内容之上。</li>
+<li><code>.style(...)</code> 用于完全覆盖样式结构，<code>.theme(tokens)</code> 用于按当前主题重建样式。</li>
+<li>组件内部不应该 <code>new</code> primitive、不绕过 Runtime、不自己读取原始鼠标状态。</li>
+</ul>
+<h2 id="theme">Theme</h2>
+<p>主题定义在 <code>components/theme.h</code>，常用入口：</p>
+<pre><code>const auto dark = components::theme::DarkThemeColors();
+const auto light = components::theme::LightThemeColors();
+
+const auto page = components::theme::pageVisuals(dark);
+const auto field = components::theme::fieldVisuals(dark);</code></pre>
+<p>当前提供：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>API</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><code>color(r, g, b, a)</code></td><td>创建 <code>core::Color</code></td></tr>
+<tr><td><code>withAlpha(color, alpha)</code></td><td>替换 alpha</td></tr>
+<tr><td><code>withOpacity(color, opacity)</code></td><td>按比例调整 alpha</td></tr>
+<tr><td><code>light()</code> / <code>dark()</code></td><td>基础明暗主题</td></tr>
+<tr><td><code>LightThemeColors()</code> / <code>DarkThemeColors()</code></td><td>兼容参考项目命名</td></tr>
+<tr><td><code>pageVisuals(tokens)</code></td><td>页面标题、正文、卡片、间距等 token</td></tr>
+<tr><td><code>fieldVisuals(tokens)</code></td><td>输入控件圆角、padding、focus、弹层阴影等 token</td></tr>
+<tr><td><code>CurrentPageVisuals(tokens)</code></td><td><code>pageVisuals</code> 别名</td></tr>
+<tr><td><code>CurrentFieldVisuals(tokens)</code></td><td><code>fieldVisuals</code> 别名</td></tr>
+<tr><td><code>resolveFieldFill(...)</code></td><td>按 hover / active 计算字段背景</td></tr>
+<tr><td><code>ResolveFieldFill(...)</code></td><td><code>resolveFieldFill</code> 别名</td></tr>
+<tr><td><code>buttonHover(...)</code></td><td>按主题计算按钮 hover 色</td></tr>
+<tr><td><code>buttonPressed(...)</code></td><td>按主题计算按钮 pressed 色</td></tr>
+<tr><td><code>border(...)</code></td><td>常用边框</td></tr>
+<tr><td><code>buttonBorder(...)</code></td><td>按钮边框</td></tr>
+<tr><td><code>shadow(...)</code></td><td>通用阴影</td></tr>
+<tr><td><code>buttonShadow(...)</code></td><td>按钮阴影</td></tr>
+<tr><td><code>panelShadow(...)</code></td><td>面板阴影</td></tr>
+<tr><td><code>popupShadow(...)</code></td><td>弹层阴影</td></tr>
+</tbody></table></div>
+<h2 id="基础包装">基础包装</h2>
+<p><code>panel</code>、<code>text</code>、<code>label</code>、<code>image</code> 返回的仍然是 core DSL builder，所以可以继续链式调用底层能力。</p>
+<pre><code>components::panel(ui, &quot;card&quot;, tokens)
+    .size(360.0f, 220.0f)
+    .transition(0.18f)
+    .build();
+
+components::text(ui, &quot;title&quot;, tokens)
+    .size(420.0f, 48.0f)
+    .text(&quot;EUI Gallery&quot;)
+    .fontSize(38.0f)
+    .horizontalAlign(core::HorizontalAlign::Center)
+    .verticalAlign(core::VerticalAlign::Center)
+    .build();
+
+components::image(ui, &quot;cover&quot;, tokens)
+    .size(320.0f, 180.0f)
+    .source(&quot;assets/icon.png&quot;)
+    .cover()
+    .build();</code></pre>
+<p><code>text.h</code> 还提供 <code>titleTextStyle(tokens)</code>、<code>subtitleTextStyle(tokens)</code>、<code>bodyTextStyle(tokens)</code>，用于快速生成 <code>core::TextStyle</code>。</p>
+<h2 id="控件">控件</h2>
+<h3 id="button">button</h3>
+<pre><code>components::button(ui, &quot;save&quot;)
+    .size(180.0f, 54.0f)
+    .theme(tokens)
+    .icon(0xF0C7)
+    .text(&quot;Save&quot;)
+    .transition(0.18f)
+    .onClick([] {
+        // update page state
+    })
+    .build();</code></pre>
+<p>常用 API：<code>size</code>、<code>scale</code>、<code>text</code>、<code>icon</code>、<code>fontSize</code>、<code>iconSize</code>、<code>textColor</code>、<code>iconColor</code>、<code>style</code>、<code>theme</code>、<code>primaryTheme</code>、<code>secondaryTheme</code>、<code>radius</code>、<code>rounding</code>、<code>opacity</code>、<code>disabled</code>、<code>enabled</code>、<code>translate</code>、<code>translateX</code>、<code>translateY</code>、<code>pressScale</code>、<code>border</code>、<code>shadow</code>、<code>colors</code>、<code>transition</code>、<code>onClick</code>、<code>onContextMenu</code>。</p>
+<p>按钮内部是 <code>Stack + Rect + Row + Text</code>。按压缩放作用在外层 stack，背景、图标和文字会一起动。</p>
+<h3 id="checkbox-radio-toggleswitch">checkbox / radio / toggleSwitch</h3>
+<p>这些都是受控组件，页面传当前值，回调里写回状态。</p>
+<pre><code>components::checkbox(ui, &quot;remember&quot;)
+    .theme(tokens)
+    .checked(remember)
+    .text(&quot;Remember me&quot;)
+    .onChange([&amp;](bool value) {
+        remember = value;
+    })
+    .build();
+
+components::radio(ui, &quot;mode.a&quot;)
+    .selected(mode == 0)
+    .text(&quot;Mode A&quot;)
+    .onSelect([&amp;] {
+        mode = 0;
+    })
+    .build();
+
+components::toggleSwitch(ui, &quot;motion&quot;)
+    .checked(enableMotion)
+    .label(&quot;Motion&quot;)
+    .onChange([&amp;](bool value) {
+        enableMotion = value;
+    })
+    .build();</code></pre>
+<p><code>checkbox</code> 支持 <code>size</code>、<code>checked</code>、<code>text</code>、<code>fontSize</code>、<code>boxSize</code>、<code>style</code>、<code>theme</code>、<code>transition</code>、<code>onChange</code>。</p>
+<p><code>radio</code> 支持 <code>size</code>、<code>selected</code> / <code>checked</code>、<code>text</code>、<code>fontSize</code>、<code>dotSize</code>、<code>style</code>、<code>theme</code>、<code>transition</code>、<code>onSelect</code>、<code>onChange</code>。</p>
+<p><code>toggleSwitch</code> 支持 <code>size</code>、<code>checked</code>、<code>label</code> / <code>text</code>、<code>fontSize</code>、<code>trackSize</code>、<code>style</code>、<code>theme</code>、<code>transition</code>、<code>onChange</code>。</p>
+<h3 id="progress-slider">progress / slider</h3>
+<pre><code>components::progress(ui, &quot;loading&quot;)
+    .theme(tokens)
+    .size(320.0f, 14.0f)
+    .value(progress)
+    .build();
+
+components::slider(ui, &quot;volume&quot;)
+    .theme(tokens)
+    .size(320.0f, 34.0f)
+    .value(volume)
+    .onChange([&amp;](float value) {
+        volume = value;
+    })
+    .build();</code></pre>
+<p><code>progress</code> 支持 <code>size</code>、<code>value</code>、<code>style</code>、<code>theme</code>、<code>transition</code>。</p>
+<p><code>slider</code> 支持 <code>size</code>、<code>value</code>、<code>style</code>、<code>theme</code>、<code>transition</code>、<code>onChange</code>。<code>value</code> 会 clamp 到 <code>0.0f - 1.0f</code>。滑块用透明 hit rect 处理点击和拖拽，拖拽时根据缓存 bounds 计算 next value。</p>
+<h3 id="input">input</h3>
+<pre><code>components::input(ui, &quot;name&quot;)
+    .theme(tokens)
+    .size(280.0f, 42.0f)
+    .value(name)
+    .placeholder(&quot;Name&quot;)
+    .onChange([&amp;](const std::string&amp; value) {
+        name = value;
+    })
+    .onEnter([] {
+        // submit
+    })
+    .build();</code></pre>
+<p>支持 <code>size</code>、<code>text</code> / <code>value</code>、<code>placeholder</code>、<code>multiline</code>、<code>fontSize</code>、<code>inset</code>、<code>style</code>、<code>theme</code>、<code>transition</code>、<code>onChange</code>、<code>onEnter</code>、<code>onFocus</code>。</p>
+<p>当前 input 支持 focus、点击定位光标、拖动选择、Shift+方向键选择、Ctrl+A/C/X/V、Backspace、Delete、Enter、单行和多行模式。暂时没有 IME 组合态显示和撤销栈。</p>
+<h3 id="segmented-tabs">segmented / tabs</h3>
+<pre><code>components::segmented(ui, &quot;density&quot;)
+    .items({&quot;Compact&quot;, &quot;Normal&quot;, &quot;Comfort&quot;})
+    .selected(density)
+    .onChange([&amp;](int index) {
+        density = index;
+    })
+    .build();
+
+components::tabs(ui, &quot;main.tabs&quot;)
+    .items({&quot;Style&quot;, &quot;Bing&quot;, &quot;Settings&quot;})
+    .selected(tab)
+    .onChange([&amp;](int index) {
+        tab = index;
+    })
+    .build();</code></pre>
+<p>两者都支持 <code>size</code>、<code>items</code>、<code>selected</code>、<code>fontSize</code>、<code>style</code>、<code>theme</code>、<code>transition</code>、<code>onChange</code>。</p>
+<h3 id="scroll">scroll</h3>
+<p><code>scroll</code> 只是滚动条和 offset 控制器，不直接持有内容。内容裁剪由外层 <code>.clip()</code> 完成，内容位移由页面按 <code>offset</code> 写到子树。</p>
+<pre><code>ui.stack(&quot;list.viewport&quot;)
+    .size(360.0f, 260.0f)
+    .clip()
+    .content([&amp;] {
+        ui.column(&quot;list.content&quot;)
+            .y(-scrollY)
+            .size(360.0f, contentHeight)
+            .build();
+    })
+    .build();
+
+components::scroll(ui, &quot;list.scroll&quot;)
+    .size(8.0f, 260.0f)
+    .viewport(260.0f)
+    .content(contentHeight)
+    .offset(scrollY)
+    .onChange([&amp;](float value) {
+        scrollY = value;
+    })
+    .build();</code></pre>
+<p>支持 <code>x</code>、<code>y</code>、<code>position</code>、<code>size</code>、<code>offset</code> / <code>value</code>、<code>viewport</code> / <code>viewportHeight</code>、<code>content</code> / <code>contentHeight</code>、<code>step</code>、<code>zIndex</code> / <code>z</code>、<code>style</code>、<code>theme</code>、<code>transition</code>、<code>onChange</code>。</p>
+<h2 id="弹层和反馈">弹层和反馈</h2>
+<h3 id="dialog">dialog</h3>
+<pre><code>components::dialog(ui, &quot;confirm&quot;)
+    .open(showDialog)
+    .screen(screen.width, screen.height)
+    .title(&quot;Confirm&quot;)
+    .message(&quot;Apply these changes?&quot;)
+    .primaryText(&quot;Apply&quot;)
+    .secondaryText(&quot;Cancel&quot;)
+    .onPrimary([&amp;] {
+        showDialog = false;
+    })
+    .onSecondary([&amp;] {
+        showDialog = false;
+    })
+    .onClose([&amp;] {
+        showDialog = false;
+    })
+    .build();</code></pre>
+<p>支持 <code>open</code>、<code>screen</code>、<code>size</code>、<code>title</code>、<code>message</code>、<code>primaryText</code>、<code>secondaryText</code>、<code>style</code>、<code>theme</code>、<code>transition</code>、<code>zIndex</code> / <code>z</code>、<code>onPrimary</code>、<code>onSecondary</code>、<code>onClose</code>。</p>
+<p><code>dialog</code> 会绘制 backdrop，并用透明 hit rect 吃掉后面内容的 hover、click 和 scroll。打开/关闭动画作用在整体面板上，内容跟着外层一起动。</p>
+<h3 id="toast">toast</h3>
+<pre><code>components::toast(ui, &quot;saved.toast&quot;)
+    .visible(showToast)
+    .screen(screen.width, screen.height)
+    .title(&quot;Saved&quot;)
+    .message(&quot;Your changes were saved.&quot;)
+    .icon(0xF00C)
+    .duration(2.4f)
+    .onAutoDismiss([&amp;] {
+        showToast = false;
+    })
+    .onDismiss([&amp;] {
+        showToast = false;
+    })
+    .build();</code></pre>
+<p>支持 <code>visible</code>、<code>screen</code>、<code>size</code>、<code>title</code>、<code>message</code>、<code>icon</code>、<code>style</code>、<code>theme</code>、<code>transition</code>、<code>zIndex</code> / <code>z</code>、<code>duration</code> / <code>autoDismiss</code>、<code>onAutoDismiss</code>、<code>onDismiss</code>。</p>
+<p><code>duration(0.0f)</code> 表示不自动消失。关闭按钮是内部命中区，点击触发 <code>onDismiss</code>。</p>
+<h3 id="contextmenu">contextMenu</h3>
+<pre><code>components::contextMenu(ui, &quot;item.menu&quot;)
+    .open(menuOpen)
+    .screen(screen.width, screen.height)
+    .position(menuX, menuY)
+    .items({&quot;Rename&quot;, &quot;Duplicate&quot;, &quot;Delete&quot;})
+    .onSelect([&amp;](int index) {
+        menuOpen = false;
+        selectedAction = index;
+    })
+    .onDismiss([&amp;] {
+        menuOpen = false;
+    })
+    .build();</code></pre>
+<p>支持 <code>open</code>、<code>screen</code>、<code>position</code>、<code>size(width, itemHeight)</code>、<code>items</code>、<code>style</code>、<code>theme</code>、<code>transition</code>、<code>zIndex</code> / <code>z</code>、<code>onSelect</code>、<code>onDismiss</code>。</p>
+<p>右键菜单会根据 <code>screen</code> 把弹层限制在屏幕内，并绘制全屏透明 dismiss 层。菜单项 hover 使用即时状态，快速 hover 不会等待颜色动画拖尾。</p>
+<h3 id="dropdown">dropdown</h3>
+<pre><code>components::dropdown(ui, &quot;theme.dropdown&quot;)
+    .items({&quot;Dark&quot;, &quot;Light&quot;, &quot;System&quot;})
+    .selected(themeIndex)
+    .open(dropdownOpen)
+    .placeholder(&quot;Theme&quot;)
+    .onOpenChange([&amp;](bool value) {
+        dropdownOpen = value;
+    })
+    .onChange([&amp;](int index) {
+        themeIndex = index;
+    })
+    .build();</code></pre>
+<p>支持 <code>size</code>、<code>items</code>、<code>selected</code>、<code>placeholder</code>、<code>open</code>、<code>itemHeight</code>、<code>style</code>、<code>theme</code>、<code>transition</code>、<code>zIndex</code> / <code>z</code>、<code>onChange</code>、<code>onOpenChange</code>。</p>
+<p>下拉面板会随外层 stack 展开，选项 hover 和右键菜单一致，关闭时选项会禁用命中，避免点到隐藏面板。</p>
+<h3 id="datepicker-timepicker-colorpicker">datepicker / timepicker / colorpicker</h3>
+<p>这三个 picker 都是受控组件，命名不带下划线。页面传入当前值和 <code>open</code>，组件通过 <code>onChange</code> / <code>onOpenChange</code> 回写 next state。</p>
+<p>picker 现在和 <code>dialog</code> 一样绘制全屏 overlay + 居中面板，适合放在页面根级 compose 末尾，避免被滚动容器或 <code>.clip()</code> 裁剪。触发入口可以用 <code>button</code> 或自定义字段单独绘制。</p>
+<p>面板打开后会维护组件内部 draft：日期/时间轮盘、滚轮、颜色 slider、预设色块都只更新面板内预览，不会立即改变页面状态。点击 <code>Done</code> 才触发 <code>onChange</code> 提交 draft；点击遮罩只关闭，不提交。</p>
+<pre><code>components::datepicker(ui, &quot;profile.date&quot;)
+    .theme(tokens)
+    .screen(screen.width, screen.height)
+    .size(420.0f, 270.0f)
+    .date(year, month, day)
+    .open(dateOpen)
+    .onOpenChange([&amp;](bool open) {
+        dateOpen = open;
+    })
+    .onChange([&amp;](int nextYear, int nextMonth, int nextDay) {
+        year = nextYear;
+        month = nextMonth;
+        day = nextDay;
+    })
+    .build();
+
+components::timepicker(ui, &quot;profile.time&quot;)
+    .theme(tokens)
+    .screen(screen.width, screen.height)
+    .size(330.0f, 264.0f)
+    .time(hour, minute)
+    .minuteStep(5)
+    .open(timeOpen)
+    .onOpenChange([&amp;](bool open) {
+        timeOpen = open;
+    })
+    .onChange([&amp;](int nextHour, int nextMinute) {
+        hour = nextHour;
+        minute = nextMinute;
+    })
+    .build();
+
+components::colorpicker(ui, &quot;profile.color&quot;)
+    .theme(tokens)
+    .screen(screen.width, screen.height)
+    .size(420.0f, 320.0f)
+    .value(accent)
+    .open(colorOpen)
+    .onOpenChange([&amp;](bool open) {
+        colorOpen = open;
+    })
+    .onChange([&amp;](core::Color value) {
+        accent = value;
+    })
+    .build();</code></pre>
+<p><code>datepicker</code> 支持 <code>open</code>、<code>screen</code>、<code>size(panelWidth, panelHeight)</code>、<code>date(year, month, day)</code>、<code>style</code>、<code>theme</code>、<code>transition</code>、<code>zIndex</code> / <code>z</code>、<code>onChange</code>、<code>onOpenChange</code>。年份范围是 <code>1900 - 2200</code>，月份和日期会按闰年和当月天数修正，<code>onChange</code> 只在 <code>Done</code> 时触发。</p>
+<p><code>timepicker</code> 支持 <code>open</code>、<code>screen</code>、<code>size(panelWidth, panelHeight)</code>、<code>time(hour, minute)</code>、<code>minuteStep</code>、<code>style</code>、<code>theme</code>、<code>transition</code>、<code>zIndex</code> / <code>z</code>、<code>onChange</code>、<code>onOpenChange</code>。内部显示 12 小时轮盘，回调仍返回 <code>0 - 23</code> 的小时和 <code>0 - 59</code> 的分钟，<code>onChange</code> 只在 <code>Done</code> 时触发。</p>
+<p><code>colorpicker</code> 支持 <code>open</code>、<code>screen</code>、<code>size(panelWidth, panelHeight)</code>、<code>value(core::Color)</code>、<code>colors(std::vector&lt;core::Color&gt;)</code>、<code>style</code>、<code>theme</code>、<code>transition</code>、<code>zIndex</code> / <code>z</code>、<code>onChange</code>、<code>onOpenChange</code>。颜色 alpha 会按 <code>1.0f</code> 处理，面板里提供 RGB slider 和预设色块，<code>onChange</code> 只在 <code>Done</code> 时触发。</p>
+<p>picker 的拖动、滚轮和 slider 交互只捕获静态 draft / drag state，不捕获临时 builder 指针；外部 <code>onChange</code> 只在 <code>Done</code> 的命中区触发。</p>
+<h2 id="数据展示">数据展示</h2>
+<h3 id="datatable">dataTable</h3>
+<pre><code>components::dataTable(ui, &quot;metrics.table&quot;)
+    .size(420.0f, 174.0f)
+    .columns({&quot;Name&quot;, &quot;Status&quot;, &quot;Value&quot;})
+    .rows({
+        {&quot;Cache&quot;, &quot;Ready&quot;, &quot;94%&quot;},
+        {&quot;Render&quot;, &quot;Idle&quot;, &quot;12ms&quot;},
+        {&quot;Network&quot;, &quot;Online&quot;, &quot;32ms&quot;},
+    })
+    .theme(tokens)
+    .build();</code></pre>
+<p>支持 <code>size</code>、<code>columns</code>、<code>rows</code>、<code>style</code>、<code>theme</code>、<code>transition</code>。<code>datatable</code> 是同一个 builder 的别名。</p>
+<p>表格内部会裁剪内容区，表头和末行圆角用 patch rect 衔接，避免圆角和分割线断开。</p>
+<h2 id="图表">图表</h2>
+<p>三个图表都是通用组件，使用 DSL 图元绘制，不使用 SVG 图片。tooltip 通过 <code>hoverOpacityFrom(sourceId)</code> 绑定到对应数据点、柱或扇区。</p>
+<h3 id="linechart">linechart</h3>
+<pre><code>components::linechart(ui, &quot;usage.line&quot;)
+    .size(206.0f, 236.0f)
+    .title(&quot;Usage&quot;)
+    .values({0.18f, 0.32f, 0.48f, 0.42f, 0.72f, 0.64f})
+    .labels({&quot;Jan&quot;, &quot;Feb&quot;, &quot;Mar&quot;, &quot;Apr&quot;, &quot;May&quot;, &quot;Jun&quot;})
+    .theme(tokens)
+    .build();</code></pre>
+<p>支持 <code>size</code>、<code>title</code>、<code>values</code>、<code>labels</code>、<code>style</code>、<code>theme</code>、<code>transition</code>。<code>lineChart</code> 是别名。折线由旋转 rect 线段绘制，点是单层交互圆，hover 时显示对应 label 和百分比。</p>
+<h3 id="barchart">barchart</h3>
+<pre><code>components::barchart(ui, &quot;usage.bar&quot;)
+    .size(206.0f, 236.0f)
+    .title(&quot;Volume&quot;)
+    .values({0.92f, 0.36f, 0.68f, 0.52f})
+    .labels({&quot;D1&quot;, &quot;D2&quot;, &quot;D3&quot;, &quot;D4&quot;})
+    .theme(tokens)
+    .build();</code></pre>
+<p>支持 <code>size</code>、<code>title</code>、<code>values</code>、<code>labels</code>、<code>colors</code>、<code>style</code>、<code>theme</code>、<code>transition</code>。<code>barChart</code> 是别名。每根柱子独立 hover，tooltip 锚点位于柱顶。</p>
+<h3 id="piechart">piechart</h3>
+<pre><code>components::piechart(ui, &quot;usage.pie&quot;)
+    .size(206.0f, 236.0f)
+    .title(&quot;Share&quot;)
+    .values({42.0f, 24.0f, 18.0f, 16.0f})
+    .labels({&quot;Blue&quot;, &quot;Green&quot;, &quot;Orange&quot;, &quot;Pink&quot;})
+    .theme(tokens)
+    .build();</code></pre>
+<p>支持 <code>size</code>、<code>title</code>、<code>values</code>、<code>labels</code>、<code>colors</code>、<code>style</code>、<code>theme</code>、<code>transition</code>。<code>pieChart</code> 是别名。扇区使用 core 的 <code>polygon</code> 图元绘制，负数按 <code>0</code> 处理，显示值按总和归一化为百分比。</p>
+<h2 id="当前限制">当前限制</h2>
+<ul>
+<li>组件没有生命周期钩子，状态应放在页面或业务层。</li>
+<li><code>scroll</code> 只负责 offset 控制，不是完整 ScrollArea。</li>
+<li><code>input</code> 暂时没有 IME 组合态显示和撤销栈。</li>
+<li>chart 是轻量展示组件，当前只显示归一化百分比，不提供坐标轴刻度配置、图例布局和数据格式化回调。</li>
+<li><code>dialog</code>、<code>toast</code>、<code>contextMenu</code>、<code>dropdown</code>、<code>datepicker</code>、<code>timepicker</code>、<code>colorpicker</code> 需要页面传入 open/visible 状态，组件不会自己持久化开关状态。</li>
+<li>transform 后的 hit-test 仍按布局矩形计算。</li>
+<li>复杂嵌套滚动、圆角 clip、事件冒泡等能力仍属于 Runtime 后续增强范围。</li>
+</ul>
+<h2 id="写新组件时的底线">写新组件时的底线</h2>
+<pre><code>class ExampleBuilder {
+public:
+    ExampleBuilder(core::dsl::Ui&amp; ui, std::string id)
+        : ui_(ui), id_(std::move(id)) {}
+
+    ExampleBuilder&amp; value(bool value) {
+        value_ = value;
+        return *this;
+    }
+
+    ExampleBuilder&amp; onChange(std::function&lt;void(bool)&gt; callback) {
+        onChange_ = std::move(callback);
+        return *this;
+    }
+
+    void build() {
+        ui_.stack(id_)
+            .size(160.0f, 42.0f)
+            .visualStateFrom(id_ + &quot;.hit&quot;, 0.965f)
+            .content([&amp;] {
+                ui_.rect(id_ + &quot;.hit&quot;)
+                    .size(160.0f, 42.0f)
+                    .states(normal_, hover_, pressed_)
+                    .onClick([callback = onChange_, value = value_] {
+                        if (callback) {
+                            callback(!value);
+                        }
+                    })
+                    .build();
+
+                ui_.text(id_ + &quot;.label&quot;)
+                    .size(160.0f, 42.0f)
+                    .text(value_ ? &quot;On&quot; : &quot;Off&quot;)
+                    .horizontalAlign(core::HorizontalAlign::Center)
+                    .verticalAlign(core::VerticalAlign::Center)
+                    .build();
+            })
+            .build();
+    }
+
+private:
+    core::dsl::Ui&amp; ui_;
+    std::string id_;
+    bool value_ = false;
+    std::function&lt;void(bool)&gt; onChange_;
+    core::Color normal_{0.12f, 0.14f, 0.18f, 1.0f};
+    core::Color hover_{0.16f, 0.18f, 0.24f, 1.0f};
+    core::Color pressed_{0.10f, 0.12f, 0.16f, 1.0f};
+};</code></pre>
+<p>重点：组件只是 DSL 组合。视觉、交互和动画都声明到 DSL 树上，由 Runtime 统一执行。</p></article></main>
+  <footer><div><span>EUI-NEO 文档</span><a href="../eui-neo-docs.html">返回文档中心</a></div></footer>
+</body>
+</html>

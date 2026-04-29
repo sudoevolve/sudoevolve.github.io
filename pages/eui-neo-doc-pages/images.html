@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>图片、网络图片与 SVG - EUI-NEO 文档</title>
+  <link rel="icon" href="../EUI-NEO-main/assets/icon.png">
+  <style>
+    :root{color-scheme:light;--blue:#4867da;--navy:#00113f;--ink:#091333;--muted:#596781;--soft:#f4f7ff;--panel:rgba(255,255,255,.9);--radius:8px;--shadow:0 20px 58px rgba(0,17,63,.12);--nav-h:70px}*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--soft)}body{margin:0;color:var(--ink);background:linear-gradient(180deg,#fff 0%,#f4f7ff 58%,#eef3ff 100%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;letter-spacing:0}a{color:inherit;text-decoration:none}.topbar{position:fixed;inset:0 0 auto;z-index:20;height:var(--nav-h);display:flex;justify-content:center;border-bottom:1px solid rgba(0,17,63,.08);background:rgba(255,255,255,.86);backdrop-filter:blur(18px)}.topbar-inner{width:min(1180px,calc(100% - 32px));display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:inline-flex;align-items:center;gap:10px;color:var(--navy);font-weight:900}.brand img{width:34px;height:34px;filter:drop-shadow(0 8px 18px rgba(72,103,218,.24))}.actions{display:flex;gap:10px;flex-wrap:wrap}.button{display:inline-flex;min-height:42px;align-items:center;justify-content:center;padding:0 14px;border:1px solid rgba(72,103,218,.28);border-radius:var(--radius);color:var(--blue);background:rgba(72,103,218,.08);font-weight:850}.button.primary{color:#fff;border-color:var(--blue);background:var(--blue)}.hero{padding:calc(var(--nav-h) + 52px) 0 34px;border-bottom:1px solid rgba(0,17,63,.08);background:linear-gradient(135deg,#fff 0%,#edf2ff 58%,#dfe6ff 100%)}.hero-inner,.layout{width:min(1180px,calc(100% - 32px));margin:0 auto}h1{margin:0 0 12px;color:var(--navy);font-size:clamp(2.5rem,6vw,4.8rem);line-height:.98;letter-spacing:0}.hero p{max-width:760px;margin:0;color:#26375f;line-height:1.78}.layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px;align-items:start;padding:30px 0 82px}.toc{position:sticky;top:calc(var(--nav-h) + 18px);padding:16px;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius);background:rgba(255,255,255,.86);box-shadow:0 14px 38px rgba(0,17,63,.08)}.toc strong{display:block;margin-bottom:10px;color:var(--navy)}.toc a{display:block;padding:8px 10px;border-radius:var(--radius);color:var(--muted);font-size:.92rem;line-height:1.35}.toc a.level-3{padding-left:22px;font-size:.86rem}.toc a:hover{color:var(--blue);background:rgba(72,103,218,.09)}article{padding:30px;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow)}article h1{font-size:2.4rem}article h2{margin:34px 0 12px;color:var(--navy);font-size:1.75rem;line-height:1.2;scroll-margin-top:calc(var(--nav-h) + 24px)}article h3{margin:26px 0 10px;color:var(--navy);font-size:1.24rem;scroll-margin-top:calc(var(--nav-h) + 24px)}article h4{margin:20px 0 8px;color:var(--navy);font-size:1.05rem}article p,article li,article td{color:var(--muted);line-height:1.8}article a{color:var(--blue);font-weight:760}article code{padding:.12em .34em;border-radius:5px;color:var(--navy);background:rgba(72,103,218,.1);font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}article pre{margin:16px 0;padding:18px;overflow:auto;border-radius:var(--radius);color:#eef3ff;background:var(--navy);line-height:1.72}article pre code{padding:0;color:inherit;background:transparent}.table-wrap{overflow:auto;margin:16px 0;border:1px solid rgba(72,103,218,.14);border-radius:var(--radius)}table{width:100%;border-collapse:collapse;background:#fff}th,td{padding:13px 14px;border-bottom:1px solid rgba(72,103,218,.12);text-align:left;vertical-align:top}th{color:var(--navy);background:rgba(72,103,218,.08)}tr:last-child td{border-bottom:0}article img{max-width:100%;border-radius:var(--radius)}footer{padding:30px 0;color:var(--muted);background:#fff}footer div{width:min(1180px,calc(100% - 32px));margin:0 auto;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}footer a{color:var(--blue);font-weight:760}@media(max-width:960px){.layout{grid-template-columns:1fr}.toc{position:static}.toc nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}}@media(max-width:620px){.topbar-inner,.hero-inner,.layout,footer div{width:calc(100% - 24px)}.actions{display:none}article{padding:22px}.toc nav{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="topbar-inner"><a class="brand" href="../eui-neo.html"><img src="../EUI-NEO-main/assets/icon.png" alt=""><span>EUI-NEO</span></a><div class="actions"><a class="button" href="../eui-neo-docs.html">文档中心</a><a class="button primary" href="https://github.com/sudoevolve/EUI-NEO">GitHub</a></div></div></header>
+  <section class="hero"><div class="hero-inner"><h1>图片、网络图片与 SVG</h1><p>EUI-NEO 技术文档，可直接在官网中阅读。</p></div></section>
+  <main class="layout"><aside class="toc"><strong>目录</strong><nav><a class="level-1" href="#图片-网络图片与-svg">图片、网络图片与 SVG</a>
+<a class="level-2" href="#dsl-写法">DSL 写法</a>
+<a class="level-2" href="#支持能力">支持能力</a>
+<a class="level-2" href="#fit-模式">Fit 模式</a>
+<a class="level-2" href="#可动画属性">可动画属性</a>
+<a class="level-2" href="#交互">交互</a>
+<a class="level-2" href="#网络文本-api-示例">网络文本 API 示例</a>
+<a class="level-2" href="#当前限制">当前限制</a>
+<a class="level-2" href="#实现位置">实现位置</a></nav></aside><article><h1 id="图片-网络图片与-svg">图片、网络图片与 SVG</h1>
+<p>当前项目有图片 DSL：<code>ui.image(id)</code>。它和 <code>ui.rect</code>、<code>ui.text</code> 一样由 <code>core::dsl::Runtime</code> 管理，不需要页面或组件直接创建 OpenGL primitive。</p>
+<h2 id="dsl-写法">DSL 写法</h2>
+<pre><code>ui.image(&quot;logo&quot;)
+    .size(96.0f, 96.0f)
+    .source(&quot;assets/icon.svg&quot;)
+    .radius(18.0f)
+    .opacity(0.92f)
+    .cover()
+    .build();
+
+ui.image(&quot;remote&quot;)
+    .size(260.0f, 150.0f)
+    .url(&quot;https://example.com/picture.png&quot;)
+    .cover()
+    .radius(16.0f)
+    .build();
+
+ui.image(&quot;bing&quot;)
+    .size(260.0f, 150.0f)
+    .bingDaily(0, &quot;zh-CN&quot;)
+    .cover()
+    .radius(16.0f)
+    .build();</code></pre>
+<p><code>components::image(ui, id)</code> 会返回一个已经套用默认 theme token 的 <code>ImageBuilder</code>。如果页面有自己的 light/dark token，推荐传入：</p>
+<pre><code>components::image(ui, &quot;avatar&quot;, tokens)
+    .source(&quot;assets/icon.png&quot;)
+    .cover()
+    .build();</code></pre>
+<h2 id="支持能力">支持能力</h2>
+<ul>
+<li>本地 PNG / JPG / BMP / WebP 等位图通过 <code>3rd/stb_image.h</code> 解码。</li>
+<li>SVG 通过 <code>3rd/nanosvg.h</code> 和 <code>3rd/nanosvgrast.h</code> 栅格化成 RGBA 纹理。</li>
+<li>Windows 的 <code>http://</code> / <code>https://</code> 图片使用系统 <code>URLDownloadToFileA</code> 下载到临时缓存目录。</li>
+<li>Linux / 其他非 Windows 平台通过 libcurl 请求网络资源；CMake 在非 Windows 平台要求 <code>CURL::libcurl</code>。</li>
+<li>网络图片下载是后台线程；下载期间不阻塞界面，下载完成后 Runtime 会触发重绘。</li>
+<li>图片纹理按解析后的文件路径缓存，同一张图重复使用不会重复上传纹理。</li>
+<li><code>bingDaily(idx, mkt)</code> 内置 Bing 每日图：先请求 Bing API，再下载返回的图片 URL。</li>
+</ul>
+<h2 id="fit-模式">Fit 模式</h2>
+<p>默认是 <code>ImageFit::Cover</code>。</p>
+<pre><code>.cover()    // 铺满区域，保持比例，超出部分裁剪
+.contain()  // 完整显示图片，保持比例，区域可能留空
+.stretch()  // 拉伸到区域，可能变形
+.fit(core::ImageFit::Cover)</code></pre>
+<p>Gallery 的 about logo 和 Bing 图片都使用 cover，因此图片不会被压缩变形，而是适应裁剪。</p>
+<h2 id="可动画属性">可动画属性</h2>
+<p>Image 进入 dirty rect 流程，支持这些属性动画：</p>
+<ul>
+<li>frame：位置和大小</li>
+<li>tint / color</li>
+<li>opacity</li>
+<li>radius</li>
+<li>transform：translate / scale / rotate</li>
+</ul>
+<p>示例：</p>
+<pre><code>ui.image(&quot;avatar&quot;)
+    .size(active ? 120.0f : 88.0f, active ? 120.0f : 88.0f)
+    .source(&quot;assets/icon.png&quot;)
+    .radius(active ? 32.0f : 18.0f)
+    .rotate(active ? 0.25f : 0.0f)
+    .transition(0.28f, core::Ease::OutCubic)
+    .animate(core::AnimProperty::Frame |
+             core::AnimProperty::Radius |
+             core::AnimProperty::Transform)
+    .build();</code></pre>
+<h2 id="交互">交互</h2>
+<p>Image 支持通用交互：</p>
+<pre><code>ui.image(&quot;github.logo&quot;)
+    .size(96.0f, 96.0f)
+    .source(&quot;assets/icon.png&quot;)
+    .onClick([] {
+        core::platform::openUrl(&quot;https://github.com/sudoevolve/EUI-NEO&quot;);
+    })
+    .build();</code></pre>
+<p>但 Image 没有内置 hover / pressed 视觉状态。需要 hover 变色、按压缩放等效果时，推荐外层使用 <code>Stack + Rect + Image</code> 组合，或封装成组件。</p>
+<h2 id="网络文本-api-示例">网络文本 API 示例</h2>
+<p>通用网络文本请求在 <code>core/network.h</code>：</p>
+<pre><code>core::network::requestText(
+    &quot;bing.meta&quot;,
+    &quot;https://www.bing.com/HPImageArchive.aspx?format=js&amp;n=1&amp;idx=0&amp;mkt=zh-CN&quot;);
+
+const core::network::TextResult result = core::network::textResult(&quot;bing.meta&quot;);
+if (result.ready &amp;&amp; result.ok) {
+    ui.text(&quot;api.text&quot;)
+        .size(520.0f, 72.0f)
+        .text(result.body)
+        .wrap(true)
+        .build();
+}</code></pre>
+<p><code>requestText</code> 是后台请求，不阻塞 UI。请求完成后会唤醒 GLFW 事件循环，<code>app/dsl_app.h</code> 会在收到网络文本完成信号后重新 compose。</p>
+<p>Gallery 的 Bing 页面包含本地 PNG、本地 SVG、Bing daily 图片和 Bing API 文本示例。</p>
+<h2 id="当前限制">当前限制</h2>
+<ul>
+<li>SVG 当前按固定目标尺寸栅格化，适合图标和中等尺寸图片；还没有按元素尺寸动态重新栅格化。</li>
+<li>网络请求没有暴露 header、超时、取消、进度等高级能力。</li>
+<li>图片点击可以做，但 hover / pressed 视觉状态需要自己组合 rect。</li>
+</ul>
+<h2 id="实现位置">实现位置</h2>
+<ul>
+<li><code>core/image.h</code></li>
+<li><code>core/image.cpp</code></li>
+<li><code>core/network.h</code></li>
+<li><code>core/network.cpp</code></li>
+<li><code>core/dsl.h</code>：<code>ElementKind::Image</code> 和 <code>ImageBuilder</code></li>
+<li><code>core/dsl_runtime.h</code>：Image 实例缓存、动画同步、dirty rect 和渲染分发</li>
+<li><code>components/image.h</code>：薄封装</li>
+</ul></article></main>
+  <footer><div><span>EUI-NEO 文档</span><a href="../eui-neo-docs.html">返回文档中心</a></div></footer>
+</body>
+</html>
