@@ -1,1100 +1,515 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>苏渡 · 弈沃 | 侠客行</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;500;700&family=Zhi+Mang+Xing&family=Long+Cang&display=swap" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sudo Evolve 的个人博客，关注 C++、OpenGL、Qt、桌面应用、渲染、动画与媒体工具。">
+  <title>Sudo Evolve</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f7f6f1;
+      --paper-soft: #efeee7;
+      --ink: #272624;
+      --muted: #69665d;
+      --quiet: #8c887d;
+      --line: #d9d6cb;
+      --blue: #87aebe;
+      --green: #92aa8e;
+      --rose: #d8a29b;
+      --wheat: #d8bd75;
+      --clay: #bd725d;
+      --serif: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+      --sans: Inter, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
 
-    <style>
-        :root {
-            /* 核心变量 */
-            --ink-black: #121212;
-            --ink-light: #454545;
-            --rice-paper: #f4f1e8;
-            --cinnabar: #8a2525;
-            --bamboo: #5d6b4e;
-            --gold: #bfa678;
-            
-            /* 动态主题变量 (默认为日间) */
-            --bg-color: var(--rice-paper);
-            --text-primary: var(--ink-black);
-            --text-secondary: #444;
-            --card-bg: rgba(255,255,255,0.6);
-            --card-border: #dcdcdc;
-            --nav-blend: multiply;
-            --cursor-color: var(--ink-black);
-            --cursor-blend: multiply;
-            
-            --font-cursive: 'Zhi Mang Xing', cursive;
-            --font-ink: 'Ma Shan Zheng', cursive;
-            --font-body: 'Noto Serif SC', serif;
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        /* 夜间模式变量覆写 */
-        body.dark-mode {
-            --bg-color: #1a1b1f; /* 寒夜深灰 */
-            --text-primary: #e0e0e0; /* 霜白 */
-            --text-secondary: #a0a0a0;
-            --ink-black: #e0e0e0; /* 将原本的黑色墨迹文字反转为白色 */
-            --ink-light: #ccc;
-            --card-bg: rgba(30, 30, 35, 0.7);
-            --card-border: #444;
-            --nav-blend: normal; /* 夜间混合模式调整 */
-            --cursor-color: #e0e0e0;
-            --cursor-blend: difference;
-        }
+    html {
+      scroll-behavior: smooth;
+    }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(216, 162, 155, 0.24), transparent 24rem),
+        radial-gradient(circle at 86% 22%, rgba(135, 174, 190, 0.2), transparent 28rem),
+        linear-gradient(180deg, var(--paper), #f4f3ee 68%, var(--paper));
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.72;
+    }
 
-        body {
-            background-color: var(--bg-color);
-            /* 纹理叠加 */
-            background-image: url('https://www.transparenttextures.com/patterns/rice-paper-3.png');
-            color: var(--text-primary);
-            font-family: var(--font-body);
-            overflow: hidden;
-            transition: background-color 0.8s ease, color 0.8s ease;
-        }
-        
-        body.dark-mode {
-            background-blend-mode: multiply; /* 让纹理变暗 */
-        }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-        /* 模式切换按钮 */
-        #theme-toggle {
-            position: fixed;
-            top: 30px;
-            right: 50px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid var(--cinnabar);
-            background: transparent;
-            z-index: 1000;
-            cursor: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-ink);
-            font-size: 1.2rem;
-            color: var(--cinnabar);
-            transition: transform 0.3s;
-            pointer-events: auto;
-            overflow: hidden;
-        }
-        #theme-toggle::before {
-            content: "日";
-            position: absolute;
-            transition: 0.5s;
-        }
-        body.dark-mode #theme-toggle::before {
-            content: "月";
-            transform: rotate(360deg);
-        }
-        #theme-toggle:hover {
-            background: var(--cinnabar);
-            color: #fff;
-        }
+    a:hover {
+      color: #8f5142;
+    }
 
-        canvas#intro-canvas {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 1000000; 
-            pointer-events: auto; 
-        }
+    .shell {
+      width: min(100% - 40px, 1040px);
+      margin: 0 auto;
+    }
 
-        #cursor {
-            position: fixed; top: 0; left: 0; 
-            width: 30px; height: 30px;
-            background: radial-gradient(circle, var(--cursor-color) 0%, transparent 70%);
-            border-radius: 50%;
-            pointer-events: none; 
-            z-index: 1000001;
-            transform: translate(-50%, -50%);
-            mix-blend-mode: var(--cursor-blend);
-            transition: transform 0.1s ease-out;
-        }
-        #cursor.active { 
-            transform: translate(-50%, -50%) scale(2.5); 
-            background: radial-gradient(circle, var(--cinnabar) 0%, transparent 70%); 
-            mix-blend-mode: normal;
-        }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 32px 0 18px;
+    }
 
-        canvas#bg-ink-canvas {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: -1; 
-            opacity: 0.3; 
-            pointer-events: none;
-            transition: opacity 1s;
-        }
+    .brand {
+      font-family: var(--serif);
+      font-size: 1.08rem;
+      font-weight: 600;
+    }
 
-        /* 梅花装饰 - 仅夜间显示 */
-        .plum-branch {
-            position: fixed;
-            z-index: -1;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 1.5s ease;
-            filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
-        }
-        body.dark-mode .plum-branch {
-            opacity: 0.6;
-        }
-        .plum-bl { bottom: -50px; left: -50px; width: 400px; transform: rotate(-10deg); }
-        .plum-tr { top: -50px; right: -50px; width: 300px; transform: rotate(170deg); }
+    .links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
 
-        .v-text {
-            writing-mode: vertical-rl;
-            text-orientation: upright;
-            letter-spacing: 0.3em;
-            margin-top: 60px;
-        }
-        .seal {
-            border: 2px solid var(--cinnabar);
-            color: var(--cinnabar);
-            padding: 5px;
-            font-family: var(--font-cursive);
-            font-size: 0.9rem;
-            display: inline-block;
-            border-radius: 4px;
-        }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 72px;
+      align-items: center;
+      min-height: 74vh;
+      padding: 58px 0 74px;
+    }
 
-        nav {
-            position: fixed; top: 0; width: 100%; padding: 30px 50px;
-            display: flex; justify-content: space-between; align-items: flex-start;
-            z-index: 100; 
-            mix-blend-mode: var(--nav-blend);
-            opacity: 0; 
-        }
-        .brand-seal {
-            width: 60px; height: 60px;
-            background-color: var(--cinnabar);
-            color: #fff;
-            font-family: var(--font-cursive);
-            font-size: 2rem;
-            display: grid; place-items: center;
-            mask-image: url('https://www.transparenttextures.com/patterns/rough-cloth.png');
-            box-shadow: 3px 3px 5px rgba(0,0,0,0.2);
-        }
+    .eyebrow {
+      margin: 0 0 22px;
+      color: var(--quiet);
+      font-size: 0.78rem;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
 
-        header {
-            height: 100vh;
-            display: flex; align-items: center; justify-content: center;
-            position: relative;
-        }
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-family: var(--serif);
+      font-weight: 600;
+      letter-spacing: 0;
+      line-height: 1.22;
+    }
 
-        .poem-intro {
-            position: absolute; left: 10%; top: 20%;
-            font-family: var(--font-cursive);
-            font-size: 2.5rem;
-            height: 60vh;
-            opacity: 0;
-            will-change: transform;
-            color: var(--text-primary);
-        }
+    h1 {
+      max-width: 720px;
+      font-size: clamp(3.7rem, 8vw, 7.8rem);
+    }
 
-        .hero-main {
-            text-align: center;
-            position: relative;
-            will-change: transform;
-            opacity: 0;
-        }
-        .hero-title {
-            font-family: var(--font-ink);
-            font-size: 7rem;
-            line-height: 1.2;
-            color: var(--text-primary);
-            text-shadow: 4px 4px 0 rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            transition: color 0.5s;
-        }
-        .hero-subtitle {
-            font-size: 1.2rem; letter-spacing: 5px;
-            border-top: 1px solid var(--cinnabar);
-            border-bottom: 1px solid var(--cinnabar);
-            padding: 10px 0; display: inline-block;
-            color: var(--text-primary);
-        }
+    .intro {
+      max-width: 700px;
+      margin: 34px 0 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
 
-        .intro-section {
-            padding: 100px 20px;
-            max-width: 900px; margin: 0 auto;
-            text-align: center;
-        }
-        .intro-quote {
-            font-family: var(--font-cursive); font-size: 2rem; 
-            color: var(--ink-light);
-            margin-bottom: 40px;
-        }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: center;
+      margin-top: 42px;
+    }
 
-        .project-scroll {
-            padding: 50px 0;
-        }
+    .text-link {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      color: var(--ink);
+      font-weight: 750;
+    }
 
-        .project-item {
-            min-height: 90vh;
-            display: flex; align-items: center; justify-content: center;
-            position: relative;
-            padding: 20px;
-        }
+    .text-link::after {
+      content: "->";
+      color: var(--clay);
+    }
 
-        .project-content {
-            display: grid; grid-template-columns: 1fr 1.5fr;
-            gap: 60px;
-            max-width: 1200px; width: 100%;
-            background: var(--card-bg);
-            backdrop-filter: blur(5px);
-            padding: 60px;
-            border: 1px solid var(--card-border);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
-            transform: translateY(50px); opacity: 0;
-            will-change: transform;
-            transition: background 0.5s, border 0.5s;
-        }
+    .letter-links {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      color: var(--quiet);
+      font-size: 0.8rem;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+    }
 
-        .proj-left {
-            border-right: 1px dashed var(--ink-light);
-            padding-right: 40px;
-            display: flex; flex-direction: column; justify-content: space-between;
-            text-align: right;
-        }
-        .proj-poem {
-            font-family: var(--font-cursive);
-            font-size: 2rem;
-            line-height: 1.5;
-            color: var(--text-primary);
-            margin-bottom: 30px;
-        }
-        .proj-title {
-            font-family: var(--font-ink); font-size: 3rem; color: var(--cinnabar);
-        }
+    .letter-links::before,
+    .letter-links::after {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: var(--line);
+    }
 
-        .proj-right { text-align: left; }
-        .tech-stack {
-            font-family: monospace; color: var(--bamboo); margin-bottom: 20px;
-            font-size: 0.9rem; display: block;
-        }
-        .proj-desc {
-            font-size: 1.1rem; line-height: 2; 
-            color: var(--text-secondary); 
-            margin-bottom: 30px;
-        }
-        .btn-view {
-            border: 1px solid var(--text-primary);
-            padding: 10px 30px;
-            text-decoration: none; 
-            color: var(--text-primary);
-            font-family: var(--font-body);
-            transition: background 0.3s, color 0.3s;
-            position: relative; overflow: hidden;
-            display: inline-block;
-        }
-        .btn-view:hover { background: var(--text-primary); color: var(--bg-color); }
+    .mark {
+      position: relative;
+      min-height: 420px;
+    }
 
-        footer .btn-view { color: #ccc; border-color: #ccc; }
-        footer .btn-view:hover { background: #ccc; color: #111; }
-        body.dark-mode footer .btn-view { color: #e0e0e0; border-color: #e0e0e0; }
-        body.dark-mode footer .btn-view:hover { background: #e0e0e0; color: #1a1b1f; }
+    .wash {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(0.5px);
+      mix-blend-mode: multiply;
+    }
 
-        .ink-splash {
-            position: absolute; z-index: -1; pointer-events: none;
-            opacity: 0.1; width: 400px;
-            will-change: transform;
-        }
-        /* 夜间模式下墨迹变为白色雾气 */
-        body.dark-mode .ink-splash {
-            filter: invert(1);
-            opacity: 0.08;
-        }
+    .wash-a {
+      width: 210px;
+      height: 210px;
+      top: 22px;
+      left: 46px;
+      background: rgba(216, 162, 155, 0.58);
+    }
 
-        footer {
-            height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: #111; color: #888;
-            text-align: center;
-            border-top: 1px solid #333;
-        }
-        .footer-poem {
-            font-family: var(--font-cursive); font-size: 2.5rem; color: #ccc; margin-bottom: 30px;
-        }
-        .footer-links {
-            margin-top: 20px;
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .friend-links {
-            margin-top: 24px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-        .friend-links-title {
-            font-size: 0.78rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            opacity: 0.68;
-        }
-        .friend-links-row {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+    .wash-b {
+      width: 190px;
+      height: 190px;
+      top: 128px;
+      right: 8px;
+      background: rgba(135, 174, 190, 0.56);
+    }
 
-        @media (max-width: 768px) {
-            .project-content { grid-template-columns: 1fr; text-align: center; transform: none !important; }
-            .proj-left { border-right: none; border-bottom: 1px dashed #ccc; padding-bottom: 30px; padding-right: 0; text-align: center; }
-            .hero-title { font-size: 4rem; }
-            .poem-intro { display: none; }
-            .tilt-card { transform: none !important; }
-            #theme-toggle { top: 20px; right: 20px; }
-            nav { padding: 20px; }
-        }
+    .wash-c {
+      width: 164px;
+      height: 164px;
+      bottom: 38px;
+      left: 88px;
+      background: rgba(146, 170, 142, 0.52);
+    }
 
-        .skills-section {
-            padding: 100px 50px;
-            max-width: 1400px;
-            margin: 0 auto;
-            position: relative;
-        }
-        
-        .skills-header {
-            text-align: center;
-            margin-bottom: 80px;
-        }
-        
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-        }
+    .code-glyph {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: rgba(39, 38, 36, 0.72);
+      font-family: var(--serif);
+      font-size: 10.8rem;
+    }
 
-        .skill-category {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            padding: 30px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.05);
-            will-change: transform;
-            transition: background 0.5s;
-        }
-        
-        .cat-title {
-            font-family: var(--font-ink);
-            font-size: 2rem;
-            color: var(--cinnabar);
-            border-bottom: 2px solid var(--text-primary);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            display: inline-block;
-        }
+    .section {
+      padding: 80px 0;
+      border-top: 1px solid var(--line);
+    }
 
-        .skill-item {
-            margin-bottom: 25px;
-            position: relative;
-        }
+    .section-head {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 64px;
+      align-items: start;
+      margin-bottom: 50px;
+    }
 
-        .skill-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 8px;
-        }
-        
-        .skill-name {
-            font-family: var(--font-body);
-            font-weight: bold;
-            font-size: 1.1rem;
-            color: var(--text-primary);
-        }
-        
-        .skill-alias {
-            font-family: var(--font-cursive);
-            color: var(--ink-light);
-            font-size: 1.2rem;
-        }
+    h2 {
+      font-size: clamp(2rem, 4vw, 3.35rem);
+    }
 
-        .qi-bar-bg {
-            width: 100%;
-            height: 6px;
-            background: rgba(128,128,128,0.2);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .qi-fill {
-            height: 100%;
-            background: var(--text-primary);
-            width: 0%;
-            position: relative;
-            transition: background 0.5s;
-        }
-        .qi-fill::after {
-            content: '';
-            position: absolute;
-            right: -5px; top: -2px;
-            width: 10px; height: 10px;
-            background: var(--text-primary);
-            border-radius: 50%;
-            filter: blur(2px);
-        }
+    .section-copy {
+      max-width: 690px;
+      margin: 0;
+      color: var(--muted);
+    }
 
-        .skill-desc {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-top: 5px;
-            font-style: italic;
-        }
+    .two-column {
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(260px, 0.88fr);
+      gap: 64px;
+      align-items: start;
+    }
 
-        .bg-seal {
-            position: absolute;
-            right: -20px; bottom: -20px;
-            font-family: var(--font-ink);
-            font-size: 8rem;
-            color: var(--cinnabar);
-            opacity: 0.05;
-            pointer-events: none;
-            transform: rotate(-15deg);
-        }
+    .rule-list,
+    .focus-list {
+      display: grid;
+      gap: 16px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: var(--muted);
+    }
 
-    </style>
+    .rule-list li,
+    .focus-list li {
+      display: grid;
+      grid-template-columns: 18px minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .rule-list li::before,
+    .focus-list li::before {
+      content: "•";
+      color: var(--clay);
+      font-weight: 800;
+    }
+
+    .side-note {
+      padding-top: 28px;
+      border-top: 2px solid var(--clay);
+    }
+
+    .side-note h3 {
+      margin-bottom: 16px;
+      font-size: 1.6rem;
+    }
+
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .tech {
+      min-height: 124px;
+      padding: 20px 0 0;
+      border-top: 2px solid var(--ink);
+    }
+
+    .tech::before {
+      content: "";
+      display: block;
+      width: 44px;
+      height: 44px;
+      margin-bottom: 22px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 18px 10px 0 rgba(216, 189, 117, 0.28);
+    }
+
+    .tech h3 {
+      margin-bottom: 8px;
+      font-size: 1.28rem;
+    }
+
+    .tech p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 22px 34px;
+      align-items: center;
+      color: var(--muted);
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 28px;
+      padding: 44px 0 58px;
+      border-top: 1px solid var(--line);
+      color: var(--quiet);
+      font-size: 0.9rem;
+    }
+
+    .friend-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .friend-links a {
+      color: var(--muted);
+    }
+
+    @media (max-width: 880px) {
+      .hero,
+      .section-head,
+      .two-column {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        gap: 34px;
+        min-height: auto;
+        padding-top: 44px;
+      }
+
+      .mark {
+        max-width: 360px;
+        min-height: 260px;
+      }
+
+      .code-glyph {
+        font-size: 7rem;
+      }
+
+      .tech-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      .shell {
+        width: min(100% - 28px, 1040px);
+      }
+
+      .nav,
+      .footer {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .links {
+        width: 100%;
+        justify-content: space-between;
+        gap: 12px;
+        font-size: 0.86rem;
+      }
+
+      h1 {
+        font-size: 3.4rem;
+      }
+
+      .intro {
+        font-size: 1rem;
+      }
+
+      .tech-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section {
+        padding: 62px 0;
+      }
+    }
+  </style>
 </head>
 <body>
-
-    <!-- 开屏动画Canvas -->
-    <canvas id="intro-canvas"></canvas>
-    <!-- 鼠标跟随 -->
-    <div id="cursor"></div>
-    <!-- 背景特效 (墨水/雪花) -->
-    <canvas id="bg-ink-canvas"></canvas>
-    
-    <!-- 主题切换按钮 -->
-    <button id="theme-toggle" title="切换昼夜"></button>
-
-    <!-- 梅花装饰SVG (夜间显示) -->
-    <svg class="plum-branch plum-bl" viewBox="0 0 100 100" overflow="visible">
-        <path d="M0,100 Q30,70 60,60 T100,40" stroke="#333" stroke-width="2" fill="none" opacity="0.5" />
-        <path d="M60,60 Q70,50 65,30" stroke="#333" stroke-width="1.5" fill="none" opacity="0.5" />
-        <!-- 花朵 -->
-        <circle cx="60" cy="60" r="3" fill="#8a2525" />
-        <circle cx="65" cy="30" r="2.5" fill="#8a2525" />
-        <circle cx="100" cy="40" r="4" fill="#8a2525" />
-        <circle cx="20" cy="80" r="2" fill="#8a2525" />
-    </svg>
-    <svg class="plum-branch plum-tr" viewBox="0 0 100 100" overflow="visible">
-        <path d="M100,0 Q70,30 40,40 T0,60" stroke="#333" stroke-width="2" fill="none" opacity="0.5" />
-        <path d="M40,40 Q30,50 35,70" stroke="#333" stroke-width="1.5" fill="none" opacity="0.5" />
-        <circle cx="40" cy="40" r="3" fill="#8a2525" />
-        <circle cx="35" cy="70" r="2.5" fill="#8a2525" />
-        <circle cx="0" cy="60" r="4" fill="#8a2525" />
-    </svg>
-
-    <nav>
-        <div class="brand-seal">苏</div>
-        <div class="v-text" style="font-family: var(--font-cursive); font-size: 1.2rem; height: 150px; color: var(--text-primary);">
-            <span>悟道</span><br><span>修身</span><br><span>编程</span>
-        </div>
-    </nav>
-
-    <header id="header-area">
-        <div class="poem-intro v-text parallax-layer" data-depth="0.1">
-            十步杀一人 · 千里不留行<br>
-            事了拂衣去 · 深藏身与名
-        </div>
-
-        <div class="hero-main parallax-layer" data-depth="0.2">
-            <h1 class="hero-title">苏渡 · 弈沃</h1>
-            <div class="hero-subtitle">
-                SUDO EVOLVE <span style="color:var(--cinnabar); margin: 0 10px;">●</span> 数理通玄
-            </div>
-            <p style="margin-top: 30px; color: var(--text-secondary); font-style: italic;">
-                "以 Root 之权，行进化之事"
-            </p>
-        </div>
+  <div class="shell">
+    <header class="nav" aria-label="Site navigation">
+      <a class="brand" href="#">Sudo Evolve</a>
+      <nav class="links">
+        <a href="#about">About</a>
+        <a href="#stack">Stack</a>
+        <a href="#contact">Contact</a>
+        <a href="https://github.com/sudoevolve">GitHub</a>
+      </nav>
     </header>
 
-    <section class="intro-section">
-        <div class="intro-quote">
-            " 满堂花醉三千客，一剑霜寒十四州 "
-        </div>
-        <p style="line-height: 2; font-size: 1.1rem; color: var(--text-secondary);">
-          余本寒士，潜心数理，常出入于 Linux 之深邃，游观于图形之玄机。
-            <br>
-           不慕仙佛，唯信方寸之屏、一指之键。
-            若程序有灵，愿以逻辑为笔，涤荡芜杂，复归清静之境。
-        </p>
-    </section>
-
-    <section class="skills-section">
-        <div class="skills-header">
-            <div class="seal" style="font-size: 1.2rem; margin-bottom: 15px;">武学</div>
-            <h2 class="hero-title" style="font-size: 4rem;">藏经阁 · 修为</h2>
-            <p style="font-family: var(--font-cursive); font-size: 1.5rem; color: var(--ink-light); margin-top: 10px;">
-                内修心法，外练招式，通晓乾坤之理
-            </p>
+    <main>
+      <section class="hero" aria-labelledby="title">
+        <div>
+          <p class="eyebrow">C++ / OpenGL / Qt Developer</p>
+          <h1 id="title">Hi, I'm Sudo Evolve</h1>
+          <p class="intro">
+            I build clean, practical desktop applications with a focus on modern UI,
+            smooth animation, rendering systems, and performance-oriented architecture.
+          </p>
+          <div class="actions">
+            <a class="text-link" href="#about">About me</a>
+            <div class="letter-links" aria-label="Social links">
+              <a href="https://github.com/sudoevolve" aria-label="GitHub">GH</a>
+              <a href="mailto:sudoevolve@gmail.com" aria-label="Email">EM</a>
+            </div>
+          </div>
         </div>
 
-        <div class="skills-grid">
-            
-            <!-- 技能卡片 1 -->
-            <div class="skill-category tilt-card">
-                <div class="bg-seal">心法</div>
-                <div class="cat-title">混元内功</div>
-                
-                <div class="skill-item">
-                    <div class="skill-header">
-                        <span class="skill-name">C++</span>
-                        <span class="skill-alias">九阳神功</span>
-                    </div>
-                    <div class="qi-bar-bg"><div class="qi-fill" data-width="90%"></div></div>
-                    <div class="skill-desc">根基深厚，内力生生不息，掌管内存之生灭。</div>
-                </div>
-
-                <div class="skill-item">
-                    <div class="skill-header">
-                        <span class="skill-name">Python</span>
-                        <span class="skill-alias">灵蛇身法</span>
-                    </div>
-                    <div class="qi-bar-bg"><div class="qi-fill" data-width="95%" style="background: var(--bamboo);"></div></div>
-                    <div class="skill-desc">变化万千，出手如电，数据科学之利器。</div>
-                </div>
-
-                <div class="skill-item">
-                    <div class="skill-header">
-                        <span class="skill-name">JavaScript</span>
-                        <span class="skill-alias">迷踪幻步</span>
-                    </div>
-                    <div class="qi-bar-bg"><div class="qi-fill" data-width="85%" style="background: var(--gold);"></div></div>
-                    <div class="skill-desc">游走于浏览器之间，幻化万物，异步随心。</div>
-                </div>
-            </div>
-
-            <!-- 技能卡片 2 -->
-            <div class="skill-category tilt-card">
-                <div class="bg-seal">机枢</div>
-                <div class="cat-title">天工机关</div>
-
-                <div class="skill-item">
-                    <div class="skill-header">
-                        <span class="skill-name">Qt / QML</span>
-                        <span class="skill-alias">玲珑宝塔</span>
-                    </div>
-                    <div class="qi-bar-bg"><div class="qi-fill" data-width="90%" style="background: #41cd52;"></div></div>
-                    <div class="skill-desc">构建桌面宏大楼阁，信号槽如经脉相连。</div>
-                </div>
-
-                <div class="skill-item">
-                    <div class="skill-header">
-                        <span class="skill-name">Flutter</span>
-                        <span class="skill-alias">纵云梯</span>
-                    </div>
-                    <div class="qi-bar-bg"><div class="qi-fill" data-width="80%" style="background: #54c5f8;"></div></div>
-                    <div class="skill-desc">跨界而行，身轻如燕，一套身法行遍天下。</div>
-                </div>
-                
-                <div class="skill-item">
-                    <div class="skill-header">
-                        <span class="skill-name">CMake</span>
-                        <span class="skill-alias">铸剑阵图</span>
-                    </div>
-                    <div class="qi-bar-bg"><div class="qi-fill" data-width="75%"></div></div>
-                    <div class="skill-desc">统筹编译之火候，成形神兵利器。</div>
-                </div>
-            </div>
-
-            <!-- 技能卡片 3 -->
-            <div class="skill-category tilt-card">
-                <div class="bg-seal">道法</div>
-                <div class="cat-title">乾坤道法</div>
-
-                <div class="skill-item">
-                    <div class="skill-header">
-                        <span class="skill-name">Linux / Shell</span>
-                        <span class="skill-alias">天地法则</span>
-                    </div>
-                    <div class="qi-bar-bg"><div class="qi-fill" data-width="88%"></div></div>
-                    <div class="skill-desc">言出法随，以字符敕令号令系统底层。</div>
-                </div>
-
-                <div class="skill-item">
-                    <div class="skill-header">
-                        <span class="skill-name">Git</span>
-                        <span class="skill-alias">回溯神术</span>
-                    </div>
-                    <div class="qi-bar-bg"><div class="qi-fill" data-width="92%" style="background: var(--cinnabar);"></div></div>
-                    <div class="skill-desc">穿梭时空，记录历史，不惧代码崩坏之劫。</div>
-                </div>
-
-                <div class="skill-item">
-                    <div class="skill-header">
-                        <span class="skill-name">MySQL / SQLite</span>
-                        <span class="skill-alias">芥子纳须弥</span>
-                    </div>
-                    <div class="qi-bar-bg"><div class="qi-fill" data-width="80%" style="background: #666;"></div></div>
-                    <div class="skill-desc">纳万千数据于方寸之间，查询如探囊取物。</div>
-                </div>
-            </div>
-
+        <div class="mark" aria-hidden="true">
+          <span class="wash wash-a"></span>
+          <span class="wash wash-b"></span>
+          <span class="wash wash-c"></span>
+          <span class="code-glyph">{ }</span>
         </div>
-    </section>
+      </section>
 
-    <div class="project-scroll">
-        
-        <!-- 项目 1 -->
-        <div class="project-item">
-            <img src="https://www.transparenttextures.com/patterns/shattered-island.png" class="ink-splash scroll-parallax" data-speed="0.5" style="top:10%; left:10%;">
-            <div class="project-content tilt-card">
-                <div class="proj-left">
-                    <div class="proj-poem">
-                        删繁就简<br>一气呵成
-                    </div>
-                    <div>
-                        <div class="seal">器骨</div>
-                        <h2 class="proj-title">界面铸形</h2>
-                        <div style="font-size: 1.2rem; margin-top:5px; color: var(--text-primary);">EUI</div>
-                    </div>
-                </div>
-                <div class="proj-right">
-                    <span class="tech-stack">> C++ / OpenGL / GLFW / Immediate Mode</span>
-                    <p class="proj-desc">
-                        此器名曰 EUI，循即时模式之道，以统一 OpenGL 渲染路径驭 GLFW 之形。  
-                        组件可搭，布局可塑，事件与绘制同机而发。  
-                        宜为桌面工具、原型试作与高性能 2D 界面之基。
-                    </p>
-                    <a href="https://github.com/sudoevolve/EUI-NEO" class="btn-view">查看器谱</a>
-                </div>
-            </div>
+      <section class="section" id="about" aria-labelledby="about-title">
+        <div class="section-head">
+          <h2 id="about-title">About Me</h2>
+          <p class="section-copy">
+            Building smooth desktop experiences. Rendering, animation, and media tools
+            are the main things I keep returning to.
+          </p>
         </div>
 
-        <!-- 项目 2 -->
-        <div class="project-item">
-            <img src="https://www.transparenttextures.com/patterns/shattered-island.png" class="ink-splash scroll-parallax" data-speed="0.3" style="bottom:10%; right:10%;">
-            <div class="project-content tilt-card">
-                <div class="proj-left">
-                    <div class="proj-poem">
-                        随心染色<br>应物成形
-                    </div>
-                    <div>
-                        <div class="seal">玄材</div>
-                        <h2 class="proj-title">质律成章</h2>
-                        <div style="font-size: 1.2rem; margin-top:5px; color: var(--text-primary);">material-components-qml</div>
-                    </div>
-                </div>
-                <div class="proj-right">
-                    <span class="tech-stack">> Qt Quick / QML / C++ / Material Design 3</span>
-                    <p class="proj-desc">
-                        此卷演 Material Design 3 于 Qt Quick 之间，兼得 QML 之灵动与 C++ 之根骨。  
-                        动态取色、组件成套、自适布局与桌面小组件并行不悖。  
-                        若欲以 Qt 构现代界面，此乃可循之正脉。
-                    </p>
-                    <a href="https://github.com/sudoevolve/material-components-qml" class="btn-view">查看图纸</a>
-                </div>
-            </div>
+        <div class="two-column">
+          <ul class="rule-list">
+            <li>Working with C++, OpenGL, Qt, QML, FFmpeg, and Python.</li>
+            <li>Interested in lightweight UI systems and responsive interaction design.</li>
+            <li>Comfortable across desktop software, graphics tools, and media workflows.</li>
+          </ul>
+
+          <aside class="side-note" aria-label="Available for">
+            <h3>Available For</h3>
+            <ul class="focus-list">
+              <li>C++ / OpenGL development</li>
+              <li>Desktop application development</li>
+              <li>UI/UX refinement</li>
+              <li>Animation systems</li>
+              <li>FFmpeg integration</li>
+            </ul>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section" id="stack" aria-labelledby="stack-title">
+        <div class="section-head">
+          <h2 id="stack-title">Tech Stack</h2>
+          <p class="section-copy">
+            C++, OpenGL, Qt, QML, FFmpeg, CMake, Python, JavaScript.
+          </p>
         </div>
 
-        <!-- 项目 3 -->
-        <div class="project-item">
-            <img src="https://www.transparenttextures.com/patterns/shattered-island.png" class="ink-splash scroll-parallax" data-speed="0.6" style="top:20%; right:20%;">
-            <div class="project-content tilt-card">
-                <div class="proj-left">
-                    <div class="proj-poem">
-                        大象无形<br>大音希声
-                    </div>
-                    <div>
-                        <div class="seal">造化</div>
-                        <h2 class="proj-title">炼虚化实</h2>
-                        <div style="font-size: 1.2rem; margin-top:5px; color: var(--text-primary);">Glsl Renderer</div>
-                    </div>
-                </div>
-                <div class="proj-right">
-                    <span class="tech-stack">> C++17 / OpenGL / RAII / Shader</span>
-                    <p class="proj-desc">
-                        自研多片元着色器运行阵法。
-                        以 <b>C++17</b> 为骨，<b>OpenGL</b> 为神。
-                        RAII 守其生灭，FBO 流其气机。  
-                        纹理自循环，光影自生发，数学之理化为丹青之妙，观之如见天地经纬。
-                    </p>
-                    <a href="https://github.com/sudoevolve/Evolve-Shader" class="btn-view">进入幻境</a>
-                </div>
-            </div>
+        <div class="tech-grid">
+          <article class="tech" style="--accent: rgba(135, 174, 190, 0.52)">
+            <h3>Desktop Apps</h3>
+            <p>Native software, practical tools, and cross-platform UI.</p>
+          </article>
+          <article class="tech" style="--accent: rgba(146, 170, 142, 0.52)">
+            <h3>Rendering</h3>
+            <p>OpenGL, graphics workflows, and visual systems.</p>
+          </article>
+          <article class="tech" style="--accent: rgba(216, 162, 155, 0.56)">
+            <h3>Animation</h3>
+            <p>Smooth interaction, motion details, and interface feel.</p>
+          </article>
+          <article class="tech" style="--accent: rgba(216, 189, 117, 0.58)">
+            <h3>Performance</h3>
+            <p>Architecture, media pipelines, and responsive behavior.</p>
+          </article>
         </div>
+      </section>
 
-        <!-- 项目 4 -->
-        <div class="project-item">
-            <div class="project-content tilt-card">
-                <div class="proj-left">
-                    <div class="proj-poem">
-                        起舞弄清影<br>何似在人间
-                    </div>
-                    <div>
-                        <div class="seal">摄魂</div>
-                        <h2 class="proj-title">幻影留声</h2>
-                        <div style="font-size: 1.2rem; margin-top:5px; color: var(--text-primary);">Eideo</div>
-                    </div>
-                </div>
-                <div class="proj-right">
-                    <span class="tech-stack">> Qt6 / QML / FFmpeg / Hardware Accel</span>
-                    <p class="proj-desc">
-                        此器名曰 Eideo，能摄光影于瞬息，录万象于方寸。  
-                        集录屏、推流、转码于一体，内秉硬件加速之精，外循 QML 简净之法。  
-                        滤镜如烟云流转，GIF 若墨迹生辉，实为文士录事之良器。
-                    </p>
-                    <a href="https://github.com/sudoevolve/Eideo" class="btn-view">查看秘籍</a>
-                </div>
-            </div>
+      <section class="section" id="contact" aria-labelledby="contact-title">
+        <div class="section-head">
+          <h2 id="contact-title">Contact</h2>
+          <div class="contact">
+            <a class="text-link" href="mailto:sudoevolve@gmail.com">sudoevolve@gmail.com</a>
+            <a class="text-link" href="https://github.com/sudoevolve">github.com/sudoevolve</a>
+          </div>
         </div>
+      </section>
+    </main>
 
-        <!-- 项目 5 -->
-        <div class="project-item">
-            <div class="project-content tilt-card">
-                <div class="proj-left">
-                    <div class="proj-poem">
-                        笔走龙蛇<br>墨染池鱼
-                    </div>
-                    <div>
-                        <div class="seal">问道</div>
-                        <h2 class="proj-title">笔墨问道</h2>
-                        <div style="font-size: 1.2rem; margin-top:5px; color: var(--text-primary);">AI Trainer</div>
-                    </div>
-                </div>
-                <div class="proj-right">
-                    <span class="tech-stack">> MNIST / TensorFlow / PyTorch</span>
-                    <p class="proj-desc">
-                        亲制手写数据之录，采毫端之迹，化为 MNIST 之典。  
-                        兼通 PyTorch 与 TensorFlow 之法，不偏不倚。  
-                        以纯真之迹，养灵慧之器，求智之本源，如师从笔墨。
-                    </p>
-                    <a href="#" class="btn-view">研墨习字</a>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <footer>
-        <div class="footer-poem v-text" style="height: 200px;">
-            相忘于江湖<br>不如相濡以沫
-        </div>
-        <div style="margin-top: 40px;">
-            <p>&copy; 2025 苏渡 · 弈沃 (Sudo Evolve)</p>
-            <p style="font-size: 0.8rem; opacity: 0.6; margin-top:10px;">Powered by Tea & Code</p>
-            <div class="footer-links">
-                <a class="btn-view" href="pages/UI%20kits.html">UI 套件</a>
-                <a class="btn-view" href="pages/blackhole.html">黑洞</a>
-                <a class="btn-view" href="pages/layout.html">布局</a>
-                <a class="btn-view" href="pages/ai.html">AI</a>
-            </div>
-            <div class="friend-links">
-                <div class="friend-links-title">友链</div>
-                <div class="friend-links-row">
-                    <a class="btn-view" href="https://sudoevolve.github.io/cppNote/" target="_blank" rel="noopener noreferrer">C++ Note</a>
-                    <a class="btn-view" href="https://meow2030.github.io/Qtcraft/" target="_blank" rel="noopener noreferrer">Qtcraft</a>
-                    <a class="btn-view" href="pages/eui-neo.html">EUI-NEO</a>
-                </div>
-            </div>
-        </div>
+    <footer class="footer">
+      <span>© 2026 Sudo Evolve</span>
+      <div class="friend-links" aria-label="Friend links">
+        <span>Links</span>
+        <a href="pages/eui-neo.html">EUI-NEO</a>
+        <a href="https://sudoevolve.github.io/cppNote/">cppNote</a>
+        <a href="https://github.com/sudoevolve/material-components-qml">material-components-qml</a>
+      </div>
     </footer>
-
-    <script>
-        gsap.registerPlugin(ScrollTrigger);
-
-        // --- 开屏动画 (保持不变) ---
-        const introCanvas = document.getElementById('intro-canvas');
-        const introCtx = introCanvas.getContext('2d');
-        let introW, introH;
-
-        function initIntro() {
-            introW = introCanvas.width = window.innerWidth;
-            introH = introCanvas.height = window.innerHeight;
-            introCtx.fillStyle = '#f4f1e8';
-            introCtx.fillRect(0, 0, introW, introH);
-        }
-        initIntro();
-        window.addEventListener('resize', initIntro);
-
-        const dropState = { y: -50, radius: 8 };
-        const rippleState = { radius: 0, opacity: 1 };
-
-        function startIntroAnimation() {
-            const tl = gsap.timeline();
-            tl.to(dropState, {
-                y: introH / 2,
-                duration: 0.8,
-                ease: "power2.in",
-                onUpdate: () => {
-                    introCtx.fillStyle = '#f4f1e8';
-                    introCtx.fillRect(0, 0, introW, introH);
-                    introCtx.beginPath();
-                    introCtx.arc(introW/2, dropState.y, dropState.radius, 0, Math.PI*2);
-                    introCtx.fillStyle = '#121212';
-                    introCtx.fill();
-                    // 尾迹
-                    introCtx.beginPath();
-                    introCtx.moveTo(introW/2 - 4, dropState.y);
-                    introCtx.lineTo(introW/2, dropState.y - 30);
-                    introCtx.lineTo(introW/2 + 4, dropState.y);
-                    introCtx.fill();
-                }
-            });
-
-            tl.call(() => {
-                startHeroAnimations();
-                document.body.style.overflow = 'auto';
-            });
-
-            tl.to(rippleState, {
-                radius: Math.max(introW, introH) * 1.5,
-                duration: 2.2,
-                ease: "power2.out",
-                onUpdate: () => {
-                    const cx = introW / 2;
-                    const cy = introH / 2;
-                    const r = rippleState.radius;
-                    introCtx.globalCompositeOperation = 'source-over';
-                    introCtx.fillStyle = '#f4f1e8';
-                    introCtx.fillRect(0, 0, introW, introH);
-                    introCtx.globalCompositeOperation = 'destination-out';
-                    introCtx.beginPath();
-                    introCtx.arc(cx, cy, r, 0, Math.PI*2);
-                    introCtx.fill();
-                    // 边缘装饰
-                    introCtx.globalCompositeOperation = 'source-over';
-                    introCtx.lineWidth = r * 0.05;
-                    introCtx.beginPath();
-                    introCtx.arc(cx, cy, r, 0, Math.PI*2);
-                    introCtx.strokeStyle = `rgba(18, 18, 18, ${1 - r/(Math.max(introW,introH)*0.8)})`; 
-                    introCtx.stroke();
-                },
-                onComplete: () => {
-                    introCanvas.style.display = 'none';
-                }
-            });
-        }
-        window.onload = startIntroAnimation;
-
-        function startHeroAnimations() {
-            gsap.to("nav", { opacity: 1, duration: 1.5, ease: "power2.out" });
-            gsap.to(".hero-main", { opacity: 1, y: 0, scale: 1, duration: 1.2, ease: "power3.out" });
-            gsap.set(".hero-main", { y: 50 }); 
-            gsap.to(".hero-main", { y: 0, opacity: 1, duration: 1.5, ease: "power2.out" });
-            gsap.to(".poem-intro", { opacity: 1, x: 0, duration: 1.5, delay: 0.2, ease: "power2.out" });
-            gsap.from(".poem-intro", { x: -30, duration: 1.5, delay: 0.2 });
-            gsap.from(".hero-title", { y: 50, opacity: 0, duration: 1.5, ease: "power3.out", delay: 0.1 });
-        }
-        
-        // --- 滚动动画 ---
-        const projects = document.querySelectorAll('.project-content');
-        projects.forEach((proj) => {
-            gsap.fromTo(proj, 
-                { opacity: 0, y: 100 },
-                {
-                    scrollTrigger: { trigger: proj, start: "top 85%", end: "top 40%", scrub: 1 },
-                    opacity: 1, y: 0, ease: "power2.out"
-                }
-            );
-        });
-
-        gsap.utils.toArray(".scroll-parallax").forEach(img => {
-            const speed = img.dataset.speed || 0.2;
-            gsap.to(img, {
-                y: (i, target) => -100 * speed,
-                scrollTrigger: { trigger: img, start: "top bottom", end: "bottom top", scrub: true }
-            });
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if(window.innerWidth < 768) return; 
-            const x = (e.clientX / window.innerWidth - 0.5) * 2; 
-            const y = (e.clientY / window.innerHeight - 0.5) * 2;
-            gsap.utils.toArray('.parallax-layer').forEach(layer => {
-                const depth = layer.dataset.depth || 0.1;
-                gsap.to(layer, { x: x * 30 * depth, y: y * 30 * depth, duration: 1, ease: "power2.out" });
-            });
-        });
-
-        const tiltCards = document.querySelectorAll('.tilt-card');
-        tiltCards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                if(window.innerWidth < 768) return;
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left; 
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = ((y - centerY) / centerY) * -3;
-                const rotateY = ((x - centerX) / centerX) * 3;
-                
-                gsap.to(card, {
-                    rotationX: rotateX, rotationY: rotateY,
-                    transformPerspective: 1000, transformOrigin: "center center",
-                    boxShadow: `${-rotateY*2}px ${rotateX*2+20}px 40px rgba(0,0,0,0.1)`,
-                    duration: 0.4, ease: "power1.out"
-                });
-            });
-            card.addEventListener('mouseleave', () => {
-                gsap.to(card, { rotationX: 0, rotationY: 0, boxShadow: "0 20px 50px rgba(0,0,0,0.05)", duration: 0.8, ease: "elastic.out(1, 0.5)" });
-            });
-        });
-
-        gsap.utils.toArray('.qi-fill').forEach(bar => {
-            gsap.to(bar, {
-                scrollTrigger: { trigger: bar, start: "top 85%" },
-                width: bar.getAttribute('data-width'), duration: 1.5, ease: "power4.out", delay: 0.2
-            });
-        });
-
-        // --- 背景效果：墨水 (日) + 雪花 (夜) ---
-        const bgCanvas = document.getElementById('bg-ink-canvas');
-        const bgCtx = bgCanvas.getContext('2d');
-        let bgW, bgH, inks = [], snows = [];
-        const MAX_INKS = 12;
-        const MAX_SNOWS = 100;
-        let isDarkMode = false;
-        
-        function resizeBg() { bgW = bgCanvas.width = window.innerWidth; bgH = bgCanvas.height = window.innerHeight; }
-        window.addEventListener('resize', resizeBg);
-        resizeBg();
-
-        // 墨水类
-        class BgInkDrop {
-            constructor() {
-                this.reset();
-            }
-            reset() {
-                this.x = Math.random() * bgW;
-                this.y = Math.random() * bgH;
-                this.radius = 0;
-                this.maxRadius = Math.random() * 80 + 40;
-                this.opacity = 0.8;
-                this.speed = Math.random() * 1.2 + 0.8;
-                // 夜间为白色(雾), 日间为深色(墨)
-                this.color = isDarkMode ? '#dddddd' : (Math.random() > 0.85 ? '#8a2525' : '#1a1a1a');
-                this.alive = true;
-            }
-            update() {
-                if (this.radius < this.maxRadius) this.radius += this.speed;
-                else { this.opacity -= 0.003; if (this.opacity <= 0.02) this.alive = false; }
-            }
-            draw() {
-                if (!this.alive) return;
-                bgCtx.beginPath();
-                bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                bgCtx.fillStyle = this.color;
-                // 夜间雾气更淡
-                bgCtx.globalAlpha = isDarkMode ? this.opacity * 0.08 : this.opacity * 0.15;
-                bgCtx.fill();
-                bgCtx.globalAlpha = 1;
-            }
-        }
-
-        // 雪花类
-        class SnowFlake {
-            constructor() {
-                this.reset();
-            }
-            reset() {
-                this.x = Math.random() * bgW;
-                this.y = Math.random() * -bgH; // 从上方开始
-                this.radius = Math.random() * 3 + 1;
-                this.speedY = Math.random() * 2 + 1;
-                this.speedX = (Math.random() - 0.5) * 1;
-                this.opacity = Math.random() * 0.6 + 0.4;
-            }
-            update() {
-                this.y += this.speedY;
-                this.x += this.speedX;
-                if (this.y > bgH) this.reset();
-            }
-            draw() {
-                bgCtx.beginPath();
-                bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                bgCtx.fillStyle = '#ffffff';
-                bgCtx.globalAlpha = this.opacity;
-                bgCtx.fill();
-                bgCtx.globalAlpha = 1;
-            }
-        }
-
-        // 初始化雪花
-        for(let i=0; i<MAX_SNOWS; i++) {
-            snows.push(new SnowFlake());
-        }
-
-        function animateBg() {
-            bgCtx.clearRect(0, 0, bgW, bgH);
-            
-            // 绘制墨水/雾气 (日夜皆有，但颜色不同)
-            if (inks.length < MAX_INKS && Math.random() < 0.01) inks.push(new BgInkDrop());
-            inks.forEach(ink => { ink.update(); ink.draw(); });
-            inks = inks.filter(ink => ink.alive);
-
-            // 绘制雪花 (仅夜间)
-            if (isDarkMode) {
-                snows.forEach(snow => {
-                    snow.update();
-                    snow.draw();
-                });
-            }
-
-            requestAnimationFrame(animateBg);
-        }
-        animateBg();
-
-        //跟随系统 + 手动切换
-
-        const toggleBtn = document.getElementById('theme-toggle');
-        
-        // 1. 获取系统的颜色偏好
-        const systemScheme = window.matchMedia('(prefers-color-scheme: dark)');
-
-        // 2. 统一的主题设置函数
-        function applyTheme(isDark) {
-            if (isDark) {
-                document.body.classList.add('dark-mode');
-            } else {
-                document.body.classList.remove('dark-mode');
-            }
-            
-            // 更新全局状态变量 (控制雪花/墨水逻辑)
-            isDarkMode = isDark;
-            
-            // 重置墨水/雾气数组，这样切换后新生成的粒子颜色才会正确
-            inks = []; 
-        }
-
-        // 3. 初始化：页面加载时，立即应用系统的当前设置
-        applyTheme(systemScheme.matches);
-
-        // 4. 监听系统变化：如果你在系统设置里切换了深色/浅色，网页会自动跟着变
-        systemScheme.addEventListener('change', (e) => {
-            applyTheme(e.matches);
-        });
-
-        // 5. 手动点击按钮切换 (覆盖当前状态)
-        toggleBtn.addEventListener('click', () => {
-            // 基于当前网页的实际状态进行反转
-            const currentIsDark = document.body.classList.contains('dark-mode');
-            applyTheme(!currentIsDark);
-        });
-
-        // 鼠标跟随
-        const cursor = document.getElementById('cursor');
-        let mouseX = -100, mouseY = -100;
-        window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
-        gsap.ticker.add(() => { gsap.set(cursor, { left: mouseX, top: mouseY }); });
-        document.querySelectorAll('a, .project-content, .skill-category, button').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.classList.add('active'));
-            el.addEventListener('mouseleave', () => cursor.classList.remove('active'));
-        });
-
-    </script>
+  </div>
 </body>
 </html>
